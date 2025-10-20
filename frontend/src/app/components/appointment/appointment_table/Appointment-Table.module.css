@@ -28,9 +28,39 @@
     padding: 0.5em;
 }
 
+.more:hover {
+
+}
+
 .icon {
     width: 1em;
     filter: brightness(0) saturate(100%) invert(100%) sepia(96%) saturate(0%) hue-rotate(47deg) brightness(104%) contrast(107%);
+}
+
+.dropdown {
+    list-style: none;
+    position: relative;
+    padding: 0;
+    margin: 0;
+}
+
+.dropdown ul {
+    list-style: none;
+    padding: 1em;
+    background-color: #302d2d;
+    border-radius: 5px;
+    position: absolute;
+    display: none;
+    right: 10%;
+}
+
+.dropdown li:hover ul {
+    display: block;
+}
+
+.dropdown a {
+    text-decoration: none;
+    color: white;
 }
 
 @media (width <=580px) {

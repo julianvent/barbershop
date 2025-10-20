@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 export default function LoginForm() {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [quote, setQuote] = useState();
+  const [error, setError] = useState("");
   const [isRegistering, setIsRegistering] = useState(false);
   const [menuSelected, setMenuSelected] = useState("login");
 
@@ -36,10 +37,15 @@ export default function LoginForm() {
           contrasena,
         }),
       });
-      if (!res.ok) throw new Error("Error");
+      if (!res.ok) {
+        throw new Error("Credenciales inválidas");
+      }
       setIsLoggingIn(false);
       router.push("/dashboard");
-    } catch (err) {}
+    } catch (err) {
+      setIsLoggingIn(false);
+      setError(err.message);
+    }
   }
 
   async function handleRegister(e) {
@@ -63,10 +69,14 @@ export default function LoginForm() {
           rol,
         }),
       });
-      if (!res.ok) throw new Error("Error");
+      if (!res.ok) throw new Error("Error al crear cuenta");
       setIsRegistering(false);
       setMenuSelected("login");
-    } catch (err) {}
+      setError("");
+    } catch (err) {
+      setIsRegistering(false);
+      setError(err.message);
+    }
   }
 
   return (
@@ -86,6 +96,7 @@ export default function LoginForm() {
                 <input type="password" name="password" />
               </div>
               <div className={styles.buttonsContainer}>
+                <p className={styles.error}>{error}</p>
                 <button type="submit" disabled={isLoggingIn}>
                   Iniciar sesión
                 </button>
@@ -93,6 +104,7 @@ export default function LoginForm() {
                   className={styles.alternateButton}
                   onClick={() => {
                     setMenuSelected("register");
+                    setError("");
                   }}
                 >
                   ¿No cuentas con una cuenta? Regístrate ahora
@@ -117,6 +129,7 @@ export default function LoginForm() {
                 <input type="password" name="password" />
               </div>
               <div className={styles.buttonsContainer}>
+                <p className={styles.error}>{error}</p>
                 <button type="submit" disabled={isRegistering}>
                   Crear cuenta
                 </button>
@@ -124,6 +137,7 @@ export default function LoginForm() {
                   className={styles.alternateButton}
                   onClick={() => {
                     setMenuSelected("login");
+                    setError("");
                   }}
                 >
                   ¿Ya tienes una cuenta? Inicia sesión

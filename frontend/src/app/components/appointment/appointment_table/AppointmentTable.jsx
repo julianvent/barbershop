@@ -9,13 +9,17 @@ export default function AppointmentTable({ entries }) {
   }
 
   entries.map((e) => {
-    e.fecha= e.fecha_hora_cita ? e.fecha_hora_cita.split("T")[0] : "";
+    e.fecha = e.fecha_hora_cita ? e.fecha_hora_cita.split("T")[0] : "";
     const [year, month, day] = e.fecha.split("-");
     const formato = `${day}/${month}/${year}`;
     e.fecha = formato;
-    e.hora = e.fecha_hora_cita ? e.fecha_hora_cita.split("T")[1].substring(0,5) : "";
+    e.hora = e.fecha_hora_cita
+      ? e.fecha_hora_cita.split("T")[1].substring(0, 5)
+      : "";
     e.estado = e.estado.charAt(0).toUpperCase() + e.estado.slice(1);
   });
+
+  if (entries.length == 0) return <p>No existen citas programadas...</p>;
 
   return (
     <table className={styles.table}>
@@ -39,13 +43,29 @@ export default function AppointmentTable({ entries }) {
             <td className={styles.hidden}>{e.numero_telefonico_cliente}</td>
             <td>{e.estado}</td>
             <td className={styles.buttonsCell}>
-              <button className={styles.more} onClick={() => handleClick(e.id)}>
-                <img
-                  src="/ellipsis-solid-full.svg"
-                  alt="more"
-                  className={styles.icon}
-                />
-              </button>
+              <ul className={styles.dropdown}>
+                <li>
+                  <button
+                    className={styles.more}
+                    onClick={() => handleClick(e.id_cita)}
+                  >
+                    <img
+                      src="/ellipsis-solid-full.svg"
+                      alt="more"
+                      className={styles.icon}
+                    />
+                  </button>
+                  <ul>
+                    <li>
+                      <a href={`dashboard/appointment/${e.id_cita}`}>Visualizar</a>
+                    </li>
+                    <br />
+                    <li>
+                      <a href={`dashboard/appointment/${e.id_cita}/update`}>Modificar</a>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
             </td>
           </tr>
         ))}
