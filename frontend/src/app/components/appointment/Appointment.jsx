@@ -5,11 +5,17 @@ import { useEffect, useState } from "react";
 
 export default function Appointment() {
   const [quote, setQuote] = useState();
+  const [appointments, setAppoinments] = useState([]);
 
   useEffect(() => {
     fetch("/api/quotes")
       .then((res) => res.json())
       .then((res) => setQuote(res.text))
+      .catch(console.error);
+    
+    fetch("/api/appointments")
+      .then((res) => res.json())
+      .then((res) => setAppoinments(res))
       .catch(console.error);
   }, [setQuote]);
 
@@ -42,6 +48,7 @@ export default function Appointment() {
   ];
 
   return (
+    
     <div className={styles.layout}>
       <div className={styles.toolbar}>
         <h1>Citas programadas</h1>
@@ -54,7 +61,7 @@ export default function Appointment() {
         </button>
       </div>
       <div className={styles.tableContainer}>
-        <AppointmentTable entries={entries}></AppointmentTable>
+        <AppointmentTable entries={appointments}></AppointmentTable>
       </div>
     </div>
   );

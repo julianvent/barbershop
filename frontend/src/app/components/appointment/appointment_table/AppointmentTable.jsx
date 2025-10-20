@@ -8,6 +8,15 @@ export default function AppointmentTable({ entries }) {
     router.push(`dashboard/appointment/${appointmentId}/update`);
   }
 
+  entries.map((e) => {
+    e.fecha= e.fecha_hora_cita ? e.fecha_hora_cita.split("T")[0] : "";
+    const [year, month, day] = e.fecha.split("-");
+    const formato = `${day}/${month}/${year}`;
+    e.fecha = formato;
+    e.hora = e.fecha_hora_cita ? e.fecha_hora_cita.split("T")[1].substring(0,5) : "";
+    e.estado = e.estado.charAt(0).toUpperCase() + e.estado.slice(1);
+  });
+
   return (
     <table className={styles.table}>
       <thead>
@@ -23,12 +32,12 @@ export default function AppointmentTable({ entries }) {
       </thead>
       <tbody>
         {entries.map((e) => (
-          <tr key={e.id}>
-            <td>{e.date}</td>
-            <td>{e.time}</td>
-            <td>{e.customer}</td>
-            <td className={styles.hidden}>{e.phone}</td>
-            <td>{e.status}</td>
+          <tr key={e.id_cita}>
+            <td>{e.fecha}</td>
+            <td>{e.hora}</td>
+            <td>{e.nombre_cliente}</td>
+            <td className={styles.hidden}>{e.numero_telefonico_cliente}</td>
+            <td>{e.estado}</td>
             <td className={styles.buttonsCell}>
               <button className={styles.more} onClick={() => handleClick(e.id)}>
                 <img
