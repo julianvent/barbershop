@@ -7,7 +7,7 @@ export default function Appointment() {
   const [quote, setQuote] = useState();
 
   useEffect(() => {
-    fetch("/quotes")
+    fetch("/api/quotes")
       .then((res) => res.json())
       .then((res) => setQuote(res.text))
       .catch(console.error);

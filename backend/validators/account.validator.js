@@ -35,9 +35,9 @@ export const AccountValidator = {
 
     if ("contrasena" in account && !isNonEmptyString(account.contrasena)) {
         throw new Error("La contraseña no puede estar vacía");
-        
+
       }
-    
+
     if ("rol" in account && !validRoles.includes(account.rol)) {
       throw new Error(`Invalid role. Must be one of: ${validRoles.join(", ")}`);
     }
@@ -46,14 +46,14 @@ export const AccountValidator = {
     validateLogin(correo_electronico, contrasena){
     if(!contrasena) throw new Error("Missing required field: contrasena");
     if(!correo_electronico) throw new Error("Missing required field: correo_electronico");
-   
+
     if (!isNonEmptyString(correo_electronico)) {
       throw new Error("El correo_electronico no puede estar vacío");
-        
+
     }
     if (!isNonEmptyString(contrasena)) {
       throw new Error("La contraseña no puede estar vacía");
-        
+
     }
   }
 

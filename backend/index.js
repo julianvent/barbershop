@@ -18,14 +18,15 @@ app.use("/", routes);
 
 async function startServer() {
   try {
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`Servidor corriendo en puerto ${PORT}`);
+    });
+
     await initDB();
 
     await sequelize.sync();
     console.log("Modelos sincronizados");
 
-    app.listen(PORT, '0.0.0.0', () => {
-      console.log(`Servidor corriendo en puerto ${PORT}`);
-    });
   } catch (error) {
     console.error("Error al iniciar servidor:", error);
     process.exit(1);

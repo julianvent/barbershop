@@ -26,8 +26,7 @@
     font-size: 0.9rem;
 }
 
-.field>input[type="email"],
-.field>input[type="password"] {
+.field>input {
     padding: 0.5em;
 
     border-radius: 6px;
@@ -67,4 +66,18 @@
     .fieldsContainer {
         padding: 1em 1em 10em;
     }
+}
+
+.buttonsContainer .alternateButton {
+    background-color: transparent;
+    max-width: 275px;
+
+    color: black;
+}
+
+.quote {
+    text-align: center;
+    padding: 0.5em;
+    margin-inline: auto;
+    max-width: 30em;
 }
