@@ -5,7 +5,7 @@ export default function AppointmentTable({ entries }) {
   const router = useRouter();
 
   async function handleClick(appointmentId) {
-    router.push(`dashboard/appointment/${appointmentId}`);
+    router.push(`dashboard/appointment/${appointmentId}/update`);
   }
 
   return (

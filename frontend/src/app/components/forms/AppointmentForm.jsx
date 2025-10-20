@@ -6,13 +6,13 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";
 
 
-export default function AppointmentForm({onSubmit, id }) {
+export default function AppointmentForm({onSubmit, id, isShow=false }) {
     const router = useRouter();
 
     const [formData, setFormData] = useState({
         nombre_cliente: "",
         numero_telefonico_cliente: "",
-        duracion: "",
+        duracion_total: "",
         estado: "pendiente",
         fecha: "",
         hora: ""
@@ -25,28 +25,18 @@ export default function AppointmentForm({onSubmit, id }) {
         setFormData({});
             try {
 
-                // const response = await fetch(`/api/citas/${id}`);
-                // const cita = await response.json();
-
-                const cita = {
-                    id_cita: 1,
-                    nombre_cliente: "Juan Pérez",
-                    numero_telefonico_cliente: "9211234567",
-                    fecha_hora_cita: "2025-10-20T15:30:00Z",
-                    duracion_total: 60, 
-                    estado: "pendiente", 
-                };
+                const response = await fetch(`/api/appointments/${id}`);
+                const cita = await response.json();
                
                 
                 const fechaHora = cita.fecha_hora_cita || "";
-                console.log(fechaHora.split("T")[0]);
                 setFormData({
                     id: cita.id_cita,
                     nombre_cliente: cita.nombre_cliente || "",
                     numero_telefonico_cliente: cita.numero_telefonico_cliente || "",
                     fecha: fechaHora ? fechaHora.split("T")[0] : "",
                     hora: fechaHora ? fechaHora.split("T")[1].substring(0,5) : "",
-                    duracion: cita.duracion_total || "",
+                    duracion_total: cita.duracion_total || "",
                     estado: cita.estado || "pendiente",
                 });
             } catch (error) {
@@ -107,26 +97,26 @@ export default function AppointmentForm({onSubmit, id }) {
       <Header></Header>
       <main >
         <div className={styles.formContainer}>
-          <h1>{id ? "Modificar cita -" + formData.fecha + " " + formData.hora : "Agendar cita "}</h1>
+          <h1>{!id ? "Agendar cita " : (isShow ? "Cita -" + formData.fecha + " " + formData.hora : "Modificar cita -" + formData.fecha + " " + formData.hora) }</h1>
           <form onSubmit={  (e) => { e.preventDefault(); onSubmit(formData)}}>
             
             <div className={styles.fieldsContainer}>
                 <div className={styles.field}>
                   <label htmlFor="client_name">Nombre del Cliente:</label>
-                  <input className={styles.formField} defaultValue={id ? formData.nombre_cliente : ''} 
+                  <input disabled={isShow} required className={styles.formField} defaultValue={id ? formData.nombre_cliente : ''} 
                   onChange={e => setFormData({ ...formData, nombre_cliente: e.target.value })} type="text" name="client_name"/>
                 </div>
 
                 <div className={styles.field}>
                   <label htmlFor="client_tel">Telefono del cliente:</label>
-                  <input className={styles.formField} defaultValue={id ? formData.numero_telefonico_cliente : ''} 
+                  <input disabled={isShow} required className={styles.formField} defaultValue={id ? formData.numero_telefonico_cliente : ''} 
                   onChange={e => setFormData({ ...formData, numero_telefonico_cliente: e.target.value })} type="number" inputMode="tel" name="client_tel"/>
                 </div>
 
                 <div className={styles.field}>
                   <label htmlFor="appo_duration">Duracion Aproximada:</label>
-                  <input className={styles.formField} defaultValue={id ? formData.duracion : ''} 
-                  onChange={e => setFormData({ ...formData, duracion: e.target.value })} type="number" inputMode="numeric" name="appo_duration"/>
+                  <input disabled={isShow} required className={styles.formField} defaultValue={id ? formData.duracion_total : ''} 
+                  onChange={e => setFormData({ ...formData, duracion_total: e.target.value })} type="number" inputMode="numeric" name="appo_duration"/>
                 </div>
 
                 {/*  Correo cliente input
@@ -157,7 +147,7 @@ export default function AppointmentForm({onSubmit, id }) {
 
                 <div className={styles.field}>
                   <label htmlFor="status">Estado de la cita:</label>
-                  <select className={styles.formField} onChange={e => setFormData({ ...formData, estado: e.target.value })}
+                  <select disabled={isShow} required className={styles.formField} onChange={e => setFormData({ ...formData, estado: e.target.value })}
                    defaultValue={id ? formData.estado : ''} name="status" id="status">
                         <option value="">Selecciona un valor valido</option>
                         <option value="pendiente">Pendiente </option>
@@ -170,13 +160,13 @@ export default function AppointmentForm({onSubmit, id }) {
 
                 <div className={styles.field}>
                   <label htmlFor="appo-date">Fecha de la cita:</label>
-                  <input defaultValue={id ? formData.fecha : ''} type="date" className={styles.formField} 
+                  <input disabled={isShow} required defaultValue={id ? formData.fecha : ''} type="date" className={styles.formField} 
                   onChange={e => setFormData({ ...formData, fecha: e.target.value })} name="appo-date"/>
                 </div>
 
                 <div className={styles.field}>
                   <label htmlFor="appo-hour">Hora de la cita:</label>
-                  <input defaultValue={id ? formData.hora : ''} type="time"  className={styles.formField}
+                  <input disabled={isShow} required defaultValue={id ? formData.hora : ''} type="time"  className={styles.formField}
                   onChange={e => setFormData({ ...formData, hora: e.target.value })} name="appo-hour"/>
                 </div>                
               
@@ -215,7 +205,9 @@ export default function AppointmentForm({onSubmit, id }) {
             
             <div className={styles.fieldsConta}>
               <div className={styles.cornerButtons}>
-                <button type="button" className={styles.cancelBoton} onClick={() => router.push('/dashboard/')} >Cancelar</button>
+                {!isShow && 
+                (<button type="button" className={styles.cancelBoton} onClick={() => router.push('/dashboard/')} >Cancelar</button>)}
+                
                 <button type="submit">Confirmar</button>
               </div>
             </div>
