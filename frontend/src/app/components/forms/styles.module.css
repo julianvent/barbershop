@@ -1,0 +1,109 @@
+
+
+.fieldsContainer{
+    display:inline-flex;    
+    font-size: 1rem;
+    margin-bottom: 2%;
+    background-color: rgb(255, 255, 255);
+    box-shadow: 0px 2px 4px rgb(219, 219, 219);
+    box-sizing: border-box;
+    width: 100%;
+    border-radius: 10px;
+
+}
+
+.field{
+    padding: 2%;
+    font-size: 1.2rem;
+    box-sizing: border-box;
+}
+
+.field input{
+    margin-top: 20px;
+    border-radius: 5px;
+    border-width: 1px;
+    height: 50px;
+    border-color: rgb(204, 204, 204);
+    outline: none;
+    border-color: rgba(0, 0, 0, 0.1);
+    font-size: 1rem;
+    padding: 0.5em;
+
+}
+
+.field select{
+    margin-top: 20px;
+    border-radius: 5px;
+    border-width: 1px;
+    border-color: rgb(204, 204, 204);
+    outline: none;
+    border-color: rgba(0, 0, 0, 0.1);
+    font-size: 1.1rem;
+    padding: 0.7em;
+
+}
+
+
+.service {
+  display: flex;
+  align-items: center; 
+  gap: 8px; 
+}
+
+.service input{
+  transform: scale(1.5);
+  margin: 10px;
+}
+
+.service > label {
+    margin-right: 50px;
+}
+.serviceDescription{
+    margin-left: 50;
+    color: rgb(39, 39, 39);
+}
+
+
+.formContainer{
+    margin: 2%;
+    display:grid;
+    box-sizing: border-box;
+}
+
+.formField{
+    font-size: 1.3rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.cancelBoton{
+    background-color: black;
+}
+
+.fieldsConta{
+    display: block;
+}
+
+.cornerButtons{
+    align-items: center;
+    justify-self: end;  
+    padding: 1%;
+    box-sizing:content-box;  
+}
+
+.cornerButtons > button{
+    margin-left: 10px;
+}
+
+
+@media (width <= 800px) {
+    .fieldsContainer{
+        min-width: fit-content;
+        display: grid;
+        margin:0
+    }
+
+    .services{
+        min-width: fit-content;
+    }
+}
