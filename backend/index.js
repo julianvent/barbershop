@@ -10,25 +10,23 @@ app.use(express.json()); // Parse JSON request bodies
 
 app.use((err, req, res, next) => {
   console.error(err);
-  res.status(500).json({ error: err.message || "Error interno" });
+  res.status(500).json({ error: err.message || "Internal error" });
 });
 
 app.use("/", routes);
 
-
 async function startServer() {
   try {
-    app.listen(PORT, '0.0.0.0', () => {
-      console.log(`Servidor corriendo en puerto ${PORT}`);
-    });
-
     await initDB();
 
     await sequelize.sync();
-    console.log("Modelos sincronizados");
+    console.log("Models synchronized");
 
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
   } catch (error) {
-    console.error("Error al iniciar servidor:", error);
+    console.error("Error starting server:", error);
     process.exit(1);
   }
 }

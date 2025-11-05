@@ -1,12 +1,12 @@
-// Make a global state for validating appointment data
-const states = ["pendiente", "confirmada", "completada", "cancelada"];
+// Valid appointment statuses
+const states = ["pending", "confirmed", "completed", "cancelled"];
 
 const WhiteListQueryParams = [
-  "nombre_cliente",
-  "numero_telefonico_cliente",
-  "fecha_hora_cita",
-  "duracion_total",
-  "estado",
+  "customer_name",
+  "customer_phone",
+  "appointment_datetime",
+  "total_duration",
+  "status",
 ];
 
 export const AppointmentValidator = {
@@ -18,15 +18,15 @@ export const AppointmentValidator = {
       }
     }
 
-    if (!states.includes(data.estado)) {
+    if (!states.includes(data.status)) {
       throw new Error(
-        `Invalid estado value. Must be one of: ${states.join(", ")}`
+        `Invalid status value. Must be one of: ${states.join(", ")}`
       );
     }
 
-    if (!Number.isInteger(data.duracion_total) || data.duracion_total <= 0) {
+    if (!Number.isInteger(data.total_duration) || data.total_duration <= 0) {
       throw new Error(
-        "duracion_total must be a positive integer representing minutes"
+        "total_duration must be a positive integer representing minutes"
       );
     }
   },

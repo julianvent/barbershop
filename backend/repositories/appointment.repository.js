@@ -5,42 +5,38 @@ export const AppointmentRepository = {
     return Appointment.findAll({
       offset,
       limit,
-      order: [["fecha_hora_cita", "ASC"]],
+      order: [["appointment_datetime", "ASC"]],
     });
   },
 
   async getById(id) {
-    return Appointment.findOne({ where: { id_cita: id } });
+    return Appointment.findByPk(id);
   },
 
   async create(appointment) {
     const newAppointment = await Appointment.create({
-      nombre_cliente: appointment.nombre_cliente,
-      numero_telefonico_cliente: appointment.numero_telefonico_cliente,
-      fecha_hora_cita: appointment.fecha_hora_cita,
-      duracion_total: appointment.duracion_total,
-      estado: appointment.estado,
+      customer_name: appointment.customer_name,
+      customer_phone: appointment.customer_phone,
+      appointment_datetime: appointment.appointment_datetime,
+      total_duration: appointment.total_duration,
+      status: appointment.status,
     });
     return newAppointment;
   },
 
   async update(id, appointment) {
-    const existingAppointment = await Appointment.findOne({
-      where: { id_cita: id },
-    });
+    const existingAppointment = await Appointment.findByPk(id);
     if (!existingAppointment) {
-      throw new Error("Cita no encontrada");
+      throw new Error("Appointment not found");
     }
     await existingAppointment.update(appointment);
     return existingAppointment;
   },
 
   async delete(id) {
-    const existingAppointment = await Appointment.findOne({
-      where: { id_cita: id },
-    });
+    const existingAppointment = await Appointment.findByPk(id);
     if (!existingAppointment) {
-      throw new Error("Cita no encontrada");
+      throw new Error("Appointment not found");
     }
     await existingAppointment.destroy();
   },
