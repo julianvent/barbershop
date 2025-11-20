@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import path from "path";
+import cors from "cors";
 import express from "express";
 import routes from "./routes/index.js";
 import { initDB, sequelize } from "./config/database.demo.js";
@@ -11,6 +12,7 @@ import { initDB, sequelize } from "./config/database.demo.js";
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use(cors());
 app.use(express.json()); // Parse JSON request bodies
 
 app.use((err, req, res, next) => {
