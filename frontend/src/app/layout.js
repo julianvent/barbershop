@@ -15,7 +15,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${poppinsSans.variable}`}>
-        {children}
+        <div className={`mainLayout`}>{children}</div>
       </body>
     </html>
   );

@@ -1,0 +1,108 @@
+.fieldsContainer {
+    display: grid;
+    background-color: rgb(255, 255, 255);
+    box-shadow: 0px 2px 4px rgb(219, 219, 219);
+    box-sizing: border-box;
+    width: 100%;
+    border-radius: 10px;
+    margin-top: 1%;
+    margin-bottom: 1%;
+
+}
+
+.row {
+    padding: 1%;
+    box-sizing: content-box;
+    display: flex;
+}
+
+.row div {
+    margin-left: 1%;
+    width: 48%
+}
+
+.buttons {
+    display: flex;
+    gap: 2em;
+    justify-self: end;
+    margin-bottom: 1%;
+    margin-right: 1%;
+}
+
+.servicesContainer {
+    display:flex;
+    flex-wrap: wrap;
+    gap: 2em;
+
+}
+
+.soloRow>label {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.buttons button {
+    background-color: #1B54FE;
+    color: white;
+    padding: 0.75em 3em;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.buttons .cancelButton {
+    background-color: #4e4e4e;
+}
+
+
+.soloRow {
+    margin-left: 1%;
+    padding: 1%;
+    box-sizing: content-box;
+}
+
+.cancelBoton {
+    background-color: black;
+    color: white;
+    padding: 1%;
+}
+
+.fieldsConta {
+    display: block;
+}
+
+.cornerButtons {
+    align-items: center;
+    justify-self: end;
+    padding: 1%;
+    box-sizing: content-box;
+}
+
+.cornerButtons>button {
+    margin-left: 10px;
+}
+
+
+@media (width <=800px) {
+    .fieldsContainer {
+        min-width: fit-content;
+        display: grid;
+        margin: 0
+    }
+
+    .row {
+        display: grid;
+        margin: 1%;
+        display: flexbox;
+    }
+
+    .row div {
+        width: 100%;
+    }
+
+    .soloRow {
+        margin: 0;
+        margin-left: 2%;
+        display: flexbox;
+    }
+}

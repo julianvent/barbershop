@@ -1,0 +1,23 @@
+.fieldsetContainer {
+    display: grid;
+    padding-inline: 1em;
+    row-gap: 1em;
+}
+
+.barbers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2em;
+    max-width: fit-content;
+    justify-content: center;
+}
+
+@media (width <=800) {
+    .fieldsetContainer {
+        padding: 0;
+    }
+
+    .barbers {
+        row-gap: 1em;
+    }
+}

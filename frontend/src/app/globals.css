@@ -1,10 +1,14 @@
 html,
 body {
-  max-width: 100vw;
-  min-height: 100vh;
+  width: 100%;
+  height: 100%;
   font-family: var(--font-poppins-sans);
+  overflow: hidden;
+}
 
-  display: grid;
+/* reset */
+* {
+  padding: 0;
   margin: 0;
 }
 
@@ -12,23 +16,34 @@ input {
   font-family: var(--font-poppins-sans);
 }
 
+textarea {
+  font-family: var(--font-poppins-sans);
+}
+
+select {
+  font-family: var(--font-poppins-sans);
+}
+
 button {
   font-family: var(--font-poppins-sans);
-  background-color: #1B54FE;
-  color: white;
-  cursor: pointer;
-
-  padding: 0.75em;
-
-  border: none;
-  border-radius: 6px;
-
-
-  font-weight: 600;
   font-size: 1rem;
-  margin-inline: auto;
+  border: none;
+  cursor: pointer;
 }
 
 button:hover {
   opacity: 0.9;
+}
+
+.mainLayout {
+  max-width: 100vw;
+  max-height: 100vh;
+
+  height: 100%;
+}
+
+.error {
+  font-size: 0.8rem;
+  font-weight: normal;
+  color: rgb(196, 0, 0);
 }

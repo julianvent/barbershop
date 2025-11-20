@@ -1,23 +1,39 @@
-export default function Sidebar() {
+import Link from "next/link";
+import styles from "./Sidebar.module.css";
+import { forwardRef } from "react";
+
+const Sidebar = forwardRef(({ visible }, ref) => {
   return (
-    <div>
+    <div data-visible={visible} ref={ref} className={styles.sidebar}>
       <ul>
         <li>
-          <a href="">Home</a>
+          <Link href="/dashboard/appointments">
+            <div className={styles.iconContainer}>
+              <img src="/icons/calendar-check-regular-full.svg" alt="" />
+            </div>
+            <span>Citas</span>
+          </Link>
         </li>
         <li>
-          <a href="">Citas</a>
+          <Link href="/dashboard/services">
+            <div className={styles.iconContainer}>
+              <img src="/icons/scissors-solid-full.svg" alt="" />
+            </div>
+            <span>Servicios</span>
+          </Link>
         </li>
         <li>
-          <a href="">Servicios</a>
-        </li>
-        <li>
-          <a href="">Paquetes</a>
-        </li>
-        <li>
-          <a href="">Personal</a>
+          <Link href="/dashboard/staff">
+            <div className={styles.iconContainer}>
+              <img src="/icons/users-solid-full.svg" alt="" />
+            </div>
+            <span>Personal</span>
+          </Link>
         </li>
       </ul>
     </div>
   );
-}
+});
+
+Sidebar.displayName = "Sidebar";
+export default Sidebar;

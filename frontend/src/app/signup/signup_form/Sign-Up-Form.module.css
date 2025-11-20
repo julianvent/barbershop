@@ -1,0 +1,20 @@
+.fieldsContainer {
+    display: grid;
+    gap: 0.5em;
+    width: 100%;
+}
+
+.fieldsContainer button {
+    background-color: #1B54FE;
+    color: white;
+    padding: 0.75em;
+    border-radius: 6px;
+    font-weight: 600;
+    margin-inline: auto;
+    width: 100%;
+}
+
+.fieldsContainer button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

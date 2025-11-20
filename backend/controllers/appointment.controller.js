@@ -4,9 +4,15 @@ export const AppointmentController = {
 
     async getAll(req, res) {
         try {
-            const page = parseInt(req.query.page) || 1;
-            const limit = parseInt(req.query.limit) || 10;
-            const appointments = await AppointmentService.list(page, limit);
+            const filters = {
+                from: req.query.from,
+                to: req.query.to,
+                sort: req.query.sort,
+                page: req.query.page,
+                limit: req.query.limit,
+                barber_id: req.query.barber_id
+            };
+            const appointments = await AppointmentService.list(filters);
             res.status(200).json(appointments);
         } catch (error) {
             res.status(500).json({ message: error.message });
@@ -53,5 +59,19 @@ export const AppointmentController = {
             res.status(400).json({ message: error.message });
         }
     },
-    
+
+    async getAvailability(req, res){
+        try {
+            const filters = {
+                from: req.query.from,
+                barber_id: req.query.barber_id
+            } ;
+            const slots = await AppointmentService.getAvailability(filters);
+
+            res.status(200).json(slots)
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+        }
+    },
+
 };

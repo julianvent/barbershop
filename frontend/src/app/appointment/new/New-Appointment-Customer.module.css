@@ -1,0 +1,17 @@
+.layout {
+    display: grid;
+    height: 100%;
+}
+
+.layout>h1 {
+    font-size: 1.4rem;
+    padding: 0.5em;
+    background-color: rgb(33, 33, 33);
+    color: white;
+}
+
+.scrollableContent {
+    background-color: #f5f5f5;
+    overflow: auto;
+    padding: 1em 0.5em;
+}

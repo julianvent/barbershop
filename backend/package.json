@@ -4,7 +4,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest run",
+    "test:watch": "vitest watch",
     "dev": "nodemon index.js",
     "start": "node index.js"
   },
@@ -16,11 +17,15 @@
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
+    "mailgen": "^2.0.32",
+    "multer": "^2.0.2",
     "mysql": "^2.18.1",
     "mysql2": "^3.15.2",
+    "nodemailer": "^7.0.10",
     "sequelize": "^6.37.7"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.10",
+    "vitest": "^4.0.10"
   }
 }

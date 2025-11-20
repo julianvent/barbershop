@@ -1,0 +1,28 @@
+.servicesContainer {
+    display: grid;
+    gap: 0.3em;
+    grid-row: 2;
+    grid-column: 2/2;
+}
+
+.services {
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    row-gap: 0.5em;
+}
+
+.fieldsTitle {
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+@media (width <=800) {
+    .servicesContainer {
+        grid-column: 1;
+        grid-row: auto;
+    }
+
+    .services {
+        grid-template-columns: 1fr;
+    }
+}

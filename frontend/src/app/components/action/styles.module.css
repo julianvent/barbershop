@@ -1,0 +1,32 @@
+.buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5em;
+    height: 100%;
+}
+
+.buttons button {
+    background-color: #011655;
+    color: white;
+    padding: 0.25em 0.8em;
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.iconContainer {
+    max-width: 1.8em;
+    max-height: 1.8em;
+}
+
+.iconContainer img {
+    width: 100%;
+    filter: brightness(0) saturate(100%) invert(100%) sepia(96%) saturate(0%) hue-rotate(47deg) brightness(104%) contrast(107%);
+}
+
+.buttons button:hover {
+    background-color: #001e77;
+}

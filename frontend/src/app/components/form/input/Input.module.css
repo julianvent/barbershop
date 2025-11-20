@@ -1,0 +1,42 @@
+.field {
+    display: grid;
+    gap: 0.3em;
+    grid-template-rows: auto 1fr 0.5fr;
+}
+
+.field>select {
+    font-size: 0.9rem;
+    min-height: 3em;
+    border-radius: 5px;
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+.field>label {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.field>input {
+    padding: 0.5em;
+    font-size: 0.9rem;
+
+    border-radius: 6px;
+    border-color: rgba(0, 0, 0, 0.1);
+    border-width: 1px;
+}
+
+.field>span {
+    font-size: 0.8rem;
+    color: rgb(196, 0, 0);
+}
+
+
+.field>textArea {
+    padding: 0.5em;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    border-color: rgba(0, 0, 0, 0.1);
+    border-width: 1px;
+    height: 150px;
+    resize: none;
+}

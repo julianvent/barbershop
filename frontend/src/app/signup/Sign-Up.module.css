@@ -1,0 +1,84 @@
+.layout {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: auto 1fr;
+    height: 100%;
+}
+
+.hero {
+    background-image: url("/hero.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: 75% center;
+    position: relative;
+    isolation: isolate;
+    min-width: 40vw;
+}
+
+.hero::after {
+    content: "";
+    position: absolute;
+    background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.89));
+    z-index: -1;
+    inset: 0;
+}
+
+.formContainer {
+    display: grid;
+    align-items: center;
+    margin-inline: auto;
+    width: 100%;
+    overflow: auto;
+}
+
+.main {
+    display: grid;
+    justify-self: center;
+    max-width: 20em;
+    width: 100%;
+}
+
+.main h1 {
+    text-align: center;
+    margin-bottom: 1em;
+}
+
+.signInContainer {
+    display: grid;
+    grid-auto-flow: column;
+
+    align-items: center;
+    justify-content: center;
+
+    margin-top: 0.2em;
+}
+
+.signInContainer span {
+    max-width: fit-content;
+    text-align: center;
+}
+
+.signInContainer a {
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+    background-color: transparent;
+    padding: 0.3em;
+    cursor: pointer;
+}
+
+@media (width <=800px) {
+    .layout {
+        grid-auto-flow: row;
+        grid-template-columns: auto;
+        grid-template-rows: 1fr 3fr;
+    }
+
+    .hero {
+        background-position: center 20%;
+    }
+
+    .formContainer {
+        width: 90%;
+    }
+}

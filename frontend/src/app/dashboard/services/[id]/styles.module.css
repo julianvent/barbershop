@@ -1,0 +1,11 @@
+.price
+{
+    margin-top: 2rem;
+    display: flex;
+    gap: 2rem;
+}
+
+.labelText{
+    font-weight: 600;
+    font-size: 1rem
+}

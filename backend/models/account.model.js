@@ -2,46 +2,49 @@ import { sequelize } from "../config/database.demo.js";
 import { DataTypes } from "sequelize";
 
 export const Account = sequelize.define(
-    "Cuenta",
-    {
-        id_cuenta: {
-            type: DataTypes.INTEGER,
-            primaryKey: true,
-            autoIncrement: true,
-        },
-        nombre_completo: {
-            type: DataTypes.STRING(50),
-            allowNull: false,
-            unique: true,
-            validate:{
-                notEmpty: { msg: "El nombre no puede estar vacío"},
-                len: { args: [2, 100], msg: "El nombre debe tener entre 2 y 100 caracteres."}
-            },
-            set(value){
-                this.setDataValue("nombre_completo", String(value).trim());
-            }
-        },
-        correo_electronico: {
-            type: DataTypes.STRING(100),
-            allowNull: false,
-            unique: true,
-            validate:{
-                notEmpty: {msg: "El correo no puede estár vacío"},
-                isEmail: { msg: "El correo es inválido"}
-            },
-            set(value){
-                this.setDataValue("correo_electronico", String(value).trim().toLowerCase());
-            }    
-        },
-        contrasena_hash: {
-            type: DataTypes.STRING(255),
-            allowNull: false
-        },        
-        rol: {
-            type: DataTypes.ENUM("admin", "barbero", "recepcionista"),
-            allowNull: false,
-            defaultValue: "recepcionista",
-        },
+  "Account",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
     },
-    {tableName: "cuenta", timestamps: false, underscored: true}
+    full_name: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
+      unique: true,
+      validate: {
+        notEmpty: { msg: "Name cannot be empty" },
+        len: {
+          args: [2, 100],
+          msg: "Name must be between 2 and 100 characters.",
+        },
+      },
+      set(value) {
+        this.setDataValue("full_name", String(value).trim());
+      },
+    },
+    email: {
+      type: DataTypes.STRING(100),
+      allowNull: false,
+      unique: true,
+      validate: {
+        notEmpty: { msg: "Email cannot be empty" },
+        isEmail: { msg: "Invalid email format" },
+      },
+      set(value) {
+        this.setDataValue("email", String(value).trim().toLowerCase());
+      },
+    },
+    password_hash: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+    },
+    role: {
+      type: DataTypes.ENUM("admin", "barber", "receptionist"),
+      allowNull: false,
+      defaultValue: "receptionist",
+    },
+  },
+  { tableName: "account", timestamps: false, underscored: true }
 );

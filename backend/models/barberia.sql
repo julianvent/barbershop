@@ -10,7 +10,7 @@ CREATE TABLE cuenta (
     correo_electronico VARCHAR(100) NOT NULL UNIQUE,
     numero_telefonico VARCHAR(15) NOT NULL,
     password_hash VARCHAR(255) NOT NULL
-    
+
 );
 
 CREATE TABLE barbero(

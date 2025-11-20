@@ -1,4 +1,5 @@
 .header {
+    grid-area: head;
     top: 0;
     z-index: 10000;
     position: sticky;
@@ -8,20 +9,44 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-
-    padding: 0 2em;
-
-    background-color: black;
-    color: white;
+    padding: 0.5em 2em;
+    background-color: rgb(34, 34, 34);
 }
 
 .headerContainer figure {
-    max-width: 42px;
-    margin: 0;
+    max-width: 2.5em;
+    max-height: 2.5em;
+    padding-inline: 0.5em;
 }
 
 .headerContainer img {
     width: 100%;
+    filter: brightness(0) saturate(100%) invert(100%) sepia(96%) saturate(0%) hue-rotate(47deg) brightness(104%) contrast(107%);
+}
+
+.headerContainer h1 {
+    color: white;
+    font-size: 1.1rem;
+}
+
+.headerContainer h2 {
+    color: white;
+    font-size: 1.25rem;
+}
+
+.headerContainer a {
+    text-decoration: none;
+}
+
+.profileContainer {
+    display: flex;
+    gap: 1em;
+    align-items: center;
+}
+
+.profileContainer span {
+    font-weight: bold;
+    color: white;
 }
 
 .dropdown {
@@ -31,36 +56,40 @@
     position: relative;
 }
 
-.dropdown img {
-    filter: brightness(0) saturate(100%) invert(100%) sepia(96%) saturate(0%) hue-rotate(47deg) brightness(104%) contrast(107%);
-}
-
 .dropdown>li {
     max-width: fit-content;
 }
 
 .dropdown ul {
-    position: absolute;
-    list-style: none;
     display: none;
-    text-align: right;
+    position: absolute;
     right: 10%;
+    padding-block: 1em;
+    border-radius: 0.5em;
+    row-gap: 1em;
+
+    background-color: #2b2b2b;
+    list-style: none;
+    text-align: right;
 }
 
 .dropdown ul>li {
-    background: #1b1b1b;
     min-width: max-content;
-    padding: 1em;
-    border-radius: 5px;
+    padding-inline: 1.5em;
+    border-radius: 0.5em;
+    font-size: 0.85rem;
 }
 
 .dropdown li:hover ul {
-    display: block;
+    display: grid;
 }
 
 .dropdown a {
     text-decoration: none;
     color: white;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
 }
 
 .dropdown a:hover {
@@ -68,9 +97,38 @@
     text-underline-offset: 8px;
 }
 
-@media (width <=500px) {
+.iconContainer {
+    max-width: 1.7em;
+    max-height: 1.7em;
+}
+
+.sidebarButton {
+    display: none;
+}
+
+.titleContainer {
+    display: flex;
+    gap: 1em;
+}
+
+@media (width <=800px) {
+    .headerContainer {
+        padding: 0.5em 1em;
+    }
+
     .headerContainer h1 {
-        font-size: 1.5rem;
         margin-left: 0.4em;
+    }
+
+    .sidebarButton {
+        display: block;
+
+        min-width: 1.5em;
+        background-image: url("/icons/bars-solid-full.svg");
+        background-repeat: no-repeat;
+        background-position: center;
+        border: none;
+        filter: brightness(0) saturate(100%) invert(100%) sepia(96%) saturate(0%) hue-rotate(47deg) brightness(104%) contrast(107%);
+        background-color: transparent;
     }
 }

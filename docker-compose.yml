@@ -1,6 +1,6 @@
 services:
   frontend:
-    container_name: barbershop-frontend
+    container_name: frontend
     build:
       context: frontend
     ports:
@@ -14,12 +14,12 @@ services:
         - action: rebuild
           path: ./frontend/package.json
     command: >
-      sh -c "npm run dev"
+      sh -c "npm install && npm run dev"
     depends_on:
       - backend
 
   backend:
-    container_name: barbershop-backend
+    container_name: backend
     build:
       context: backend
     ports:
@@ -31,7 +31,7 @@ services:
           target: /app
           initial_sync: true
     command: >
-      sh -c "npm run dev"
+      sh -c "npm install && npm run dev"
     environment:
       - PORT=8000
       - DB_HOST=mysql

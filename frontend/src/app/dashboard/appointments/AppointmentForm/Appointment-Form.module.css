@@ -1,0 +1,82 @@
+.formLayout {
+    display: grid;
+    gap: 2em;
+}
+
+.formLayout h2 {
+    font-size: 1.05rem;
+}
+
+.fieldsContainer {
+    display: grid;
+    gap: 1em;
+    background-color: white;
+    padding: 1em 2em;
+    border-radius: 12px;
+}
+
+.fieldsContainer fieldset {
+    border: none;
+}
+
+.customerFields {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: 5em;
+}
+
+.appointmentFields {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr) 0.5fr;
+    column-gap: 5em;
+    row-gap: 1em;
+}
+
+.buttons {
+    display: flex;
+    gap: 2em;
+    justify-self: end;
+}
+
+.buttons button {
+    background-color: #1B54FE;
+    color: white;
+    padding: 0.75em 3em;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.buttons .cancelButton {
+    background-color: #4e4e4e;
+}
+
+@media (width <=800) {
+    .fieldsContainer {
+        padding: 0.75em 1em;
+    }
+
+    .formLayout {
+        gap: 1.2em;
+    }
+
+    .buttons {
+        gap: 1em;
+    }
+
+    .formLayout h2 {
+        font-size: 1rem;
+    }
+
+    .customerFields,
+    .appointmentFields {
+        grid-auto-flow: row;
+        grid-template-columns: auto;
+        row-gap: 1em;
+    }
+
+    .buttons button {
+        padding: 0.75em 1.2em;
+    }
+}

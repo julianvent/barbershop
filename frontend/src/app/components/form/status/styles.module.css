@@ -1,0 +1,54 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  width:fit-content;
+  height: fit-content;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+
+.pendiente {
+  background-color: #b1b1b1; 
+  color: #494949;
+}
+
+.pendiente .dot {
+  background-color: #303030; 
+}
+
+.confirmado {
+  background-color: #d3d9fd; 
+  color: #1f3e66;
+}
+
+.confirmado .dot {
+  background-color: #282bc6; 
+}
+
+.activo {
+  background-color: #d9fdd3; 
+  color: #0f5132;
+}
+
+.activo .dot {
+  background-color: #00a152; 
+}
+
+.inactivo {
+  background-color: #fdd3d3; 
+  color: #661f1f;
+}
+
+.inactivo .dot {
+  background-color: #c62828; 
+}

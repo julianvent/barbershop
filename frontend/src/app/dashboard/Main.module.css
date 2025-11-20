@@ -1,0 +1,53 @@
+.layout {
+    display: grid;
+    gap: 1em;
+    grid-template-rows: auto 1fr;
+    min-height: 100%;
+    padding: 1em 2em;
+    background-color: white;
+    border-radius: 1em;
+}
+
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.toolbar h1 {
+    font-size: 1.2rem;
+}
+
+.buttonContainer {
+    display: flex;
+    gap: 1em;
+}
+
+.toolbar button {
+    background-color: #1B54FE;
+    color: white;
+    padding: 0.75em 3em;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.tableContainer {
+    min-height: 100%;
+}
+
+
+@media (width <=800px) {
+    .layout {
+        padding: 1em 0.6em;
+    }
+
+    .toolbar h1 {
+        font-size: 1rem;
+    }
+
+    .toolbar button {
+        font-size: 0.8rem;
+        padding: 0.7em 1em;
+    }
+}

@@ -1,0 +1,30 @@
+.timeContainer {
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    gap: 0.3em;
+    grid-column: 1/1;
+}
+
+.times {
+    display: grid;
+    max-width: fit-content;
+    column-gap: 3em;
+    row-gap: 0.7em;
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.fieldsTitle {
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+@media (width <=800) {
+    .timeContainer {
+        grid-column: 1;
+    }
+
+    .times {
+        column-gap: 1em;
+        grid-template-columns: repeat(3, auto);
+    }
+}

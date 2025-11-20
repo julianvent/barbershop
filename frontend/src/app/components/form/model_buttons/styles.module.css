@@ -1,0 +1,36 @@
+.buttons {
+    display: flex;
+    gap: 2em;
+    justify-self: end;
+    margin-bottom: 1%;
+    margin-right: 1%;
+}
+
+.buttons button {
+    background-color: #1B54FE;
+    color: white;
+    padding: 0.75em 3em;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.buttons .cancelButton {
+    background-color: #4e4e4e;
+}
+
+.buttons .deleteButton {
+    background-color: #b30000;
+}
+
+@media (width <=800px) {
+        .buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2em;
+        margin-top: 10%;
+        justify-content: center;
+        margin-bottom: 1%;
+        margin-right: 1%;
+    }
+}

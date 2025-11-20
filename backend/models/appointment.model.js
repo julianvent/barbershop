@@ -3,39 +3,46 @@ import { sequelize } from "../config/database.demo.js";
 import { DataTypes } from "sequelize";
 
 export const Appointment = sequelize.define(
-  "Cita",
+  "Appointment",
   {
-    id_cita: {
+    id: {
       type: DataTypes.INTEGER,
-      primaryKey: true,
+      primaryKey: true, 
       autoIncrement: true,
     },
-    nombre_cliente: {
+    customer_name: {
       type: DataTypes.STRING(100),
       allowNull: false,
     },
-    numero_telefonico_cliente: {
+    customer_phone: {
       type: DataTypes.STRING(15),
       allowNull: false,
     },
-    fecha_hora_cita: {
+    customer_email: {
+      type: DataTypes.STRING(100),
+      allowNull: true,
+    },
+    appointment_datetime: {
       type: DataTypes.DATE,
       allowNull: false,
     },
-    duracion_total: {
+    total_duration: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    estado: {
-      type: DataTypes.ENUM(
-        "pendiente",
-        "confirmada",
-        "cancelada",
-        "completada"
-      ),
+    status: {
+      type: DataTypes.ENUM("pending", "confirmed", "cancelled", "completed"),
       allowNull: false,
-      defaultValue: "pendiente",
+      defaultValue: "pending",
     },
+    barber_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references:{
+        model: "barber",
+        key: "id"
+      }
+    }
   },
-  { tableName: "cita", timestamps: false, underscored: true }
+  { tableName: "appointment", timestamps: false, underscored: true }
 );

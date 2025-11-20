@@ -1,5 +1,5 @@
 
-// Documentación: https://thequoteshub.com/api/docs/ 
+// Documentation: https://thequoteshub.com/api/docs/ 
 const BASE_URL = 'https://thequoteshub.com/api';
 const TIMEOUT_MS = 10_000;
 
@@ -27,7 +27,7 @@ export async function getRandomQuoteFromRandomTag() {
   const tagsPayload = await tagsRes.json();
   const tags = Array.isArray(tagsPayload?.tags) ? tagsPayload.tags : [];
   if (tags.length === 0) {
-    throw new Error('No hay tags disponibles');
+    throw new Error('No tags available');
   }
 
   const tag = tags[Math.floor(Math.random() * tags.length)];

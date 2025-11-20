@@ -1,60 +1,52 @@
-const validRoles = ["admin", "barbero", "recepcionista"];
-const allowedFields = [ "nombre_completo", "contrasena", "rol", "correo_electronico" ];
+const validRoles = ["admin", "barber", "receptionist"];
+const allowedFields = ["full_name", "password", "role", "email"];
 const isNonEmptyString = (v) => typeof v === "string" && v.trim() !== "";
-const loginFields = ["correo_electronico", "contrasena"];
+const loginFields = ["email", "password"];
 
 export const AccountValidator = {
   validateCreate(account) {
     if (!account || typeof account !== "object") {
-      throw new Error("Body vacío o inválido");
+      throw new Error("Body is empty or invalid");
     }
     for (const field of allowedFields) {
       if (!(field in account)) {
         throw new Error(`Missing required field: ${field}`);
       }
-      if (field === "rol" && !validRoles.includes(account.rol)) {
-        throw new Error(`Invalid role. Must be one of: ${validRoles.join(", ")}`);
+      if (field === "role" && !validRoles.includes(account.role)) {
+        throw new Error(
+          `Invalid role. Must be one of: ${validRoles.join(", ")}`
+        );
       }
     }
   },
 
   validateUpdate(account) {
     if (!account || typeof account !== "object") {
-      throw new Error("Body vacío o inválido");
+      throw new Error("Body is empty or invalid");
     }
 
-    for (const field of allowedFields) {
-      if (field === "rol" && !validRoles.includes(account.rol)) {
-        throw new Error(`Invalid role. Must be one of: ${validRoles.join(", ")}`);
-      }
-    }
-
-    if ("nombre_completo" in account && !isNonEmptyString(account.nombre_completo)) {
-      throw new Error("nombre_completo no puede estar vacío");
-    }
-
-    if ("contrasena" in account && !isNonEmptyString(account.contrasena)) {
-        throw new Error("La contraseña no puede estar vacía");
-
-      }
-
-    if ("rol" in account && !validRoles.includes(account.rol)) {
+    if ("role" in account && !validRoles.includes(account.role)) {
       throw new Error(`Invalid role. Must be one of: ${validRoles.join(", ")}`);
     }
 
+    if ("full_name" in account && !isNonEmptyString(account.full_name)) {
+      throw new Error("full_name cannot be empty");
+    }
+
+    if ("password" in account && !isNonEmptyString(account.password)) {
+      throw new Error("password cannot be empty");
+    }
   },
-    validateLogin(correo_electronico, contrasena){
-    if(!contrasena) throw new Error("Missing required field: contrasena");
-    if(!correo_electronico) throw new Error("Missing required field: correo_electronico");
 
-    if (!isNonEmptyString(correo_electronico)) {
-      throw new Error("El correo_electronico no puede estar vacío");
+  validateLogin(email, password) {
+    if (!password) throw new Error("Missing required field: password");
+    if (!email) throw new Error("Missing required field: email");
 
+    if (!isNonEmptyString(email)) {
+      throw new Error("email cannot be empty");
     }
-    if (!isNonEmptyString(contrasena)) {
-      throw new Error("La contraseña no puede estar vacía");
-
+    if (!isNonEmptyString(password)) {
+      throw new Error("password cannot be empty");
     }
-  }
-
+  },
 };

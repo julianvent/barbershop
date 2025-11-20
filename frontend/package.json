@@ -2,15 +2,16 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://backend:8000",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start"
   },
   "dependencies": {
+    "ag-grid-react": "^34.3.1",
+    "next": "15.5.5",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "next": "15.5.5"
+    "react-hook-form": "^7.65.0"
   }
 }
