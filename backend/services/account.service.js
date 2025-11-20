@@ -51,12 +51,11 @@ export const AccountService = {
     }
 
     const plain = account.get ? account.get({ plain: true }) : account;
-    const { id, email: userEmail, full_name, role } = plain;
+    const { id, role } = plain;
 
     const token = signAccessToken({ sub: id, role });
 
     return {
-      user: { id, email: userEmail, full_name, role },
       token,
     };
   },

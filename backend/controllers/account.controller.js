@@ -53,7 +53,8 @@ export const AccountController = {
     try {
       const { email, password } = req.body;
       const verifiedAccount = await AccountService.login(email, password);
-      return res.status(200).json(verifiedAccount);
+      res.cookie('token', verifiedAccount.token);
+      res.send();
     } catch (error) {
       const code = error.status || 401;
       res.status(code).json({ message: error.message });
