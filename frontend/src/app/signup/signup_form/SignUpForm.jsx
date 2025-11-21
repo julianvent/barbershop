@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import styles from "./Sign-Up-Form.module.css";
@@ -5,14 +6,26 @@ import Input from "@/app/components/form/input/Input";
 import * as validators from "@/app/utils/inputValidators";
 import { signUp } from "../api/signUp";
 import ConfirmPasswordInput from "@/app/components/form/input/ConfirmPasswordInput";
+import { useRouter } from "next/navigation";
+import { signInRoute } from "@/app/utils/routes";
 
 export default function SignUpForm() {
-  const [isSigningUp, setIsSigningUp] = useState();
+  const [signingUp, setSigningUp] = useState();
+  const [error, setError] = useState("");
   const methods = useForm();
+  const router = useRouter();
 
   const onSubmit = methods.handleSubmit(async (data) => {
-    setIsSigningUp(true);
-    await signUp(data);
+    setSigningUp(true);
+    setError("");
+    methods.clearErrors();
+
+    signUp(data)
+      .then(() => router.push(signInRoute))
+      .catch(() => {
+        setError("Algo salió mal. Por favor, intenta de nuevo.");
+      })
+      .finally(() => setSigningUp(false));
   });
 
   return (
@@ -33,9 +46,20 @@ export default function SignUpForm() {
             autoComplete={"new-password"}
           ></Input>
           <ConfirmPasswordInput></ConfirmPasswordInput>
-          <button type="submit" disabled={isSigningUp}>
+          <button type="submit" disabled={signingUp}>
             Crear cuenta
           </button>
+          {error && (
+            <div className={styles.error}>
+              <figure>
+                <img
+                  src="/icons/circle-exclamation-solid-full.svg"
+                  alt="Error"
+                />
+              </figure>
+              <p>{error}</p>
+            </div>
+          )}
         </div>
       </form>
     </FormProvider>

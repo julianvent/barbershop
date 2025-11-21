@@ -1,0 +1,58 @@
+# Dependencies
+node_modules/
+package-lock.json
+vendor/
+bower_components/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+dist/
+build/
+public/build/
+*.min.js
+*.min.css
+
+
+# Uploads and user content
+uploads/
+storage/
+public/uploads/
+
+# Cache
+cache/
+*.cache
+.sass-cache/
+
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# OS files
+Thumbs.db
+Desktop.ini
+
+# Temporary files
+tmp/
+temp/
+*.tmp
