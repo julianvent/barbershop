@@ -1,0 +1,1 @@
+const signUpApiRoute = "/api/accounts"

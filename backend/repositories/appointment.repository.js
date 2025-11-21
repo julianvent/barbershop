@@ -45,7 +45,7 @@ export const AppointmentRepository = {
   },
   async getServiceByAppointmentId(id){
     const where  = { appointment_id: id}
-    return ServiceAppointment.findAll(where)
+    return ServiceAppointment.findAll({where})
   },
   async create(appointment) {
     let sum_duration = 0;

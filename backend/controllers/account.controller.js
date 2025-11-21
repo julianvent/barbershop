@@ -33,6 +33,7 @@ export const AccountController = {
     try {
       const { id } = req.params;
       const accountData = req.body;
+      if(req.user.role != "admin") delete accountData.role;
       const updatedAccount = await AccountService.update(id, accountData);
       res.status(200).json(updatedAccount);
     } catch (error) {
@@ -53,7 +54,8 @@ export const AccountController = {
     try {
       const { email, password } = req.body;
       const verifiedAccount = await AccountService.login(email, password);
-      return res.status(200).json(verifiedAccount);
+      res.cookie('token', verifiedAccount.token);
+      res.send();
     } catch (error) {
       const code = error.status || 401;
       res.status(code).json({ message: error.message });

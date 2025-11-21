@@ -5,6 +5,7 @@ import { ServiceRepository } from "../repositories/service.repository.js";
 import { AppointmentValidator } from "../validators/appointment.validator.js";
 import { NotificationService } from "./notifications/helper/notification.service.js";
 import { DAYS } from "../validators/schedule.validator.js";
+import { generateAppointmentLink } from "./jwt.service.js";
 
 const MARGIN = 15;
 export const AppointmentService = {
@@ -69,6 +70,8 @@ export const AppointmentService = {
   async create(appointmentData) {
     AppointmentValidator.validateCreate(appointmentData);
     const newAppointment = await AppointmentRepository.create(appointmentData);
+    const token = generateAppointmentLink(newAppointment.id);
+    console.log(token)
     await NotificationService.appointmentCreated(newAppointment);
     return newAppointment;
   },

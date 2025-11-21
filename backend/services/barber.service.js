@@ -19,7 +19,6 @@ export const BarberService = {
         }
     },
     async find(id) {
-        console.log(4)
         return BarberRepository.getById(id)
     },
     async create(barberData) {

@@ -23,9 +23,9 @@ export const passwordValidation = {
 };
 
 export const nameValidation = {
-  id: "name",
+  id: "full_name",
   type: "text",
-  name: "name",
+  name: "full_name",
   label: "Nombre completo",
   validation: {
     required: "Requerido",
