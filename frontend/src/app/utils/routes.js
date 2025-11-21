@@ -1,3 +1,5 @@
+export const signInRoute = "/signin"
+
 export const appointmentsRoute = "/dashboard/appointments";
 export const edit = '/${id}/update';
 export const see = '/${id}';

@@ -1,4 +1,3 @@
-"use client";
 import SignUpForm from "./signup_form/SignUpForm";
 import styles from "./Sign-Up.module.css";
 

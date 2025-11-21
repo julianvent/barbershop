@@ -1,0 +1,1 @@
+export const signUpApiRoute = "api/accounts"

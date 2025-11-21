@@ -1,4 +1,16 @@
-export const signUp = async (data) => {
+import { signUpApiRoute } from "./routes";
+import axios from "axios";
+
+axios.defaults.headers.post["Content-Type"] = "application/json";
+
+export function signUp(data) {
+  data = { ...data, role: "receptionist" };
   console.log(data);
-  await new Promise((res) => setTimeout(res, 700));
-};
+
+  return axios
+    .post(signUpApiRoute, data)
+    .then((res) => res.data)
+    .catch((error) => {
+      return Promise.reject(new Error(`Error trying to sign up ${error.code}`));
+    });
+}

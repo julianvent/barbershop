@@ -1,4 +1,5 @@
 import { Poppins } from "next/font/google";
+import axios from "axios";
 import "./globals.css";
 
 const poppinsSans = Poppins({
