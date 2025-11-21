@@ -1,4 +1,3 @@
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import styles from "./Sign-Up-Form.module.css";
@@ -9,13 +8,11 @@ import ConfirmPasswordInput from "@/app/components/form/input/ConfirmPasswordInp
 
 export default function SignUpForm() {
   const [isSigningUp, setIsSigningUp] = useState();
-  const router = useRouter();
   const methods = useForm();
 
   const onSubmit = methods.handleSubmit(async (data) => {
     setIsSigningUp(true);
     await signUp(data);
-    router.push("/signin");
   });
 
   return (

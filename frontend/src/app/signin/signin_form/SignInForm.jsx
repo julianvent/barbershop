@@ -1,7 +1,6 @@
 "use client";
 
 import styles from "./Sign-Form.module.css";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import Input from "@/app/components/form/input/Input";
@@ -10,17 +9,14 @@ import {
   passwordValidation,
 } from "@/app/utils/inputValidators";
 import { signIn } from "../api/signIn";
-import { appointmentsRoute } from "@/app/utils/routes";
 
 export default function SignInForm() {
   const [isSigningIn, setIsSigningIn] = useState(false);
-  const router = useRouter();
   const methods = useForm();
 
   const onSubmit = methods.handleSubmit(async (data) => {
     setIsSigningIn(true);
     await signIn(data);
-    router.push(appointmentsRoute);
   });
 
   return (
