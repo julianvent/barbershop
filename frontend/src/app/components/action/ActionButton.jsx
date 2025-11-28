@@ -2,11 +2,11 @@
 import { useRouter } from "next/navigation";
 import styles from "./styles.module.css";
 
-export function ActionButton({ id, actions }) {
+export function ActionButton({ name, actions }) {
   const router = useRouter();
 
   const handleClick = (action) => {
-    const finalRoute = action.route.replace("${id}", id);
+    const finalRoute = action.route.replace("${id}", encodeURIComponent(name));
     router.push(finalRoute);
   };
 

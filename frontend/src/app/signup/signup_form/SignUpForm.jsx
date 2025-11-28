@@ -12,7 +12,11 @@ export default function SignUpForm() {
 
   const onSubmit = methods.handleSubmit(async (data) => {
     setIsSigningUp(true);
-    await signUp(data);
+    try{
+      await signUp(data);
+    }finally{
+      setIsSigningUp(false);
+    }
   });
 
   return (

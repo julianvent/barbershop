@@ -20,24 +20,24 @@ export default function showService({params}){
     return (
         <Layout>
             <div className={layout.layout}>
-                <h1>{service ? ((service.tipo == 'Paquete' ? 'Paquete': 'Servicio') + ' - ' + service.name):' Cargando'}</h1>
+                <h1>{service ? ((service.type == 'Paquete' ? 'Paquete': 'Servicio') + ' - ' + service.name):' Cargando'}</h1>
             
             <div>
                 {
                     service&&(<div
-                    dangerouslySetInnerHTML={{__html: service.descripcion.trim()}}/>
+                    dangerouslySetInnerHTML={{__html: service.description.trim()}}/>
                     )
                 }
             
                 <div className={styles.price}>
                     <p className={styles.labelText}>Precio</p>
-                    <p>{service ? service.precio : '...'}</p>
+                    <p>{service ? service.price : '...'}</p>
                 </div>
 
                 {service ? ((service.tipo != 'Paquete' ? (
                     <div className={styles.price}>
                         <p className={styles.labelText}>Tipo</p>
-                        <p>{service ? service.tipo : '...'}</p>
+                        <p>{service ? service.type : '...'}</p>
                     </div>
                 ): '')):''}
 
@@ -45,7 +45,7 @@ export default function showService({params}){
             </div>
             
             {
-                    service&&(<Buttons id={service.id} modelType={'service'} service={service.tipo}/>
+                    service&&(<Buttons id={service.name} modelType={'service'} service={service.type}/>
                     )
             }
             

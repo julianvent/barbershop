@@ -1,6 +1,6 @@
 
 export const durationValidation = {
-  id:"duracion",
+  id:"duration",
   type: "number",
   name: "duration",
   label: "Duracion",
@@ -14,7 +14,7 @@ export const durationValidation = {
 }
 
 export const typeValidation = {
-  id: "tipo",
+  id: "type",
   type: "text",
   name: "type",
   label: "Tipo del Servicio",
@@ -35,7 +35,7 @@ export const nameValidation = {
 };
 
 export const priceValidation = {
-  id: "precio",
+  id: "price",
   type: "number",
   name: "price",
   label: "Precio",
@@ -45,7 +45,7 @@ export const priceValidation = {
 }
 
 export const descriptionValidation = {
-  id: "descripcion",
+  id: "description",
   type: "text",
   name: "description",
   label: "Descripcion",

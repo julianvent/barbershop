@@ -1,7 +1,7 @@
 import { FormProvider, useForm } from "react-hook-form";
 import styles from "./styles.module.css";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Input from "@/app/components/form/input/Input";
 import {
   descriptionValidation,
@@ -10,16 +10,27 @@ import {
 } from "@/app/utils/bundlesValidators";
 import TextArea from "@/app/components/form/input/TextArea";
 import ServiceCheckbox from "@/app/components/form/checkbox/ServiceCheckbox";
-import { servicesEntries } from "@/app/utils/data";
 import { servicesRoute } from "@/app/utils/routes";
+import { getServices } from "../api/services";
 
 export default function BundleForm({ onSubmit }) {
   const router = useRouter();
-  const [isCreatingService, setIsCreatingService] = useState(false);
+  const [services, setServices] = useState(null);
+
+  useEffect(()=> {
+    const fetch = async () => {
+      const data = await getServices();
+      setServices(data);
+    };
+
+    fetch();
+
+  },[]);
+  
   const methods = useForm();
   const submit = methods.handleSubmit(async (data) => {
-    setIsCreatingService(true);
-    await onSubmit(data);
+      await onSubmit(data, services);
+      
   });
 
   return (
@@ -38,13 +49,14 @@ export default function BundleForm({ onSubmit }) {
           <div className={styles.soloRow}>
             <label className={styles.fieldsTitle}>Servicios</label>
             <div className={styles.servicesContainer}>
-              {servicesEntries.map((service) => (
-                <ServiceCheckbox
-                  key={service.id}
+              {services&&(services.map((service) => {
+                service.id = service.name;
+                return (<ServiceCheckbox
+                  key={service.name}
                   id={"services"}
                   service={service}
-                ></ServiceCheckbox>
-              ))}
+                ></ServiceCheckbox>)
+              }))}
             </div>
           </div>
 

@@ -5,6 +5,9 @@ import styles from "./styles.module.css";
 import { useRouter } from "next/navigation";
 
 export default function Buttons({id,modelType, service}){
+    if(modelType == 'service'){
+        id = encodeURIComponent(id)
+    }
     const router = useRouter();
     let routes = {}
     switch (modelType){

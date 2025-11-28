@@ -37,15 +37,15 @@ export const serviceFields = [
   },
   {
     headerName: "Precio",
-    field: "precio",
+    field: "price",
   },
   {
     headerName: "Duracion Aproximada",
-    field: "duracion",
+    field: "duration",
   },
   {
     headerName: "Tipo",
-    field: "tipo",
+    field: "type",
   }
 ];
 

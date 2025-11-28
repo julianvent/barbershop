@@ -13,10 +13,23 @@ import { serviceFields, defaultColDef } from "@/app/utils/columns";
 import { ActionButton } from "@/app/components/action/ActionButton";
 import { AgGridReact } from "ag-grid-react";
 import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
+import { getServices } from "./api/services";
+import { useEffect, useState } from "react";
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 export default function Services() {
   const router = useRouter();
+  const [services, setServices] = useState([]);
+
+  useEffect(() => {
+    const fetch = async() =>{
+      const data = await getServices();
+      setServices(data)
+
+    }
+    fetch();
+  },[]);
+
   const actions = [
     {
       name: "see",
@@ -36,15 +49,16 @@ export default function Services() {
         const service = params.data;
 
         const filteredActions =
-          service.tipo === "Paquete"
+          service.type === "Paquete"
             ? actions.filter((a) => a.name !== "edit")
             : actions;
 
-        return <ActionButton id={service.id} actions={filteredActions} />;
+        return <ActionButton name={service.name} actions={filteredActions} />;
       },
       flex: 1,
     },
   ];
+
 
   return (
     <Layout>
@@ -63,8 +77,9 @@ export default function Services() {
         <div className={styles.tableContainer}>
           <AgGridReact
             defaultColDef={defaultColDef}
-            rowData={servicesEntries}
+            rowData={services}
             columnDefs={fields}
+              overlayNoRowsTemplate={`No se han registrado servicios`}
           />
         </div>
       </div>
