@@ -17,25 +17,25 @@ export const AppointmentRepository = {
     to = null,
     sort = "ASC",
     offset = 0,
-    limit = 20
+    limit = 20,
   } = {}) {
     const where = {};
-    if(barberId != null) where.barber_id = barberId
+    if (barberId != null) where.barber_id = barberId;
 
-    if(from || to) {
+    if (from || to) {
       where.appointment_datetime = {
-        ...(from? {[Op.gte]: from}: {}),
-        ...(to?{[Op.lte]: to}: {})
-      }
+        ...(from ? { [Op.gte]: from } : {}),
+        ...(to ? { [Op.lte]: to } : {}),
+      };
     }
-    if(statusAppointment) where.status = statusAppointment
-    const order = [['appointment_datetime', sort] ]
+    if (statusAppointment) where.status = statusAppointment;
+    const order = [["appointment_datetime", sort]];
     const options = {
       where,
-      order
+      order,
     };
     if (offset != null) options.offset = offset;
-    if (limit  != null) options.limit  = limit;
+    if (limit != null) options.limit = limit;
 
     return Appointment.findAndCountAll(options);
   },
@@ -43,24 +43,80 @@ export const AppointmentRepository = {
   async getById(id) {
     return Appointment.findByPk(id);
   },
-  async getServiceByAppointmentId(id){
-    const where  = { appointment_id: id}
-    return ServiceAppointment.findAll({where})
+  async getServiceByAppointmentId(id) {
+    const where = { appointment_id: id };
+    return ServiceAppointment.findAll({ where });
   },
+
   async create(appointment) {
     let sum_duration = 0;
 
     await BarberRepository.getById(appointment.barber_id);
+
     const appointmentDate = new Date(appointment.appointment_datetime);
+    const day_of_week = DAYS[appointmentDate.getDay()];
 
-    const day_of_week = DAYS[appointmentDate.getDay()]
+    const schedule = await ScheduleRepository.getByDay(day_of_week);
 
-    const schedule = await ScheduleRepository.getByDay(day_of_week)
-    const scheduleStartDate = setTimeToDate(appointmentDate, schedule.start_time)
-    const scheduleEndDate = setTimeToDate(appointmentDate, schedule.end_time)
+    if (!schedule.is_active) {
+      throw new Error("The barbershop is closed on this day");
+    }
 
-    if(appointmentDate < scheduleStartDate || appointmentDate > scheduleEndDate ) {
-      throw new Error("The appointment time is outside of the allowed schedule");
+    const scheduleStartDate = setTimeToDate(
+      appointmentDate,
+      schedule.start_time
+    );
+    const scheduleEndDate = setTimeToDate(appointmentDate, schedule.end_time);
+
+    if (
+      appointmentDate < scheduleStartDate ||
+      appointmentDate > scheduleEndDate
+    ) {
+      throw new Error(
+        "The appointment time is outside of the allowed schedule"
+      );
+    }
+
+    let services = [];
+
+    if (appointment.services_ids && appointment.services_ids.length > 0) {
+      for (const service_id of appointment.services_ids) {
+        const service = await ServiceRepository.getById(service_id);
+        sum_duration += service.duration;
+        services.push(service);
+      }
+    }
+
+    const totalDuration =
+      appointment.total_duration != null
+        ? appointment.total_duration
+        : sum_duration;
+
+    if (!totalDuration || totalDuration <= 0) {
+      throw new Error("Total duration must be greater than zero");
+    }
+
+    const appointmentStart = appointmentDate.getTime();
+    const appointmentEnd = appointmentStart + totalDuration * 60 * 1000;
+
+    // Check overlapping appointments for that barber
+    const existingAppointments = await this.getAvabialityAppointments(
+      appointment.barber_id,
+      scheduleStartDate,
+      scheduleEndDate
+    );
+
+    const overlaps = existingAppointments.some((app) => {
+      const start = new Date(app.appointment_datetime).getTime();
+      // * n seconds * n milliseconds -> minutes
+      const end = start + app.total_duration * 60 * 1000;
+
+      // Overlap if intervals intersect: [start,end) vs [appointmentStart, appointmentEnd)
+      return appointmentStart < end && appointmentEnd > start;
+    });
+
+    if (overlaps) {
+      throw new Error("Barber is not available at this time");
     }
 
     const newAppointment = await Appointment.create({
@@ -68,39 +124,35 @@ export const AppointmentRepository = {
       customer_phone: appointment.customer_phone,
       customer_email: appointment.customer_email || null,
       appointment_datetime: appointment.appointment_datetime,
-      total_duration: appointment.total_duration ?? 0,
+      total_duration: totalDuration,
       status: appointment.status,
-      barber_id: appointment.barber_id
+      barber_id: appointment.barber_id,
     });
 
-    const services_ids = []
-    for (const service_id of appointment.services_ids) {
-      try {
-        const service = await ServiceRepository.getById(service_id);
-        sum_duration += service.duration;
+    // Create service relations (we already loaded services above)
+    const services_ids = [];
 
+    for (const service of services) {
+      try {
         await ServiceAppointment.create({
-          service_id,
+          service_id: service.id,
           appointment_id: newAppointment.id,
           price: service.price,
         });
-        services_ids.push(service)
-      } catch (err){
-        console.error('schedule error:', err.message);
+        services_ids.push(service);
+      } catch (err) {
+        console.error("schedule error:", err.message);
       }
     }
-    if (appointment.total_duration == null)
-      await newAppointment.update({ total_duration: sum_duration });
 
     return {
       ...newAppointment.toJSON(),
-      services: services_ids.map( service => ({
+      services: services_ids.map((service) => ({
         id: service.id,
-        name: service.name
-      }))
+        name: service.name,
+      })),
     };
   },
-
   async update(id, appointment) {
     const existingAppointment = await Appointment.findByPk(id);
     if (!existingAppointment) {
@@ -116,15 +168,15 @@ export const AppointmentRepository = {
     }
     await existingAppointment.destroy();
   },
-  async getAvabialityAppointments(barberId, from, to){
-    const where = {}
+  async getAvailabilityAppointments(barberId, from, to) {
+    const where = {};
     where.appointment_datetime = {
       [Op.gte]: from,
-      [Op.lte]: to
-    }
-    if(barberId != null) where.barber_id = barberId
+      [Op.lte]: to,
+    };
+    if (barberId != null) where.barber_id = barberId;
 
-    where.status = { [Op.in]: availability_states}
-    return Appointment.findAll({where})
-  }
+    where.status = { [Op.in]: availability_states };
+    return Appointment.findAll({ where });
+  },
 };
