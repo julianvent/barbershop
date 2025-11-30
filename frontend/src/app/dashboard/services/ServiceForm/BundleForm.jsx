@@ -1,7 +1,7 @@
 import { FormProvider, useForm } from "react-hook-form";
 import styles from "./styles.module.css";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Input from "@/app/components/form/input/Input";
 import {
   descriptionValidation,
@@ -10,16 +10,41 @@ import {
 } from "@/app/utils/bundlesValidators";
 import TextArea from "@/app/components/form/input/TextArea";
 import ServiceCheckbox from "@/app/components/form/checkbox/ServiceCheckbox";
-import { servicesEntries } from "@/app/utils/data";
 import { servicesRoute } from "@/app/utils/routes";
+import { getServices } from "../api/services";
+import InputDecimal from "@/app/components/form/input/InputDecimal";
 
 export default function BundleForm({ onSubmit }) {
   const router = useRouter();
-  const [isCreatingService, setIsCreatingService] = useState(false);
+  const [services, setServices] = useState(null);
+  const [isCreatingBundle, setIsCreatingBundle] = useState(false);
+
+  useEffect(()=> {
+    const fetch = async () => {
+      const data = await getServices();
+      setServices(data);
+    };
+
+    fetch();
+
+  },[]);
+  
   const methods = useForm();
   const submit = methods.handleSubmit(async (data) => {
-    setIsCreatingService(true);
-    await onSubmit(data);
+      setIsCreatingBundle(true);
+      
+      const err = await onSubmit(data, services);
+
+      if(err){
+        methods.setError("root.serverError", {
+          type: "server",
+          message: err,
+        });
+        setIsCreatingBundle(false);
+      }else{
+        router.push(servicesRoute);
+      }
+      
   });
 
   return (
@@ -33,23 +58,29 @@ export default function BundleForm({ onSubmit }) {
         <div className={styles.fieldsContainer}>
           <div className={styles.row}>
             <Input {...nameValidation} />
-            <Input {...priceValidation} />
+            <InputDecimal {...priceValidation} />
           </div>
           <div className={styles.soloRow}>
             <label className={styles.fieldsTitle}>Servicios</label>
             <div className={styles.servicesContainer}>
-              {servicesEntries.map((service) => (
-                <ServiceCheckbox
-                  key={service.id}
+              {services&&(services.map((service) => {
+                service.id = service.name;
+                return (<ServiceCheckbox
+                  key={service.name}
                   id={"services"}
                   service={service}
-                ></ServiceCheckbox>
-              ))}
+                ></ServiceCheckbox>)
+              }))}
             </div>
           </div>
 
           <div className={styles.soloRow}>
             <TextArea {...descriptionValidation} />
+            {methods.formState.errors.root?.serverError && (
+              <div className={styles.errorMessage}>
+                {methods.formState.errors.root.serverError.message}
+              </div>
+            )}
           </div>
           <div className={styles.buttons}>
             <button

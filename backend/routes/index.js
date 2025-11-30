@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { sequelize } from "../config/database.demo.js";
+import { sequelize } from "../config/database.config.js";
 import appointmentRoutes from "./appointment.routes.js";
 import accountRoutes from "./account.routes.js";
 import quoteRouter from "./quotes.routes.js";
 import scheduleRoutes from "./schedule.routes.js";
 import serviceRoute from "./service.routes.js";
-import barberRouter from "./barber.routes.js"
+import barberRouter from "./barber.routes.js";
 
 const router = Router();
 
@@ -31,6 +31,6 @@ router.use("/accounts", accountRoutes);
 router.use("/quotes", quoteRouter);
 router.use("/schedules", scheduleRoutes);
 router.use("/services", serviceRoute);
-router.use("/barbers", barberRouter)
+router.use("/barbers", barberRouter);
 
 export default router;

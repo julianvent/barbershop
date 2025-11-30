@@ -9,9 +9,8 @@ function isTrue(v) {
 
 function buildNotifierChain() {
   let notifier = new Notifier();
-  if (isTrue(process.env.ENABLE_EMAIL)) {
-    notifier = new EmailNotifierDecorator(notifier);
-  }
+  notifier = new EmailNotifierDecorator(notifier);
+  console.log("Notifier created with email decorator");
   return notifier;
 }
 const notifierChain = buildNotifierChain();

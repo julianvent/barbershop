@@ -1,4 +1,6 @@
 import nodemailer from "nodemailer";
+import dotenv from "dotenv";
+dotenv.config();
 
 let transporter = null;
 
@@ -16,13 +18,13 @@ function createTransportForProvider(provider) {
         const mailer = nodemailer.createTransport({
           service: "gmail",
           auth: {
-            user: process.env.SMTP_USER,
-            pass: process.env.SMTP_PASS,
+            user: process.env.SMTP_USER || "sagozbarberdev@gmail.com",
+            pass: process.env.SMTP_PASS || "bro-look-up-for-the-password",
           },
         });
         return mailer;
       } catch (error) {
-        console.error("Error creating email transport:", error);
+        console.error("Error creating email transport: \n", error);
         throw error;
       }
   }

@@ -5,6 +5,7 @@ import layout from "../../Main.module.css";
 import styles from "./styles.module.css";
 import { getService } from "../api/services";
 import Buttons from "@/app/components/form/model_buttons/Buttons";
+import { Status } from "@/app/components/form/status/Status";
 
 export default function showService({params}){
     const {id} = React.use(params);
@@ -20,24 +21,35 @@ export default function showService({params}){
     return (
         <Layout>
             <div className={layout.layout}>
-                <h1>{service ? ((service.tipo == 'Paquete' ? 'Paquete': 'Servicio') + ' - ' + service.name):' Cargando'}</h1>
+                <h1>{service ? ((service.type == 'Paquete' ? 'Paquete': 'Servicio') + ' - ' + service.name):' Cargando'}</h1>
             
             <div>
                 {
                     service&&(<div
-                    dangerouslySetInnerHTML={{__html: service.descripcion.trim()}}/>
+                    dangerouslySetInnerHTML={{__html: service.description.trim()}}/>
                     )
                 }
             
                 <div className={styles.price}>
                     <p className={styles.labelText}>Precio</p>
-                    <p>{service ? service.precio : '...'}</p>
+                    <p>{service ? service.price.toFixed(2) : '...'}</p>
                 </div>
+
+                <div className={styles.price}>
+                    <p className={styles.labelText}>Duracion Aproximada</p>
+                    <p>{service ? Math.floor(service.duration/60) > 1 ? Math.floor(service.duration/60) + ' hr ' + service.duration%60 + ' minutos' : service.duration + ' minutos' : '...'}</p>
+                </div>
+
+                <div className={styles.price}>
+                    <p className={styles.labelText}>Estado</p>
+                    {service && <Status id="state" state={service.status} name={'N/A'} />}
+                </div>
+
 
                 {service ? ((service.tipo != 'Paquete' ? (
                     <div className={styles.price}>
                         <p className={styles.labelText}>Tipo</p>
-                        <p>{service ? service.tipo : '...'}</p>
+                        <p>{service ? service.type : '...'}</p>
                     </div>
                 ): '')):''}
 
@@ -45,7 +57,7 @@ export default function showService({params}){
             </div>
             
             {
-                    service&&(<Buttons id={service.id} modelType={'service'} service={service.tipo}/>
+                    service&&(<Buttons model={service} modelType={'service'}/>
                     )
             }
             

@@ -37,27 +37,25 @@ export const serviceFields = [
   },
   {
     headerName: "Precio",
-    field: "precio",
+    field: "price",
+    valueFormatter: params => params.data.price.toFixed(2),
   },
   {
     headerName: "Duracion Aproximada",
-    field: "duracion",
+    field: "duration",
+    valueFormatter: params => Math.floor(params.data.duration/60) > 1 ? Math.floor(params.data.duration/60) + ' hr ' + params.data.duration%60 + ' minutos' : params.data.duration + ' minutos',
   },
   {
     headerName: "Tipo",
-    field: "tipo",
+    field: "type",
   }
 ];
 
 
 export const employeesEntries = [
   {
-    headerName: "Nombre",
-    field: "name",
-  },
-  {
-    headerName: "Apellidos",
-    field: "last_names",
+    headerName: "Nombre Completo",
+    field: "barber_name",
   },
   {
     headerName: "Telefono",

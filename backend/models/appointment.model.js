@@ -1,5 +1,5 @@
-import { sequelize } from "../config/database.demo.js";
-//import { sequelize } from "../../config/database.demo.js";
+import { sequelize } from "../config/database.config.js";
+//import { sequelize } from "../../config/database.config.js";
 import { DataTypes } from "sequelize";
 
 export const Appointment = sequelize.define(
@@ -7,7 +7,7 @@ export const Appointment = sequelize.define(
   {
     id: {
       type: DataTypes.INTEGER,
-      primaryKey: true, 
+      primaryKey: true,
       autoIncrement: true,
     },
     customer_name: {
@@ -38,11 +38,11 @@ export const Appointment = sequelize.define(
     barber_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references:{
+      references: {
         model: "barber",
-        key: "id"
-      }
-    }
+        key: "id",
+      },
+    },
   },
   { tableName: "appointment", timestamps: false, underscored: true }
 );

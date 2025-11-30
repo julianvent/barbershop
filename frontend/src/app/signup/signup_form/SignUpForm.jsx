@@ -16,16 +16,12 @@ export default function SignUpForm() {
   const router = useRouter();
 
   const onSubmit = methods.handleSubmit(async (data) => {
-    setSigningUp(true);
-    setError("");
-    methods.clearErrors();
-
-    signUp(data)
-      .then(() => router.push(signInRoute))
-      .catch(() => {
-        setError("Algo salió mal. Por favor, intenta de nuevo.");
-      })
-      .finally(() => setSigningUp(false));
+    setIsSigningUp(true);
+    try{
+      await signUp(data);
+    }finally{
+      setIsSigningUp(false);
+    }
   });
 
   return (
