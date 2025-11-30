@@ -14,7 +14,11 @@ export const priceValidation = {
   name: "price",
   label: "Precio",
   validation: {
-    required: "Ingrese el precio"
+    required: "Ingrese el precio",
+    min: {
+      value: 1,
+      message: "El precio debe ser un valor valido"
+    }
   }
 };
 

@@ -14,15 +14,22 @@ export default function updateServices({params}) {
             setService(data);
        }
        load();
-       console.log(service)
     }, [id]);
+
+    const submit = async (data) => {
+      try{
+        await updateService(data,id);
+      }catch(err){
+        return err;
+      }
+    };
   return (
     <CreateNewLayout
       title={"Actualizar servicio - " + (service == null ? "Cargando..." : service.name) }
       returnRoute={servicesRoute}
     >
       <ServiceForm
-        onSubmit={updateService}
+        onSubmit={submit}
         service={service}
       ></ServiceForm>
     </CreateNewLayout>

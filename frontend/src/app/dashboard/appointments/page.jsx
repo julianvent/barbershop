@@ -15,7 +15,6 @@ import { defaultColDef, appointmentColumns } from "@/app/utils/columns";
 import { ActionButton } from "@/app/components/action/ActionButton";
 import { getAppointments } from "./api/appointments";
 import { useEffect, useState } from "react";
-import { Status } from "@/app/components/form/status/Status";
 
 export default function Appointments() {
   const [appointmentEntries, setAppointmentEntries] = useState();

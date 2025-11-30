@@ -12,10 +12,29 @@ import { defaultColDef, employeesEntries } from "@/app/utils/columns";
 import { AgGridReact } from "ag-grid-react";
 import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
 import { ActionButton } from "@/app/components/action/ActionButton";
+import { useEffect, useState } from "react";
+import { getEmployees } from "./api/employees";
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 export default function Page() {
   const router = useRouter();
+  const [employees, setEmployees] = useState();
+  let message = 'No se han registrado los servicios';
+
+  useEffect(() => {
+    const fetch = async () => {
+      try{
+        const data = await getEmployees();
+        setEmployees(data.data);
+
+      }catch (err){
+        message = 'Error al obtener los registros de los barberos'
+      }
+    }
+
+    fetch();
+  },[]);
+
 
   const actions = [
     {
@@ -31,10 +50,30 @@ export default function Page() {
   const fields = [
     ...employeesEntries,
     {
+      headerName: "Estado",
+      resizable: false,
+      cellRenderer: (params) => {        
+        const Map = {  
+          true : {color:'#10B981', text: 'Activo' },
+          false : {color:'#EF4444', text: 'Inactivo' }, 
+        };
+        
+        return (
+          <span style={{
+            color: Map[params.data.is_active].color,
+            fontWeight: '600',
+            fontSize: '0.875rem'
+          }}>
+            {Map[params.data.is_active].text}
+          </span>
+        );
+      }
+    },
+    {
       headerName: "Acciones",
       field: "id",
       cellRenderer: (params) => (
-        <ActionButton id={params.data.id} actions={actions} />
+        <ActionButton name={params.data.id} actions={actions} />
       ),
       flex: 1,
     },
@@ -55,8 +94,9 @@ export default function Page() {
         <div className={styles.tableContainer}>
           <AgGridReact
             defaultColDef={defaultColDef}
-            rowData={indexBarbers}
+            rowData={employees}
             columnDefs={fields}
+            overlayNoRowsTemplate={message}
           />
         </div>
       </div>

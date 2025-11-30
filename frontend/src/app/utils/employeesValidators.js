@@ -1,8 +1,8 @@
 export const nameValidation = {
-  id: "name",
+  id: "barber_name",
   type: "text",
   name: "name",
-  label: "Nombre",
+  label: "Nombre Completo",
   validation: {
     required: "Ingrese el nombre del empleado",
   },
@@ -46,23 +46,23 @@ export const emailValidation = {
   },
 };
 
-export const photoValidation = {
-  id: "photo",
+export const photoValidation = (hasPhoto) => ({
+  id: "image",
   type: "file",
-  name: "photo",
   label: "Añada la Foto del Empleado",
   validation: {
     validate: (files) => {
               const file = files[0];
+              if (hasPhoto) return true;
               if (!file) return "Archivo obligatorio";
               const allowedTypes = ["image/jpeg", "image/png"];
               return allowedTypes.includes(file.type) || "Solo se permiten JPG o PNG";
     }
   },
-};
+});
 
 export const statusValidation = {
-  id: "status",
+  id: "is_active",
   label: "Estado",
   validation: {
     required: "Seleccione el estado",

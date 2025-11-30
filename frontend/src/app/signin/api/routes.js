@@ -1,1 +1,1 @@
-const signUpApiRoute = "/api/accounts"
+export const signInApiRoute = "/api/accounts/login"

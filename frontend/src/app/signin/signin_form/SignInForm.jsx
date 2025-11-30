@@ -9,14 +9,20 @@ import {
   passwordValidation,
 } from "@/app/utils/inputValidators";
 import { signIn } from "../api/signIn";
+import { useRouter } from "next/navigation";
 
 export default function SignInForm() {
   const [isSigningIn, setIsSigningIn] = useState(false);
   const methods = useForm();
+  const router = useRouter();
 
   const onSubmit = methods.handleSubmit(async (data) => {
     setIsSigningIn(true);
-    await signIn(data);
+    try{
+      await signIn(data, router);
+    }finally{
+      setIsSigningIn(false);
+    }
   });
 
   return (

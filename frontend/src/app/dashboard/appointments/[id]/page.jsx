@@ -136,7 +136,7 @@ export default function showAppointment({params}){
                         </div>
                         </div>
 
-                    {appointment&&(<Buttons id={appointment.id} modelType={'appointment'}/> ) }                
+                    {appointment&&(<Buttons model={appointment} modelType={'appointment'}/> ) }                
                 </div>
             </Layout>
     )

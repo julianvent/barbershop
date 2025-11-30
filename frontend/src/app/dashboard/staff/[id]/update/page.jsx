@@ -16,13 +16,22 @@ export default function updateStaff({params}){
            load();
     }, [id]);
 
+
+    const submit = async (data) => {
+        try{
+            await updateEmployee(id, data);
+        }catch(err){
+            return err;
+        }
+    };
+
     return (
         <CreateNewLayout
         title={"Actualizar registro del empleado - " + (employee ? employee.name + ' ' + employee.last_names : '...')}
         returnRoute={staffRoute}
         >
             <EmployeeForm 
-            onSubmit={updateEmployee}
+            onSubmit={submit}
             employee={employee}/>
 
         </CreateNewLayout>
