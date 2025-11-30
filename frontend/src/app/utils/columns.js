@@ -54,12 +54,8 @@ export const serviceFields = [
 
 export const employeesEntries = [
   {
-    headerName: "Nombre",
-    field: "name",
-  },
-  {
-    headerName: "Apellidos",
-    field: "last_names",
+    headerName: "Nombre Completo",
+    field: "barber_name",
   },
   {
     headerName: "Telefono",

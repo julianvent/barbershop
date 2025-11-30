@@ -2,7 +2,7 @@
 import { FormProvider, useForm } from "react-hook-form";
 import styles from "./styles.module.css"
 import Input from "@/app/components/form/input/Input";
-import { emailValidation, lastNameValidation, nameValidation, phoneValidation, photoValidation, statusValidation } from "@/app/utils/employeesValidators";
+import { emailValidation, nameValidation, phoneValidation, photoValidation, statusValidation } from "@/app/utils/employeesValidators";
 import { useEffect, useState } from "react";
 import { staffRoute } from "@/app/utils/routes";
 import { useRouter } from "next/navigation";
@@ -17,13 +17,24 @@ export default function EmployeeForm({onSubmit,employee}){
 
     const { handleSubmit, watch, setValue, formState: { errors } } = methods;
     const [preview, setPreview] = useState(null);
-    const file = watch("photo");
+    const [isCreatingEmployee, setIsCreatingEmployee] = useState(false);
+    const file = watch("image");
     const submit = methods.handleSubmit( async function(data){
-        if(employee){
-            onSubmit(employee.id, data);
+        setIsCreatingEmployee(true);
+        const err = await onSubmit(data);
+
+        if(err){
+            methods.setError("root.serverError", {
+            type: "server",
+            message: err,
+            });
+            setIsCreatingEmployee(false);
         }else{
-            onSubmit(data);
+            router.push(staffRoute);
         }
+
+
+        
     });
 
     useEffect(() => {
@@ -44,7 +55,10 @@ export default function EmployeeForm({onSubmit,employee}){
 
     useEffect(() => {
         if (employee) {
-        methods.reset(employee);
+        methods.reset({
+            ...employee,
+            is_active: employee.is_active ? "active" : "inactive"
+        });
         }
     }, [employee, methods]);
 
@@ -61,7 +75,7 @@ export default function EmployeeForm({onSubmit,employee}){
                     <div className={styles.columns}>
                     <div className={styles.imageContainer}>
                         <img
-                            src={employee && !preview ? employee.photo :(preview ? preview : '/image.svg')}
+                            src={employee && !preview ? '/api/' + employee.image_path : (preview ? preview : '/image.svg')}
                             alt="Imagen del personal"
                             className={(preview || employee) ? styles.imageFitBack :  styles.imageFit}
                         />
@@ -70,34 +84,36 @@ export default function EmployeeForm({onSubmit,employee}){
                     <div className={styles.subFields}>
                         <div className={styles.row}>
                             <Input {...nameValidation}></Input>
-                            <Input {...lastNameValidation}/>
+                            {employee&&(<StatusSelect {...statusValidation}/>)}
                         </div>
                         <div className={styles.row}>
                             <Input {...phoneValidation}/>
                             <Input {...emailValidation}/>
-                        </div>
-                        <div className={styles.row}>
-                            {employee&&(<StatusSelect {...statusValidation}/>)}
                         </div>
 
                     </div>
                 </div>
                 <div className={styles.columns}>
                     <div>
-                        <Input {...photoValidation}/>
+                        <Input {...photoValidation(!!employee?.image_path)}/>
+                        {methods.formState.errors.root?.serverError && (
+                            <div className={styles.errorMessage}>
+                                {methods.formState.errors.root.serverError.message}
+                            </div>
+                        )}
                     </div>
                 </div>
-                    <div className={styles.buttons}>
-                        <button
-                            className={styles.cancelButton}
-                            onClick={(e) => {
-                                e.preventDefault();
-                                router.push(staffRoute);
-                            }}>
-                            Cancelar
-                        </button>
-                        <button type="submit">Confirmar</button>
-                    </div>
+                <div className={styles.buttons}>
+                    <button
+                        className={styles.cancelButton}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            router.push(staffRoute);
+                        }}>
+                        Cancelar
+                    </button>
+                    <button type="submit" disabled={isCreatingEmployee}>Confirmar</button>
+                </div>
                 </div>
                 
 

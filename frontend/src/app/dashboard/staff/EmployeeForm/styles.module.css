@@ -53,6 +53,11 @@
     width: 30%;
 }
 
+.errorMessage {
+  color: #dc2626;
+  margin-bottom: 1rem;   
+}
+
 
 .row div {
     width: 50%;

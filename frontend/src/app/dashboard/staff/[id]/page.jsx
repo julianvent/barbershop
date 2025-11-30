@@ -28,7 +28,7 @@ export default function EmployeeDetail({params}){
                 <div className={styles.columns}>
                     <div className={styles.imageContainer}>
                         <img
-                            src={(employee != null) ? employee.photo : '/image.svg'}
+                            src={(employee != null) ? '/api/'+employee.image_path : '/image.svg'}
                             alt={"Imagen de" + ((employee != null)? ' '+employee.name: 'l empleado')}
                             className={styles.imageFitBack}
                         />
@@ -36,13 +36,8 @@ export default function EmployeeDetail({params}){
                     <div className={styles.subFields}>
                         <div className={styles.row}>
                             <div>
-                                <p className={show.labelText}>Nombre</p>
-                                <p>{(employee != null)?employee.name: '...'}</p>
-                            </div>
-
-                            <div>
-                                <p className={show.labelText}>Apellidos</p>
-                                <p>{(employee != null)?employee.last_names: '...'}</p>
+                                <p className={show.labelText}>Nombre Completo </p>
+                                <p>{(employee != null)?employee.barber_name: '...'}</p>
                             </div>
                             
                         </div>
@@ -64,7 +59,7 @@ export default function EmployeeDetail({params}){
                             <div className={show.statusContainer}>
                                 <p className={show.labelText}>Estado</p>
 
-                                {employee && <Status id="state" state={employee.status} type={"barber"} />}
+                                {employee && <Status id="state" state={employee.is_active ? 'active' : 'inactive'} type={"barber"} />}
 
                             </div>
                         </div>
