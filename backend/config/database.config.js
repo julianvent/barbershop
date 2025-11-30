@@ -1,6 +1,7 @@
 import { Sequelize } from "sequelize";
 import "dotenv/config";
 import mysql from "mysql2/promise";
+import { seedDatabase } from "../utils/seed.utils.js";
 
 const DB_NAME = process.env.DB_NAME || "barberia";
 const DB_USER = process.env.DB_USER || "root";
@@ -18,6 +19,7 @@ export async function initDB() {
     console.log(`Timeout of ${TIMEOUT}ms`);
     await new Promise((resolve) => setTimeout(resolve, TIMEOUT));
     await createDatabaseIfNotExists();
+    await seedDatabase(sequelize);
     await sequelize.authenticate();
     console.log("Database connection OK");
   } catch (err) {
@@ -46,22 +48,4 @@ async function createDatabaseIfNotExists() {
   }
 }
 
-async function dropDatabase() {
-  let connection;
-  try {
-    connection = await mysql.createConnection({
-      host: DB_HOST,
-      user: DB_USER,
-      password: DB_PASSWORD,
-    });
-    await connection.query(`DROP DATABASE IF EXISTS \`${DB_NAME}\``);
-    console.log(`Database '${DB_NAME}' dropped`);
-  } catch (err) {
-    console.error("Error dropping database:", err.message);
-    throw err;
-  } finally {
-    if (connection) {
-      await connection.end();
-    }
-  }
-}
+

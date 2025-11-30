@@ -1,4 +1,4 @@
-import { sequelize } from "../config/database.demo.js";
+import { sequelize } from "../config/database.config.js";
 import { DataTypes } from "sequelize";
 
 export const Service = sequelize.define(

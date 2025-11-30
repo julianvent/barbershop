@@ -72,7 +72,11 @@ export const AppointmentService = {
     const newAppointment = await AppointmentRepository.create(appointmentData);
     const token = generateAppointmentLink(newAppointment.id);
     console.log(token)
-    await NotificationService.appointmentCreated(newAppointment);
+    try {
+      await NotificationService.appointmentCreated(newAppointment);
+    } catch (error) {
+      console.error("Error sending appointment created notification:", error);
+    }
     return newAppointment;
   },
 

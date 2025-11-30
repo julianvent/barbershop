@@ -1,39 +1,78 @@
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import nodemailer from "nodemailer";
-import dotenv from "dotenv";
-import { setEmailTransport, sendEmail } from "../../services/integrations/email.client.js"; 
+import { sendEmail, setEmailTransport } from "../../services/integrations/email.client.js";
 
-dotenv.config();
+// Mock nodemailer
+vi.mock("nodemailer", () => ({
+  default: {
+    createTransport: vi.fn().mockReturnValue({
+      sendMail: vi.fn().mockResolvedValue({ messageId: "test-id" }),
+    }),
+    createTestAccount: vi.fn().mockResolvedValue({
+      user: "test-user",
+      pass: "test-pass",
+      smtp: { host: "smtp.ethereal.email", port: 587, secure: false },
+    }),
+    getTestMessageUrl: vi.fn(),
+  },
+}));
 
-async function main() {
-  try {
+describe("Email Client", () => {
+  let sendMailMock;
 
-    const testAccount = await nodemailer.createTestAccount();
+  beforeEach(() => {
+    vi.clearAllMocks();
+    // We will rely on setEmailTransport to inject our mock.
 
-    console.log("Credentials obtained, configuring Ethereal transporter...");
+    sendMailMock = vi.fn().mockResolvedValue({ messageId: "mock-id" });
+    const mockTransporter = {
+      sendMail: sendMailMock,
+    };
+    setEmailTransport(mockTransporter);
+  });
 
-    const testTransporter = nodemailer.createTransport({
-      host: testAccount.smtp.host,
-      port: testAccount.smtp.port,
-      secure: testAccount.smtp.secure,
-      auth: {
-        user: testAccount.user,
-        pass: testAccount.pass,
-      },
-    });
+  it("should send an email using the configured transporter", async () => {
+    const mailOptions = {
+      to: "zs22017021@estudiantes.uv.mx",
+      subject: "Test Subject",
+      text: "Test Body",
+    };
 
-    setEmailTransport(testTransporter);
+    const result = await sendEmail(mailOptions);
 
-    const info = await sendEmail({
-      to: "cliente@example.com",
-      subject: "Test Email (Notification Flow)",
-      body: "Este es un correo de prueba usando email.client.js + Mailgen.",
-    });
+    expect(sendMailMock).toHaveBeenCalledTimes(1);
+    expect(sendMailMock).toHaveBeenCalledWith(expect.objectContaining({
+      to: "zs22017021@estudiantes.uv.mx",
+      subject: "Test Subject",
+      text: "Test Body",
+    }));
+    expect(result).toEqual({ messageId: "mock-id" });
+  });
 
-    console.log("✅ Message sent:", info.messageId);
-    console.log("🔍 Preview URL:", nodemailer.getTestMessageUrl(info));
-  } catch (error) {
-    console.error("❌ Error sending test email:", error);
-  }
-}
+  it("should support HTML content", async () => {
+    const mailOptions = {
+      to: "zs22017021@estudiantes.uv.mx",
+      subject: "HTML Test",
+      html: "<p>HTML Body</p>",
+    };
 
-main();
+    await sendEmail(mailOptions);
+
+    expect(sendMailMock).toHaveBeenCalledWith(expect.objectContaining({
+      html: "<p>HTML Body</p>",
+    }));
+  });
+
+  it("should log preview URL in development", async () => {
+    const originalEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = "development";
+    const consoleSpy = vi.spyOn(console, "log");
+    nodemailer.getTestMessageUrl.mockReturnValue("http://preview.url");
+
+    await sendEmail({ to: "test@example.com", subject: "Dev Test" });
+
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining("Preview URL:"), "http://preview.url");
+
+    process.env.NODE_ENV = originalEnv;
+  });
+});
