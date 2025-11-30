@@ -1,31 +1,26 @@
 import { NotifierDecorator } from "./notifier.decorator.js";
 import { sendEmail } from "../integrations/email.client.js";
-import { NotificationType } from "./notification.types.js";
+import { NOTIFICATION_RENDERERS } from "./notification.types.js";
 
-import { renderAppointmentCreated } from "./templates/appointment.created.js";
-import { renderAppointmentConfirmed } from "./templates/appointment.confirmed.js";
-import { renderAppointmentCanceled } from "./templates/appointment.canceled.js";
-import { renderAppointmentReminder } from "./templates/appointment.reminder.js";
-import { renderAppointmentUpdated } from "./templates/appointment.updated.js";
+/**
+ * Default fallback renderer for unknown notification types
+ */
+const DEFAULT_RENDERER = () => ({
+  subject: "Notificación",
+  html: "<p>Hola, ten un buen día. 🤖</p>",
+});
 
+/**
+ * Renders email content based on notification type
+ * @param {Object} params - The rendering parameters
+ * @param {string} params.type - The notification type
+ * @param {Object} params.to - The recipient information
+ * @param {Object} params.payload - The notification payload
+ * @returns {Object} Object containing subject and html properties
+ */
 function renderByType({ type, to, payload }) {
-  switch (type) {
-    case NotificationType.APPOINTMENT_CREATED:
-      return renderAppointmentCreated({ to, payload });
-    case NotificationType.APPOINTMENT_CONFIRMED:
-      return renderAppointmentConfirmed({ to, payload });
-    case NotificationType.APPOINTMENT_CANCELED:
-      return renderAppointmentCanceled({ to, payload });
-    case NotificationType.APPOINTMENT_REMINDER:
-      return renderAppointmentReminder({ to, payload });
-    case NotificationType.APPOINTMENT_UPDATED:
-      return renderAppointmentUpdated({ to, payload });
-    default:
-      return {
-        subject: "Notificación",
-        html: "<p>Hola, ten un buen día. 🤖</p>",
-      };
-  }
+  const renderer = NOTIFICATION_RENDERERS.get(type) || DEFAULT_RENDERER;
+  return renderer({ to, payload });
 }
 
 export class EmailNotifierDecorator extends NotifierDecorator {
@@ -36,7 +31,7 @@ export class EmailNotifierDecorator extends NotifierDecorator {
    */
   async send(notification) {
     if (!notification.to.email) {
-      return super.send(notification); // maybe throwing or returning a JSON response
+      return super.send(notification);
     }
 
     const { subject, html } = renderByType({
@@ -47,7 +42,7 @@ export class EmailNotifierDecorator extends NotifierDecorator {
 
     await sendEmail({
       to: notification.to.email,
-      subject: "Recordatorio de cita" || subject,
+      subject: subject || "Recordatorio de cita",
       html: html,
     });
 

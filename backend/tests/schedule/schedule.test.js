@@ -13,6 +13,14 @@ vi.mock("../../repositories/schedule.repository.js", () => ({
   ScheduleRepository: scheduleRepoMock,
 }));
 
+vi.mock("../../middlewares/require.auth.middleware.js", () => ({
+  default: (req, res, next) => next(),
+}));
+
+vi.mock("../../middlewares/require.admin.middleware.js", () => ({
+  requireRole: () => (req, res, next) => next(),
+}));
+
 const scheduleRouter = (await import("../../routes/schedule.routes.js")).default;
 
 function createApp() {

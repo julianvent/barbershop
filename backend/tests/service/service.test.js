@@ -14,6 +14,14 @@ vi.mock("../../repositories/service.repository.js", () => ({
   ServiceRepository: serviceRepoMock,
 }));
 
+vi.mock("../../middlewares/require.auth.middleware.js", () => ({
+  default: (req, res, next) => next(),
+}));
+
+vi.mock("../../middlewares/require.admin.middleware.js", () => ({
+  requireRole: () => (req, res, next) => next(),
+}));
+
 const serviceRouter = (await import("../../routes/service.routes.js")).default;
 
 function createApp() {
