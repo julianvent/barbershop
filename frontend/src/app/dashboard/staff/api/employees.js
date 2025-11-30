@@ -3,7 +3,7 @@ import axios from "axios";
 
 export const getEmployees = async () => {
     try{
-        const headers = axiosConfig();
+        const headers = await axiosConfig();
         const response = await axios.get('/api/barbers?limit=50', headers);
         return response.data;
     }catch(err){
@@ -67,7 +67,7 @@ export const updateEmployee = async (id,data) => {
     }catch(err){
         throw 'Error al actualizar el empleado';
     }
-      
+
 };
 
 export const deleteEmployee = async (id) =>{
@@ -77,5 +77,5 @@ export const deleteEmployee = async (id) =>{
     }catch(err){
         throw 'Error al eliminar el registro del empleado';
     }
-    
+
 }

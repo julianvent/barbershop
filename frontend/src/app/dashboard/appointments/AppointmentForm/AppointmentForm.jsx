@@ -14,23 +14,19 @@ import {
   timeValidation,
 } from "@/app/utils/appointmentValidators";
 import { useEffect, useState } from "react";
-import {
-  barbers,
-  servicesEntries,
-  status,
-  timesAvailable,
-} from "../../../utils/data";
+import { servicesEntries, status, timesAvailable } from "../../../utils/data";
 import { useRouter } from "next/navigation";
 import { appointmentsRoute } from "@/app/utils/routes";
 import { createAppointment, updateAppointment } from "../api/appointments";
 import BarberFieldset from "@/app/components/form/barberSelector/BarberSelector";
 import TimeSelector from "@/app/components/form/timeSelector/TimeSelector";
 import ServiceSelector from "@/app/components/form/serviceSelector/ServiceSelector";
+import { getEmployees } from "../../staff/api/employees";
 
 export default function AppointmentForm({ appointment, mode }) {
-  const [selectedBarber, setSelectedBarber] = useState(null);
-
   const router = useRouter();
+  const [selectedBarber, setSelectedBarber] = useState(null);
+  const barbers = useBarbers();
 
   const methods = useForm({
     defaultValues: appointment || {},
@@ -98,4 +94,22 @@ export default function AppointmentForm({ appointment, mode }) {
       </form>
     </FormProvider>
   );
+}
+
+function useBarbers() {
+  const [barbers, setBarbers] = useState([]);
+
+  useEffect(() => {
+    async function fetchBarbers() {
+      try {
+        const data = await getEmployees();
+        console.log(data.data);
+        setBarbers(data.data);
+      } catch (error) {
+        console.error("Error fetching barbers");
+      }
+    }
+    fetchBarbers();
+  }, []);
+  return barbers;
 }

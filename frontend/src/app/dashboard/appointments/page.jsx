@@ -2,7 +2,6 @@
 import styles from "../Main.module.css";
 import { useRouter } from "next/navigation";
 import Layout from "@/app/components/base_layout/Layout";
-import { appointments } from "../../utils/data";
 import {
   editAppointments,
   newAppointmentRoute,
@@ -45,24 +44,26 @@ export default function Appointments() {
     {
       headerName: "Estado",
       resizable: false,
-      cellRenderer: (params) => {        
+      cellRenderer: (params) => {
         const Map = {
-          'pending': {color:'#6B7280'  , text: 'Pendiente' },    
-          'confirmed': {color:'#3B82F6', text: 'Confirmada' },   
-          'completed': {color:'#10B981', text: 'Completada' },
-          'cancelled': {color:'#EF4444', text: 'Cancelada' }, 
+          pending: { color: "#6B7280", text: "Pendiente" },
+          confirmed: { color: "#3B82F6", text: "Confirmada" },
+          completed: { color: "#10B981", text: "Completada" },
+          cancelled: { color: "#EF4444", text: "Cancelada" },
         };
-        
+
         return (
-          <span style={{
-            color: Map[params.data.status].color,
-            fontWeight: '600',
-            fontSize: '0.875rem'
-          }}>
+          <span
+            style={{
+              color: Map[params.data.status].color,
+              fontWeight: "600",
+              fontSize: "0.875rem",
+            }}
+          >
             {Map[params.data.status].text}
           </span>
         );
-      }
+      },
     },
     {
       headerName: "",
