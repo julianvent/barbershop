@@ -8,7 +8,8 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
 import routes from "./routes/index.js";
-import { initDB, sequelize } from "./config/database.config.js";
+import { initDB, sequelize } from "./config/database.demo.js";
+import { createDefaultAdminIfNotExist } from "./config/createDefaultAdmin.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -31,7 +32,7 @@ async function startServer() {
 
     await sequelize.sync();
     console.log("Models synchronized");
-
+    await createDefaultAdminIfNotExist();
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });
