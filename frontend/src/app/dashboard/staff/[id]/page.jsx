@@ -73,7 +73,7 @@ export default function EmployeeDetail({params}){
                 </div>
                 
                 {
-                        employee&&(<Buttons id={employee.id} modelType={'staff'}/>
+                        employee&&(<Buttons model={employee} modelType={'staff'}/>
                         )
                 }
             </div>

@@ -11,10 +11,9 @@ export default function NewService() {
 
   const submit = async (data) => {
     try{
-      createService(data)
-      router.push(servicesRoute)
-
+      await createService(data);
     }catch(err){
+      return err;
     }
   };
 

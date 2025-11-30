@@ -28,7 +28,7 @@ export const nameValidation = {
   id: "name",
   type: "text",
   name: "name",
-  label: "Nombre del servicio",
+  label: "Nombre",
   validation: {
     required: "Ingrese el nombre del servicio",
   },
@@ -40,7 +40,11 @@ export const priceValidation = {
   name: "price",
   label: "Precio",
   validation: {
-    required: "Ingrese el precio"
+    required: "Ingrese el precio",
+    min: {
+      value: 1,
+      message: "El precio debe ser un valor valido"
+    }
   }
 }
 

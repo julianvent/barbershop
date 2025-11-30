@@ -4,9 +4,10 @@ import { appointmentsRoute, editAppointments, editService, editStaffRoute, servi
 import styles from "./styles.module.css";
 import { useRouter } from "next/navigation";
 
-export default function Buttons({id,modelType, service}){
+export default function Buttons({model,modelType}){
+    let id = model.id
     if(modelType == 'service'){
-        id = encodeURIComponent(id)
+        id = encodeURIComponent(model.name)
     }
     const router = useRouter();
     let routes = {}
@@ -38,23 +39,23 @@ export default function Buttons({id,modelType, service}){
                         }}>
                         Regresar
                     </button>
-                    {(service != 'Paquete') && (
 
-                        <button
-                            onClick={(e) => {
-                                const url = routes.edit.replace('${id}', id);
-                                e.preventDefault();
-                                router.push(url);
+                    <button
+                        onClick={(e) => {
+                            const url = routes.edit.replace('${id}', id);
+                            e.preventDefault();
+                            router.push(url);
 
-                            }}>
-                            Editar
-                        </button>
+                        }}>
+                        Editar
+                    </button>
 
-                    )}
                     <button className={styles.deleteButton}
+                        disabled={model.status == 'inactive'}
                         onClick={ (e) => {
                             e.preventDefault();
                             routes.deleteFunction(id);
+                            router.push(routes.index);
                     }}>Eliminar</button>
                 </div>
     )

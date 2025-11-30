@@ -14,21 +14,31 @@ import TextArea from "@/app/components/form/input/TextArea";
 import { servicesRoute } from "@/app/utils/routes";
 import StatusSelect from "@/app/components/form/input/StatusSelect";
 import { statusValidation } from "@/app/utils/servicesValidators";
+import InputDecimal from "@/app/components/form/input/InputDecimal";
 
 export default function ServiceForm({ onSubmit, service }) {
   const router = useRouter();
-  const [isCreatingBundle, setIsCreatingBundle] = useState(false);
+  const [isCreatingService, setIsCreatingService] = useState(false);
   const methods = useForm({
     defaultValues: service || {},
   });
 
   const submit = methods.handleSubmit(async (data) => {
-    setIsCreatingBundle(true);
-    if (service) {
-      await onSubmit(data, service.id);
-    } else {
-      await onSubmit(data);
-    }
+    setIsCreatingService(true);
+
+    const err = await onSubmit(data);
+    
+
+      if (err) {
+
+        methods.setError("root.serverError", {
+          type: "server",
+          message: err,
+        });
+        setIsCreatingService(false);
+      }else{
+        router.push(servicesRoute);
+      }
   });
 
   useEffect(() => {
@@ -47,23 +57,38 @@ export default function ServiceForm({ onSubmit, service }) {
       >
         <div className={styles.fieldsContainer}>
           <div className={styles.row}>
-            <Input {...nameValidation}></Input>
-            <Input {...priceValidation}></Input>
+            <Input {...nameValidation} disabled={service}></Input>
+            <InputDecimal {...priceValidation}></InputDecimal>
           </div>
 
           <div className={styles.row}>
             <Input {...durationValidation}></Input>
-            <Input {...typeValidation}></Input>
+            {service &&(<Input {...typeValidation} disabled={service.type == 'Paquete'}></Input>)}
             {service && <StatusSelect {...statusValidation} />}
           </div>
 
           <div className={styles.soloRow}>
-            <TextArea {...descriptionValidation}></TextArea>
+          {(!service || service.type !== "Paquete") && (
+            <TextArea {...descriptionValidation} />
+          )}
+            {methods.formState.errors.root?.serverError && (
+              <div className={styles.errorMessage}>
+                {methods.formState.errors.root.serverError.message}
+              </div>
+            )}
           </div>
 
           <div className={styles.fieldsConta}>
             <div className={styles.buttons}>
-              <button type="submit">Confirmar</button>
+              <button
+                  className={styles.cancelButton}
+                  onClick={(e) => {
+                      e.preventDefault();
+                      router.push(servicesRoute);
+                  }}>
+                  Cancelar
+              </button>
+              <button type="submit" disabled={isCreatingService}>Confirmar</button>
             </div>
           </div>
         </div>

@@ -18,14 +18,28 @@ export const getServices = async () => {
 export const createService = async (data) => {
     try{
         const headers = axiosConfig();
-        const request = await axios.post( '/api/services',data, headers);
-    }catch(error){
-        console.log(error);
+        await axios.post( '/api/services',data, headers);
+    }catch(err){
+        let message = 'Ocurrio un error en el servidor';
+        const error = err.response?.data.error;
+        if(error){
+            if(error == 'A service with that name already exists'){
+                message = 'Un servicio ya tiene ese nombre'
+            }
+        }
+        throw message;
     }
 };
 
-export const updateService = async (data) => {
-    console.log(data);
+export const updateService = async (data,name) => {
+    try{
+        const headers = axiosConfig();
+        await axios.put( '/api/services/'+name,data, headers);
+        return null;
+    }catch(err){
+        let message = 'Ocurrio un error en el servidor';
+        throw message;
+    }
 
 };
 
@@ -60,8 +74,11 @@ export const createBundle = async (data, servis) => {
     data.duration = duration;
     data.type = 'Paquete';
     const {services, ...newData} = data;
-    console.log(newData);
-    createService(newData);
+    try{
+        await createService(newData);
+    }catch(err){
+        throw err;
+    }
 
 };
 
@@ -76,6 +93,13 @@ export const getService = async (name) => {
     }
 };
 
-export const deleteService = async (id) => {
-    console.log('Eliminando servicio ' + id)
+export const deleteService = async (name) => {
+    const headers = axiosConfig();
+    const uri = '/api/services/'+name;
+    try{
+        await axios.delete(uri,headers);
+    }catch (err){
+        console.log(err);
+        throw "Error en el servidor";
+    }
 }

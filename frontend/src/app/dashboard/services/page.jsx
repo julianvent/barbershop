@@ -43,17 +43,32 @@ export default function Services() {
   const fields = [
     ...serviceFields,
     {
+      headerName: "Estado",
+      resizable: false,
+      cellRenderer: (params) => {        
+        const Map = {  
+          'active': {color:'#10B981', text: 'Activo' },
+          'inactive': {color:'#EF4444', text: 'Inactivo' }, 
+        };
+        
+        return (
+          <span style={{
+            color: Map[params.data.status].color,
+            fontWeight: '600',
+            fontSize: '0.875rem'
+          }}>
+            {Map[params.data.status].text}
+          </span>
+        );
+      }
+    }
+    ,
+    {
       headerName: "Acciones",
       field: "id",
       cellRenderer: (params) => {
         const service = params.data;
-
-        const filteredActions =
-          service.type === "Paquete"
-            ? actions.filter((a) => a.name !== "edit")
-            : actions;
-
-        return <ActionButton name={service.name} actions={filteredActions} />;
+        return <ActionButton name={service.name} actions={actions} />;
       },
       flex: 1,
     },
