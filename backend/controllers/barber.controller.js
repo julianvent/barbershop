@@ -1,4 +1,5 @@
 import { BarberService } from "../services/barber.service.js";
+import { generateImageUrl } from "../utils/barber.utils.js";
 
 export const BarberController = {
     async getAll(req, res){
@@ -8,7 +9,14 @@ export const BarberController = {
                 limit: req.query.limit,
             }
             const result = await BarberService.list(filters)
-            res.json(result)
+            const data = result.data.map(barber => ({
+                ...barber.get?.() ?? barber,
+                image_path: generateImageUrl(req, barber.image_path)
+            }));
+            res.json({
+                data,
+                meta: result.meta
+            })
         }catch (e) {
             res.status(500).json({ error: e.message });
         }
@@ -17,6 +25,7 @@ export const BarberController = {
         try {
             const { id } = req.params;
             const barber = await BarberService.find(id);
+            barber.image_path = generateImageUrl(req, barber.image_path)
             res.status(200).json(barber);
         } catch (error) {
             res.status(404).json({ message: error.message });
@@ -32,8 +41,9 @@ export const BarberController = {
             delete barberData.image_path; // Prevent clients from setting image_path manually, since we don't use a request DTO and this field must only be assigned from the uploaded file
             const file = req.files?.[0];
             if (file) barberData.image_path = file.filename;
-            const new_barber = await BarberService.create(barberData);
-            res.status(201).json(new_barber)
+            const newBarber = await BarberService.create(barberData);
+            newBarber.image_path = generateImageUrl(req, newBarber.image_path)
+            res.status(201).json(newBarber)
         } catch(error) {
             res.status(500).json({ error: error.message })
         }
@@ -49,7 +59,7 @@ export const BarberController = {
             const file = req.files?.[0];
             if (file) barberData.image_path = file.filename;
             const updateBarber = await BarberService.update(id, barberData);
-
+            updateBarber.image_path = generateImageUrl(req, newBarber.image_path);
             res.status(200).json(updateBarber)
         } catch(error) {
             res.status(500).json({ error: error.message })

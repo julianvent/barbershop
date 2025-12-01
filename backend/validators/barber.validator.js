@@ -14,7 +14,6 @@ export const BarberValidator = {
                 throw new Error(`Missing required field: ${field}`);
             }
         }
-
     },
     validateUpdate(barberData) {
         if (!barberData || typeof barberData !== "object") {

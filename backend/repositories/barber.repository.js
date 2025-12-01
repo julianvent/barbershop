@@ -1,8 +1,6 @@
 import { Barber } from "../models/barber.model.js";
 
-
-const monkeyBarber = "assets/images/monkeyBarber.png";
-const RETURN_ATTRS = ["id", "barber_name", "is_active", "image_path"];
+const RETURN_ATTRS = ["id", "barber_name", "is_active", "image_path", "phone", "email"];
 
 export const BarberRepository = {
     async list(offset, limit, sort){
@@ -22,7 +20,9 @@ export const BarberRepository = {
             const newBarber = await Barber.create({
                 barber_name: barberData.barber_name,
                 is_active: true,
-                image_path: barberData.image_path ?? monkeyBarber
+                image_path: barberData.image_path,
+                phone: barberData.phone,
+                email: barberData.email
             });
             return Barber.findByPk(newBarber.id,{
                 attributes: RETURN_ATTRS

@@ -21,6 +21,14 @@ export const Barber = sequelize.define(
       type: DataTypes.BOOLEAN,
       allowNull: false,
     },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    phone: {
+      type: DataTypes.STRING,
+      allowNull: true
+    }
   },
   { tableName: "barber" }
 );
