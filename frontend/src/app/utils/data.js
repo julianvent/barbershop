@@ -232,32 +232,32 @@ export const timesAvailable = [
 ];
 
 export const indexBarbers = [
-  { 
-    id: 1, 
-    name: "Kevin", 
+  {
+    id: 1,
+    name: "Kevin",
     last_names: "Frias Garcia",
     phone: "555-123-4567",
     email: "kevin@example.com",
     status: "inactive",
-    photo: "/kevin2.png" 
+    photo: "/kevin2.png"
   },
-  { 
-    id: 2, 
-    name: "Adrian", 
+  {
+    id: 2,
+    name: "Adrian",
     last_names: "Herrera Jeronimo",
     phone: "555-234-5678",
     email: "adrian@example.com",
     status: "active",
-    photo: "/kevin.png" 
+    photo: "/kevin.png"
   },
-  { 
-    id: 3, 
-    name: "Jose", 
+  {
+    id: 3,
+    name: "Jose",
     last_names: "Ventura Uscanga",
     phone: "555-345-6789",
     email: "jose@example.com",
     status: "active",
-    photo: "/kevin.png" 
+    photo: "/kevin.png"
   },
 ];
 

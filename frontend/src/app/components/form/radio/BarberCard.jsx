@@ -17,7 +17,7 @@ export default function BarberCard({ id, barber, onChange }) {
           })}
         />
         <label>
-          <p>{barber.name}</p>
+          <p>{barber.barber_name}</p>
         </label>
       </div>
     </div>
