@@ -1,6 +1,9 @@
 import { BarberRepository } from "../repositories/barber.repository.js";
 import { BarberValidator } from "../validators/barber.validator.js";
 import { existsImage, removeImage } from "../config/upload.images.js";
+import { UPLOAD_DIR } from "../config/upload.images.js";
+import path from "path";
+const monkeyBarber = "assets/images/monkeyBarber.png";
 
 export const BarberService = {
     async list(filters){
@@ -22,6 +25,9 @@ export const BarberService = {
         return BarberRepository.getById(id)
     },
     async create(barberData) {
+
+        if(barberData.image_path == undefined) barberData.image_path = monkeyBarber;
+        else barberData.image_path = path.relative(process.cwd(), path.join(UPLOAD_DIR, barberData.image_path));
         BarberValidator.validateCreate(barberData);
         return BarberRepository.create(barberData);
     },

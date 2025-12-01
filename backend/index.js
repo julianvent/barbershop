@@ -8,7 +8,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
 import routes from "./routes/index.js";
-import { initDB, sequelize } from "./config/database.demo.js";
+import { initDB, sequelize } from "./config/database.config.js";
 import { createDefaultAdminIfNotExist } from "./config/createDefaultAdmin.js";
 
 const app = express();

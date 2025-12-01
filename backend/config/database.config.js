@@ -47,5 +47,3 @@ async function createDatabaseIfNotExists() {
     }
   }
 }
-
-
