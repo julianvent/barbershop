@@ -59,7 +59,7 @@ export const BarberController = {
             const file = req.files?.[0];
             if (file) barberData.image_path = file.filename;
             const updateBarber = await BarberService.update(id, barberData);
-            updateBarber.image_path = generateImageUrl(newBarber.image_path);
+            updateBarber.image_path = generateImageUrl(updateBarber.image_path);
             res.status(200).json(updateBarber)
         } catch(error) {
             res.status(500).json({ error: error.message })
