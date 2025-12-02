@@ -59,8 +59,9 @@ export const AppointmentService = {
     return {
       ...appointment_data,
       services: response_service,
+      barber_id: barber_data.id,
       barber: {
-        id: barber_data.id,
+        barber_id: barber_data.id,
         barber_name: barber_data.barber_name
       }
     };
