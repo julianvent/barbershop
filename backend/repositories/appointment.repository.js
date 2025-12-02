@@ -100,7 +100,7 @@ export const AppointmentRepository = {
     const appointmentEnd = appointmentStart + totalDuration * 60 * 1000;
 
     // Check overlapping appointments for that barber
-    const existingAppointments = await this.getAvabialityAppointments(
+    const existingAppointments = await this.getAvailabilityAppointments(
       appointment.barber_id,
       scheduleStartDate,
       scheduleEndDate

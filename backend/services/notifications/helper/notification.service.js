@@ -2,6 +2,7 @@ import { Notifier } from "../notifier.js";
 import { EmailNotifierDecorator } from "../notification.email.decorator.js";
 import { NotificationDTO } from "../notification.dto.js";
 import { NotificationType } from "../notification.types.js";
+import { generateAppointmentLink } from "../../../services/jwt.service.js";
 
 function isTrue(v) {
   return String(v || "").toLowerCase() === "true";
@@ -38,6 +39,7 @@ function mexDate(dt) {
 
 export const NotificationService = {
   async appointmentCreated(appt) {
+    const link = generateAppointmentLink(appt.id)
     const dto = new NotificationDTO({
       appointmentId: appt.id,
       to: toRecipient(appt),
@@ -46,6 +48,7 @@ export const NotificationService = {
         customerName: appt.customer_name,
         whenText: mexDate(appt.appointment_datetime),
         barber: appt.barber_id,
+        appointmentLink: link
       },
     });
     await notifierChain.send(dto);

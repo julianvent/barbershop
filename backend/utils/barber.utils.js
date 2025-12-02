@@ -1,6 +1,6 @@
 
-export function generateImageUrl(req, relativePath) {
-    const baseUrl = `${req.protocol}://${req.get("host")}`;
-    return `${baseUrl}/${relativePath}`.replace(/\\/g, "/")
+import { BASE_URL } from "../services/jwt.service.js";
+export function generateImageUrl(relativePath) {
+    return `${BASE_URL}${relativePath}`.replace(/\\/g, "/")
 ;
 }

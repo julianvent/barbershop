@@ -5,7 +5,6 @@ import { ServiceRepository } from "../repositories/service.repository.js";
 import { AppointmentValidator } from "../validators/appointment.validator.js";
 import { NotificationService } from "./notifications/helper/notification.service.js";
 import { DAYS } from "../validators/schedule.validator.js";
-import { generateAppointmentLink } from "./jwt.service.js";
 
 const MARGIN = 15;
 export const AppointmentService = {
@@ -70,8 +69,6 @@ export const AppointmentService = {
   async create(appointmentData) {
     AppointmentValidator.validateCreate(appointmentData);
     const newAppointment = await AppointmentRepository.create(appointmentData);
-    const token = generateAppointmentLink(newAppointment.id);
-    console.log(token)
     try {
       await NotificationService.appointmentCreated(newAppointment);
     } catch (error) {
@@ -116,7 +113,7 @@ export const AppointmentService = {
 
     for (const barberId of barberIds) {
 
-      const appointments = await AppointmentRepository.getAvabialityAppointments(barberId, from, to);
+      const appointments = await AppointmentRepository.getAvailabilityAppointments(barberId, from, to);
       const schedule = await ScheduleRepository.getByDay(DAYS[from.getDay()]);
 
       const workStart = new Date(from);

@@ -16,9 +16,9 @@ export function getMailGenerator() {
  * Build a HTML email content
  * @param {{intro: string[]; outro?: string[]}}
  */
-export function buildHtml({ intro, outro = [] }) {
+export function buildHtml({ intro, outro, action = [] }) {
   const mg = getMailGenerator();
-  return mg.generate({ body: { intro, outro } });
+  return mg.generate({ body: { intro, outro, action } });
 }
 
 /**
