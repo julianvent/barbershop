@@ -45,12 +45,12 @@ export default function Services() {
     {
       headerName: "Estado",
       resizable: false,
-      cellRenderer: (params) => {        
-        const Map = {  
+      cellRenderer: (params) => {
+        const Map = {
           'active': {color:'#10B981', text: 'Activo' },
-          'inactive': {color:'#EF4444', text: 'Inactivo' }, 
+          'inactive': {color:'#EF4444', text: 'Inactivo' },
         };
-        
+
         return (
           <span style={{
             color: Map[params.data.status].color,

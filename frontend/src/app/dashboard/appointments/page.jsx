@@ -62,7 +62,7 @@ export default function Appointments() {
       field: "id",
       resizable: false,
       cellRenderer: (params) => (
-        <ActionButton id={params.data.id} actions={actions} />
+        <ActionButton name={params.data.id} actions={actions} />
       ),
       flex: 1,
     },
