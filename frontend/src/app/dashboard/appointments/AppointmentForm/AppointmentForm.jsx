@@ -24,8 +24,8 @@ import ServiceSelector from "@/app/components/form/serviceSelector/ServiceSelect
 import { getEmployees } from "../../staff/api/employees";
 
 export default function AppointmentForm({ appointment, mode }) {
-  const router = useRouter();
   const [selectedBarber, setSelectedBarber] = useState(null);
+  const router = useRouter();
   const barbers = useBarbers();
 
   const methods = useForm({
@@ -40,10 +40,9 @@ export default function AppointmentForm({ appointment, mode }) {
 
   useEffect(() => {
     if (appointment) {
-      methods.reset(appointment);
-      setSelectedBarber(appointment.barber_id);
+      setSelectedBarber(appointment.barber.id);
     }
-  }, [appointment]);
+  }, [selectedBarber]);
 
   return (
     <FormProvider {...methods}>
@@ -103,7 +102,6 @@ function useBarbers() {
     async function fetchBarbers() {
       try {
         const data = await getEmployees();
-        console.log(data.data);
         setBarbers(data.data);
       } catch (error) {
         console.error("Error fetching barbers");

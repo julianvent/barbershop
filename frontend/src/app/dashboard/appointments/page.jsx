@@ -16,15 +16,7 @@ import { getAppointments } from "./api/appointments";
 import { useEffect, useState } from "react";
 
 export default function Appointments() {
-  const [appointmentEntries, setAppointmentEntries] = useState();
-
-  useEffect(() => {
-    async function fetchAppointments() {
-      setAppointmentEntries(await getAppointments(1));
-    }
-
-    fetchAppointments();
-  }, []);
+  const appointments = useAppointments();
 
   const router = useRouter();
 
@@ -70,7 +62,7 @@ export default function Appointments() {
       field: "id",
       resizable: false,
       cellRenderer: (params) => (
-        <ActionButton id={params.data.id} actions={actions} />
+        <ActionButton name={params.data.id} actions={actions} />
       ),
       flex: 1,
     },
@@ -90,10 +82,24 @@ export default function Appointments() {
         </div>
         <AgGridReact
           defaultColDef={defaultColDef}
-          rowData={appointmentEntries}
+          rowData={appointments}
           columnDefs={fields}
         />
       </div>
     </Layout>
   );
+}
+
+function useAppointments() {
+  const [appointments, setAppointments] = useState([]);
+
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      const data = await getAppointments();
+      setAppointments(data);
+    };
+
+    fetchAppointments();
+  }, []);
+  return appointments;
 }

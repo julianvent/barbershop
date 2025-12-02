@@ -6,16 +6,8 @@ import { appointmentsRoute } from "@/app/utils/routes";
 import AppointmentForm from "../../AppointmentForm/AppointmentForm";
 
 export default function UpdateAppointment({ params }) {
-  const [appointment, setAppointment] = useState(null);
-
   const { id } = React.use(params);
-
-  useEffect(() => {
-    async function fetchAppointment() {
-      setAppointment(await getAppointment({ appointmentId: id }));
-    }
-    fetchAppointment();
-  }, [id]);
+  const appointment = useAppointment(id);
 
   return (
     <CreateNewLayout title={"Actualizar cita"} returnRoute={appointmentsRoute}>
@@ -26,4 +18,18 @@ export default function UpdateAppointment({ params }) {
       )}
     </CreateNewLayout>
   );
+}
+
+function useAppointment(appointmentId) {
+  const [appointment, setAppointment] = useState(null);
+
+  useEffect(() => {
+    const fetchAppointment = async () => {
+      const data = await getAppointment(appointmentId);
+      setAppointment(data);
+    };
+
+    fetchAppointment();
+  }, []);
+  return appointment;
 }
