@@ -18,29 +18,33 @@ import { servicesEntries, status, timesAvailable } from "../../../utils/data";
 import { useRouter } from "next/navigation";
 import { appointmentsRoute } from "@/app/utils/routes";
 import { createAppointment, updateAppointment } from "../api/appointments";
-import BarberFieldset from "@/app/components/form/barberSelector/BarberSelector";
+import BarberSelector from "@/app/components/form/barberSelector/BarberSelector";
 import TimeSelector from "@/app/components/form/timeSelector/TimeSelector";
 import ServiceSelector from "@/app/components/form/serviceSelector/ServiceSelector";
 import { getEmployees } from "../../staff/api/employees";
+import { getServices } from "../../services/api/services";
 
 export default function AppointmentForm({ appointment, mode }) {
   const [selectedBarber, setSelectedBarber] = useState(null);
   const router = useRouter();
   const barbers = useBarbers();
+  const services = useServices();
+
+  const parsedAppointment = appointment && parseAppointment(appointment);
 
   const methods = useForm({
-    defaultValues: appointment || {},
+    defaultValues: parsedAppointment || {},
   });
 
   const onSubmit = (data) => {
-    if (appointment) updateAppointment(data);
+    if (parsedAppointment) updateAppointment(data);
     else createAppointment(data);
     router.push(appointmentsRoute);
   };
 
   useEffect(() => {
-    if (appointment) {
-      setSelectedBarber(appointment.barber.id);
+    if (parsedAppointment) {
+      setSelectedBarber(parsedAppointment.barber_id);
     }
   }, [selectedBarber]);
 
@@ -59,11 +63,11 @@ export default function AppointmentForm({ appointment, mode }) {
 
           <div className={styles.fieldsContainer}>
             <h2>Selecciona un barbero</h2>
-            <BarberFieldset
+            <BarberSelector
               barbers={barbers}
               onChange={(e) => setSelectedBarber(e.target.value)}
               {...barberValidation}
-            ></BarberFieldset>
+            ></BarberSelector>
           </div>
 
           <div className={styles.fieldsContainer}>
@@ -82,12 +86,14 @@ export default function AppointmentForm({ appointment, mode }) {
               ></TimeSelector>
               <ServiceSelector
                 {...serviceValidation}
-                services={servicesEntries}
+                services={services}
               ></ServiceSelector>
             </fieldset>
           </div>
           <div className={styles.buttons}>
-            <button>Agendar cita</button>
+            <button>
+              {parsedAppointment ? "Confirmar cambios" : "Programar cita"}
+            </button>
           </div>
         </div>
       </form>
@@ -110,4 +116,35 @@ function useBarbers() {
     fetchBarbers();
   }, []);
   return barbers;
+}
+
+function useServices() {
+  const [services, setServices] = useState([]);
+
+  useEffect(() => {
+    async function fetchServices() {
+      try {
+        const data = await getServices();
+        setServices(data);
+      } catch (error) {
+        console.error("Error fetching services");
+      }
+    }
+
+    fetchServices();
+  }, []);
+  return services;
+}
+
+function parseAppointment(appointment) {
+  const parsed = appointment;
+  const barberIdToString = parsed.barber.barber_id.toString();
+  parsed.barber_id = barberIdToString;
+
+  const services = parsed.services.map((service) => service.id + "");
+  parsed.services_ids = services;
+
+  console.log(parsed);
+
+  return parsed;
 }

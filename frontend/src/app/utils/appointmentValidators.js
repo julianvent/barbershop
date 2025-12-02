@@ -52,7 +52,7 @@ export const barberValidation = {
 };
 
 export const serviceValidation = {
-  id: "services",
+  id: "services_ids",
   validation: {
     required: "Selecciona uno o más servicios",
   },
