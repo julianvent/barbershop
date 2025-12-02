@@ -26,7 +26,14 @@ export const ServiceRepository = {
         }
       : undefined;
 
-    const sortable = new Set(["id","name", "price", "duration", "type", "status"]);
+    const sortable = new Set([
+      "id",
+      "name",
+      "price",
+      "duration",
+      "type",
+      "status",
+    ]);
     if (!sortable.has(sort)) {
       sort = "name";
     }
@@ -45,13 +52,12 @@ export const ServiceRepository = {
     };
   },
 
-  async getById(id){
-      const existing_service = await Service.findByPk(id, {
-        attributes: RETURN_ATTRS,
-      });
-      if(!existing_service)
-          throw new Error("Service not found");
-      return existing_service;
+  async getById(id) {
+    const existing_service = await Service.findByPk(id, {
+      attributes: RETURN_ATTRS,
+    });
+    if (!existing_service) throw new Error("Service not found");
+    return existing_service;
   },
 
   async create(data) {
@@ -61,15 +67,15 @@ export const ServiceRepository = {
     });
   },
 
-  async update(serviceName, data) {
-    await Service.update(data, { where: { name: serviceName } });
-    return this.getByName(serviceName);
+  async update(id, data) {
+    await Service.update(data, { where: { id } });
+    return this.getById(id);
   },
 
-  async deactivate(serviceName) {
+  async deactivate(id) {
     const [updated] = await Service.update(
       { status: "inactive" },
-      { where: { name: serviceName } }
+      { where: { id } }
     );
     return updated > 0;
   },

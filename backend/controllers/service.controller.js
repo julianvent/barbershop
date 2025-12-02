@@ -11,15 +11,6 @@ export const ServiceController = {
     }
   },
 
-  async getByName(req, res) {
-    try {
-      const row = await ServiceService.get(req.params.name);
-      res.json(row);
-    } catch (e) {
-      res.status(404).json({ error: e.message });
-    }
-  },
-
   async getById(req, res) {
     try {
       const row = await ServiceService.getById(req.params.id);
@@ -40,7 +31,7 @@ export const ServiceController = {
 
   async update(req, res) {
     try {
-      const row = await ServiceService.update(req.params.name, req.body);
+      const row = await ServiceService.update(req.params.id, req.body);
       res.json(row);
     } catch (e) {
       res.status(400).json({ error: e.message });
@@ -49,7 +40,7 @@ export const ServiceController = {
 
   async delete(req, res) {
     try {
-      await ServiceService.remove(req.params.name);
+      await ServiceService.remove(req.params.id);
       res.status(204).send();
     } catch (e) {
       res.status(404).json({ error: e.message });

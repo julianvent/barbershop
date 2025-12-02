@@ -19,11 +19,6 @@ export const ServiceService = {
     const name = String(body.name).trim();
     body.name = name;
 
-    const existing = await ServiceRepository.getByName(name);
-    if (existing && existing.name.toLowerCase() === name.toLowerCase()) {
-      throw new Error("A service with that name already exists");
-    }
-
     try {
       return await ServiceRepository.create(body);
     } catch (error) {
@@ -31,23 +26,17 @@ export const ServiceService = {
     }
   },
 
-  async update(serviceName, body) {
+  async update(serviceId, body) {
     ServiceValidator.validateUpdate(body);
-    const current = await ServiceRepository.getByName(serviceName);
+    const current = await ServiceRepository.getById(serviceId);
     if (!current) {
       throw new Error("Service not found");
     }
-    if (body.name && body.name !== serviceName) {
-      const existingByName = await ServiceRepository.getByName(body.name);
-      if (existingByName) {
-        throw new Error("A service with that name already exists");
-      }
-    }
-    return ServiceRepository.update(serviceName, body);
+    return ServiceRepository.update(serviceId, body);
   },
 
-  async remove(serviceName) {
-    const deleted = await ServiceRepository.deactivate(serviceName);
+  async remove(serviceId) {
+    const deleted = await ServiceRepository.deactivate(serviceId);
     if (!deleted) {
       throw new Error("Service not found or could not be deactivated");
     }
