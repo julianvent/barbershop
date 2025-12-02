@@ -3,6 +3,8 @@
 import dotenv from "dotenv";
 dotenv.config();
 
+import rateLimit from 'express-rate-limit'
+
 import path from "path";
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -13,6 +15,14 @@ import { createDefaultAdminIfNotExist } from "./config/createDefaultAdmin.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const MAX_REQUESTS = process.env.MAX_REQUESTS || 1000
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: MAX_REQUESTS,
+  message: "Too many requests from this IP, please try again after 15 minutes"
+})
+
+app.use(limiter)
 app.use(cookieParser())
 app.use(cors());
 app.use(express.json()); // Parse JSON request bodies
