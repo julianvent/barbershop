@@ -9,25 +9,18 @@ export function signUp(data) {
   console.log(data);
 
   try {
-    axios.post(
-      signUpApiRoute,
-      data,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        }
-      }
-    );
+    axios.post(signUpApiRoute, data, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
     redirect(signInRoute);
-
-
-  }catch(error) {
+  } catch (error) {
     if (error.response) {
       console.log(error.response.data);
       console.log(error.response.status);
       console.log(error.response.headers);
     }
   }
-
-};
+}

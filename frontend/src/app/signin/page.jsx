@@ -9,10 +9,6 @@ export default function SignIn() {
         <main className={styles.main}>
           <h1>Barbershop</h1>
           <SignInForm></SignInForm>
-          <div className={styles.signUpContainer}>
-            <span>o</span>
-            <a href="/signup">regístrate</a>
-          </div>
         </main>
       </div>
     </div>

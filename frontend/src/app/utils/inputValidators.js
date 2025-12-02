@@ -3,6 +3,7 @@ export const emailValidation = {
   type: "email",
   name: "email",
   label: "Correo electrónico",
+  autoComplete: "email",
   validation: {
     required: "Requerido",
     pattern: {
@@ -16,6 +17,7 @@ export const passwordValidation = {
   id: "password",
   type: "password",
   name: "password",
+  autoComplete: "current-password",
   label: "Contraseña",
   validation: {
     required: "Requerido",
@@ -31,4 +33,3 @@ export const nameValidation = {
     required: "Requerido",
   },
 };
-
