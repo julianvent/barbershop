@@ -1,10 +1,9 @@
-export const defaultColDef={
-    resizable: true,
-    sortable: true,
-    flex: 2,
-    minWidth: 100,
-  };
-
+export const defaultColDef = {
+  resizable: true,
+  sortable: true,
+  flex: 2,
+  minWidth: 100,
+};
 
 export const appointmentColumns = [
   {
@@ -19,16 +18,15 @@ export const appointmentColumns = [
   },
   {
     headerName: "Cliente",
-    field: "customer",
+    field: "customer_name",
     width: 200,
   },
   {
     headerName: "Teléfono",
-    field: "phone",
+    field: "customer_phone",
     width: 150,
   },
 ];
-
 
 export const serviceFields = [
   {
@@ -38,19 +36,24 @@ export const serviceFields = [
   {
     headerName: "Precio",
     field: "price",
-    valueFormatter: params => params.data.price.toFixed(2),
+    valueFormatter: (params) => params.data.price.toFixed(2),
   },
   {
     headerName: "Duracion Aproximada",
     field: "duration",
-    valueFormatter: params => Math.floor(params.data.duration/60) > 1 ? Math.floor(params.data.duration/60) + ' hr ' + params.data.duration%60 + ' minutos' : params.data.duration + ' minutos',
+    valueFormatter: (params) =>
+      Math.floor(params.data.duration / 60) > 1
+        ? Math.floor(params.data.duration / 60) +
+          " hr " +
+          (params.data.duration % 60) +
+          " minutos"
+        : params.data.duration + " minutos",
   },
   {
     headerName: "Tipo",
     field: "type",
-  }
+  },
 ];
-
 
 export const employeesEntries = [
   {
