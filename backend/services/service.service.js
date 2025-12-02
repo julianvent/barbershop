@@ -6,8 +6,8 @@ export const ServiceService = {
     return ServiceRepository.list(params);
   },
 
-  async get(serviceName) {
-    const service = await ServiceRepository.getByName(serviceName);
+  async get(serviceId) {
+    const service = await ServiceRepository.getById(serviceId);
     if (!service) {
       throw new Error("Service not found");
     }
