@@ -9,12 +9,14 @@ export async function seedDatabase(sequelize) {
       { Account },
       { ServiceAppointment },
       { Appointment },
+      { Schedule },
     ] = await Promise.all([
       import("../models/service.model.js"),
       import("../models/barber.model.js"),
       import("../models/account.model.js"),
       import("../models/service.appointment.model.js"),
       import("../models/appointment.model.js"),
+      import("../models/schedule.model.js"),
     ]);
 
     await sequelize.sync({ alter: false });
@@ -33,49 +35,285 @@ export async function seedDatabase(sequelize) {
     await Service.destroy({ where: {}, truncate: true, cascade: true });
     await Barber.destroy({ where: {}, truncate: true, cascade: true });
     await Account.destroy({ where: {}, truncate: true, cascade: true });
+    await Schedule.destroy({ where: {}, truncate: true, cascade: true });
 
     // Re-enable foreign key checks
     await sequelize.query("SET FOREIGN_KEY_CHECKS = 1");
     console.log("Existing data cleared");
 
-    const services = await Service.bulkCreate([
-      {
-        name: "Corte de Cabello",
-        description: "Corte de cabello clásico o moderno, incluye lavado",
-        price: 15.0,
-        duration: 30,
-        type: "haircut",
-        status: "active",
-      },
-      {
-        name: "Arreglo de Barba",
-        description: "Recorte y perfilado de barba con navaja",
-        price: 10.0,
-        duration: 20,
-        type: "beard",
-        status: "active",
-      },
-      {
-        name: "Combo Corte + Barba",
-        description: "Corte de cabello completo más arreglo de barba",
-        price: 22.0,
-        duration: 45,
-        type: "combo",
-        status: "active",
-      },
-    ]);
-    console.log(`✓ Created ${services.length} services`);
+    // Seed all data
+    const services = await seedService(Service);
+    const barbers = await seedBarber(Barber);
+    const schedules = await seedSchedule(Schedule);
+    const accounts = await seedAccount(Account);
+    const appointments = await seedAppointment(
+      Appointment,
+      ServiceAppointment,
+      barbers,
+      services
+    );
 
-    // Seed Barber
-    const barber = await Barber.create({
-      barber_name: "Carlos Mendoza",
-      image_path: "/images/barbers/default.jpg",
-      is_active: true,
-    });
-    console.log(`✓ Created barber: ${barber.barber_name}`);
-    console.log("\n Database seeding completed successfully!");
+    console.log("\nDatabase seeding completed successfully!");
   } catch (error) {
     console.error("Error seeding database:", error);
     throw error;
   }
+}
+
+/**
+ * Seed services
+ */
+async function seedService(Service) {
+  const services = await Service.bulkCreate([
+    {
+      name: "Corte de Cabello",
+      description: "Corte de cabello clásico o moderno, incluye lavado",
+      price: 15.0,
+      duration: 30,
+      type: "haircut",
+      status: "active",
+    },
+    {
+      name: "Arreglo de Barba",
+      description: "Recorte y perfilado de barba con navaja",
+      price: 10.0,
+      duration: 20,
+      type: "beard",
+      status: "active",
+    },
+    {
+      name: "Combo Corte + Barba",
+      description: "Corte de cabello completo más arreglo de barba",
+      price: 22.0,
+      duration: 45,
+      type: "combo",
+      status: "active",
+    },
+    {
+      name: "Coloración de Cabello",
+      description: "Aplicación de color para cabello, incluye asesoría",
+      price: 40.0,
+      duration: 60,
+      type: "coloring",
+      status: "active",
+    },
+  ]);
+  console.log(`✓ Created ${services.length} services`);
+  return services;
+}
+
+/**
+ * Seed barbers
+ */
+async function seedBarber(Barber) {
+  const teamName = [
+    "SEBASTIÁN DE JESÚS HERNÁNDEZ MONTERO",
+    "ADRIÁN HERRERA JERÓNIMO",
+    "JOSÉ JULIÁN VENTURA USCANGA",
+    "CARLOS ALBERTO CARMONA LÓPEZ",
+  ];
+
+  const barbers = [];
+  for (let name of teamName) {
+    const barber = await Barber.create({
+      barber_name: name,
+      image_path: "/assets/images/monkeyBarber.png",
+      is_active: true,
+    });
+    barbers.push(barber);
+  }
+
+  const keffBarber = await Barber.create({
+    barber_name: "KEVIN SEBASTIÁN FRIAS GARCÍA",
+    image_path: "/assets/images/monkeyBarberKeff.jpg",
+    is_active: true,
+  });
+  barbers.push(keffBarber);
+
+  console.log(`✓ Created ${barbers.length} barbers`);
+  return barbers;
+}
+
+/**
+ * Seed schedules
+ */
+async function seedSchedule(Schedule) {
+  const schedules = await Schedule.bulkCreate([
+    {
+      day_of_week: "Monday",
+      start_time: "09:00:00",
+      end_time: "18:00:00",
+      is_active: true,
+    },
+    {
+      day_of_week: "Tuesday",
+      start_time: "09:00:00",
+      end_time: "18:00:00",
+      is_active: true,
+    },
+    {
+      day_of_week: "Wednesday",
+      start_time: "09:00:00",
+      end_time: "18:00:00",
+      is_active: true,
+    },
+    {
+      day_of_week: "Thursday",
+      start_time: "09:00:00",
+      end_time: "18:00:00",
+      is_active: true,
+    },
+    {
+      day_of_week: "Friday",
+      start_time: "09:00:00",
+      end_time: "18:00:00",
+      is_active: true,
+    },
+    {
+      day_of_week: "Saturday",
+      start_time: "10:00:00",
+      end_time: "16:00:00",
+      is_active: true,
+    },
+    {
+      day_of_week: "Sunday",
+      start_time: "00:00:00",
+      end_time: "00:00:00",
+      is_active: false,
+    },
+  ]);
+  console.log(`✓ Created ${schedules.length} schedules`);
+  return schedules;
+}
+
+/**
+ * Seed accounts
+ */
+async function seedAccount(Account) {
+  const { hash } = await import("../services/password.service.js");
+
+  const accountsData = [
+    {
+      full_name: "Carlos Receptionist",
+      email: "carlos.recep@barbershop.com",
+      password: "recep123",
+      role: "receptionist",
+    },
+    {
+      full_name: "Ana Receptionist",
+      email: "ana.recep@barbershop.com",
+      password: "recep123",
+      role: "receptionist",
+    },
+    {
+      full_name: "Sebastian Barber",
+      email: "sebastian@barbershop.com",
+      password: "barber123",
+      role: "barber",
+    },
+    {
+      full_name: "Kevin Barber",
+      email: "kevin@barbershop.com",
+      password: "barber123",
+      role: "barber",
+    },
+  ];
+
+  const accounts = [];
+  for (const data of accountsData) {
+    const { password, ...accountData } = data;
+    const password_hash = await hash(password);
+
+    const account = await Account.create({
+      ...accountData,
+      password_hash,
+    });
+    accounts.push(account);
+  }
+
+  console.log(`✓ Created ${accounts.length} accounts`);
+  return accounts;
+}
+
+/**
+ * Seed appointments
+ */
+async function seedAppointment(
+  Appointment,
+  ServiceAppointment,
+  barbers,
+  services
+) {
+  const appointmentsData = [
+    {
+      customer_name: "Juan Pérez",
+      customer_phone: "5551234567",
+      customer_email: "juan.perez@email.com",
+      appointment_datetime: new Date("2024-12-02T10:00:00"),
+      total_duration: 30,
+      status: "confirmed",
+      barber_id: barbers[0].id,
+      services: [services[0]], // Corte de Cabello
+    },
+    {
+      customer_name: "María García",
+      customer_phone: "5552345678",
+      customer_email: "maria.garcia@email.com",
+      appointment_datetime: new Date("2024-12-02T14:30:00"),
+      total_duration: 45,
+      status: "confirmed",
+      barber_id: barbers[1].id,
+      services: [services[2]], // Combo
+    },
+    {
+      customer_name: "Carlos López",
+      customer_phone: "5553456789",
+      customer_email: "carlos.lopez@email.com",
+      appointment_datetime: new Date("2024-12-03T11:00:00"),
+      total_duration: 20,
+      status: "pending",
+      barber_id: barbers[2].id,
+      services: [services[1]], // Barba
+    },
+    {
+      customer_name: "Ana Martínez",
+      customer_phone: "5554567890",
+      customer_email: "ana.martinez@email.com",
+      appointment_datetime: new Date("2024-12-03T16:00:00"),
+      total_duration: 50,
+      status: "confirmed",
+      barber_id: barbers[3].id,
+      services: [services[0], services[1]], // Corte + Barba
+    },
+    {
+      customer_name: "Roberto Sánchez",
+      customer_phone: "5555678901",
+      customer_email: "roberto.sanchez@email.com",
+      appointment_datetime: new Date("2024-12-04T09:30:00"),
+      total_duration: 30,
+      status: "pending",
+      barber_id: barbers[4].id,
+      services: [services[0]], // Corte
+    },
+  ];
+
+  const appointments = [];
+  for (const data of appointmentsData) {
+    const { services: appointmentServices, ...appointmentData } = data;
+    const appointment = await Appointment.create(appointmentData);
+
+    // Create service_appointment records
+    for (const service of appointmentServices) {
+      await ServiceAppointment.create({
+        appointment_id: appointment.id,
+        service_id: service.id,
+        price: service.price,
+      });
+    }
+
+    appointments.push(appointment);
+  }
+
+  console.log(`✓ Created ${appointments.length} appointments`);
+  return appointments;
 }
