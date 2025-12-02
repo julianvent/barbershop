@@ -4,7 +4,7 @@ import { requestApp } from "../helpers/request.js";
 
 const serviceRepoMock = {
   list: vi.fn(),
-  getByName: vi.fn(),
+  getById: vi.fn(),
   create: vi.fn(),
   update: vi.fn(),
   deactivate: vi.fn(),
@@ -38,7 +38,7 @@ describe("Service routes workflow", () => {
 
   test("GET /services forwards query params to repository.list", async () => {
     const payload = {
-      data: [{ name: "Skin Fade", price: 250 }],
+      data: [{ id: 1, name: "Skin Fade", price: 250 }],
       meta: { page: 2, limit: 5, total: 1, pages: 1 },
     };
     serviceRepoMock.list.mockResolvedValue(payload);
@@ -59,8 +59,9 @@ describe("Service routes workflow", () => {
     });
   });
 
-  test("GET /services/:name returns service from repository", async () => {
+  test("GET /services/:id returns service from repository", async () => {
     const service = {
+      id: 7,
       name: "Deluxe Trim",
       description: "Hot towel + cut",
       price: 350,
@@ -68,29 +69,29 @@ describe("Service routes workflow", () => {
       type: "hair",
       status: "active",
     };
-    serviceRepoMock.getByName.mockResolvedValue(service);
+    serviceRepoMock.getById.mockResolvedValue(service);
 
     const response = await requestApp(createApp(), {
-      path: "/services/Deluxe%20Trim",
+      path: "/services/7",
     });
 
     expect(response.status).toBe(200);
-    expect(serviceRepoMock.getByName).toHaveBeenCalledWith("Deluxe Trim");
+    expect(serviceRepoMock.getById).toHaveBeenCalledWith("7");
     expect(response.body).toEqual(service);
   });
 
-  test("GET /services/:name returns 404 when service is missing", async () => {
-    serviceRepoMock.getByName.mockResolvedValue(null);
+  test("GET /services/:id returns 404 when service is missing", async () => {
+    serviceRepoMock.getById.mockResolvedValue(null);
 
     const response = await requestApp(createApp(), {
-      path: "/services/Unknown",
+      path: "/services/999",
     });
 
     expect(response.status).toBe(404);
     expect(response.body?.error).toContain("Service not found");
   });
 
-  test("POST /services creates a new record when validator passes", async () => {
+  test("POST /services trims input and persists via repository", async () => {
     const payload = {
       name: "  Premium Fade  ",
       description: "Includes beard trim",
@@ -98,8 +99,7 @@ describe("Service routes workflow", () => {
       duration: 50,
       type: "hair",
     };
-    const created = { ...payload, name: "Premium Fade", status: "active" };
-    serviceRepoMock.getByName.mockResolvedValueOnce(null);
+    const created = { ...payload, name: "Premium Fade", status: "active", id: 3 };
     serviceRepoMock.create.mockResolvedValueOnce(created);
 
     const response = await requestApp(createApp(), {
@@ -109,7 +109,6 @@ describe("Service routes workflow", () => {
     });
 
     expect(response.status).toBe(201);
-    expect(serviceRepoMock.getByName).toHaveBeenCalledWith("Premium Fade");
     expect(serviceRepoMock.create).toHaveBeenCalledWith({
       ...payload,
       name: "Premium Fade",
@@ -117,7 +116,19 @@ describe("Service routes workflow", () => {
     expect(response.body).toEqual(created);
   });
 
-  test("POST /services prevents duplicates before repository.create", async () => {
+  test("POST /services rejects missing fields before hitting repository", async () => {
+    const response = await requestApp(createApp(), {
+      method: "POST",
+      path: "/services",
+      body: { name: "Edge Up" },
+    });
+
+    expect(response.status).toBe(400);
+    expect(response.body?.error).toContain("Missing required field");
+    expect(serviceRepoMock.create).not.toHaveBeenCalled();
+  });
+
+  test("POST /services surfaces duplicate error from repository", async () => {
     const payload = {
       name: "Premium Fade",
       description: "Includes beard trim",
@@ -125,7 +136,7 @@ describe("Service routes workflow", () => {
       duration: 50,
       type: "hair",
     };
-    serviceRepoMock.getByName.mockResolvedValueOnce({ name: "Premium Fade" });
+    serviceRepoMock.create.mockRejectedValueOnce(new Error("duplicate"));
 
     const response = await requestApp(createApp(), {
       method: "POST",
@@ -135,65 +146,69 @@ describe("Service routes workflow", () => {
 
     expect(response.status).toBe(400);
     expect(response.body?.error).toContain("already exists");
-    expect(serviceRepoMock.create).not.toHaveBeenCalled();
   });
 
-  test("PUT /services/:name updates the resource and checks conflicts", async () => {
+  test("PUT /services/:id updates the resource", async () => {
     const updatePayload = {
-      name: "Luxury Fade",
       price: 320,
+      status: "inactive",
     };
     const updated = {
-      ...updatePayload,
-      description: "Updated",
+      id: 2,
+      name: "Premium Fade",
+      description: "Updated desc",
       duration: 45,
       type: "hair",
-      status: "active",
+      ...updatePayload,
     };
-    serviceRepoMock.getByName
-      .mockResolvedValueOnce({
-        name: "Premium Fade",
-        description: "Old",
-        duration: 45,
-        price: 300,
-        type: "hair",
-        status: "active",
-      })
-      .mockResolvedValueOnce(null);
+    serviceRepoMock.getById.mockResolvedValueOnce({
+      id: 2,
+      name: "Premium Fade",
+    });
     serviceRepoMock.update.mockResolvedValueOnce(updated);
 
     const response = await requestApp(createApp(), {
       method: "PUT",
-      path: "/services/Premium%20Fade",
+      path: "/services/2",
       body: updatePayload,
     });
 
     expect(response.status).toBe(200);
-    expect(serviceRepoMock.update).toHaveBeenCalledWith(
-      "Premium Fade",
-      updatePayload
-    );
+    expect(serviceRepoMock.getById).toHaveBeenCalledWith("2");
+    expect(serviceRepoMock.update).toHaveBeenCalledWith("2", updatePayload);
     expect(response.body).toEqual(updated);
   });
 
-  test("DELETE /services/:name deactivates the service", async () => {
+  test("PUT /services/:id rejects invalid fields and skips repository", async () => {
+    const response = await requestApp(createApp(), {
+      method: "PUT",
+      path: "/services/2",
+      body: { invalid: true },
+    });
+
+    expect(response.status).toBe(400);
+    expect(response.body?.error).toContain("Invalid field");
+    expect(serviceRepoMock.update).not.toHaveBeenCalled();
+  });
+
+  test("DELETE /services/:id deactivates the service", async () => {
     serviceRepoMock.deactivate.mockResolvedValueOnce(true);
 
     const response = await requestApp(createApp(), {
       method: "DELETE",
-      path: "/services/Premium%20Fade",
+      path: "/services/5",
     });
 
     expect(response.status).toBe(204);
-    expect(serviceRepoMock.deactivate).toHaveBeenCalledWith("Premium Fade");
+    expect(serviceRepoMock.deactivate).toHaveBeenCalledWith("5");
   });
 
-  test("DELETE /services/:name returns 404 when repository reports no change", async () => {
+  test("DELETE /services/:id returns 404 when repository reports no change", async () => {
     serviceRepoMock.deactivate.mockResolvedValueOnce(false);
 
     const response = await requestApp(createApp(), {
       method: "DELETE",
-      path: "/services/Unknown",
+      path: "/services/5",
     });
 
     expect(response.status).toBe(404);
