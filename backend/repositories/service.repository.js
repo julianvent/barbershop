@@ -46,7 +46,9 @@ export const ServiceRepository = {
   },
 
   async getById(id){
-      const existing_service = await Service.findByPk(id);
+      const existing_service = await Service.findByPk(id, {
+        attributes: RETURN_ATTRS,
+      });
       if(!existing_service)
           throw new Error("Service not found");
       return existing_service;
