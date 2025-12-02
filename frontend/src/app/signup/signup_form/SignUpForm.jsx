@@ -7,7 +7,6 @@ import * as validators from "@/app/utils/inputValidators";
 import { signUp } from "../api/signUp";
 import ConfirmPasswordInput from "@/app/components/form/input/ConfirmPasswordInput";
 import { useRouter } from "next/navigation";
-import { signInRoute } from "@/app/utils/routes";
 
 export default function SignUpForm() {
   const [signingUp, setSigningUp] = useState();

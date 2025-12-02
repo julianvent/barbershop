@@ -16,6 +16,8 @@ const Input = ({
     formState: { errors },
   } = useFormContext();
 
+  const errorId = `${id}-error`;
+
   return (
     <div className={styles.field}>
       <label htmlFor={id}>{label}</label>
@@ -26,9 +28,15 @@ const Input = ({
         autoComplete={autoComplete}
         defaultValue={defaultValue}
         disabled={disabled}
+        aria-invalid={!!errors[id]}
+        aria-describedby={errors[id] ? errorId : undefined}
         {...register(id, validation)}
       />
-      {errors[id] && <span role="alert">{errors[id].message}</span>}
+      {errors[id] && (
+        <span id={errorId} role="alert" aria-live="assertive">
+          {errors[id].message}
+        </span>
+      )}
     </div>
   );
 };
