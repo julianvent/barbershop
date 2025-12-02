@@ -95,40 +95,40 @@ export default function showAppointment({ params }) {
           </div>
         </div>
 
-        {/* <div className={styles.columns}>
+        <div className={styles.columns}>
           <div>
             <h3>Servicios Ofrecidos</h3>
             <div className={styles.table}>
               <table>
                 <tbody>
-                  {services.map((e) => {
-                    if (e.tipo == "Paquete") {
-                      return (
-                        <tr key={e.id}>
-                          <td>{e.name}</td>
-                          <td className={styles.noBold}>
-                            <div
-                              dangerouslySetInnerHTML={{
-                                __html: e.descripcion.trim(),
-                              }}
-                            />
-                          </td>
-                        </tr>
-                      );
-                    } else {
-                      return (
-                        <tr key={e.id}>
-                          <td>{e.name}</td>
-                          <td>{e.descripcion}</td>
-                        </tr>
-                      );
-                    }
-                  })}
+                  {appointment &&
+                    appointment.services.map((e) => {
+                      if (e.tipo == "Paquete") {
+                        return (
+                          <tr key={e.id}>
+                            <td>{e.name}</td>
+                            <td className={styles.noBold}>
+                              <div
+                                dangerouslySetInnerHTML={{
+                                  __html: e.descripcion.trim(),
+                                }}
+                              />
+                            </td>
+                          </tr>
+                        );
+                      } else {
+                        return (
+                          <tr key={e.id}>
+                            <td>{e.name}</td>
+                          </tr>
+                        );
+                      }
+                    })}
                 </tbody>
               </table>
             </div>
           </div>
-        </div> */}
+        </div>
 
         {appointment && (
           <Buttons model={appointment} modelType={"appointment"} />

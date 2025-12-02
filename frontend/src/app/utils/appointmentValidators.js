@@ -21,7 +21,7 @@ export const phoneValidation = {
 };
 
 export const dateValidation = {
-  id: "appointment_date",
+  id: "date",
   type: "date",
   label: "Fecha programada",
   validation: {
@@ -30,7 +30,7 @@ export const dateValidation = {
 };
 
 export const timeValidation = {
-  id: "appointment_time",
+  id: "time",
   validation: {
     required: "Selecciona un horario",
   },
