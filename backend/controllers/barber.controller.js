@@ -11,7 +11,7 @@ export const BarberController = {
             const result = await BarberService.list(filters)
             const data = result.data.map(barber => ({
                 ...barber.get?.() ?? barber,
-                image_path: generateImageUrl(req, barber.image_path)
+                image_path: generateImageUrl(barber.image_path)
             }));
             res.json({
                 data,
@@ -25,7 +25,7 @@ export const BarberController = {
         try {
             const { id } = req.params;
             const barber = await BarberService.find(id);
-            barber.image_path = generateImageUrl(req, barber.image_path)
+            barber.image_path = generateImageUrl(barber.image_path)
             res.status(200).json(barber);
         } catch (error) {
             res.status(404).json({ message: error.message });
@@ -42,7 +42,7 @@ export const BarberController = {
             const file = req.files?.[0];
             if (file) barberData.image_path = file.filename;
             const newBarber = await BarberService.create(barberData);
-            newBarber.image_path = generateImageUrl(req, newBarber.image_path)
+            newBarber.image_path = generateImageUrl(newBarber.image_path)
             res.status(201).json(newBarber)
         } catch(error) {
             res.status(500).json({ error: error.message })
@@ -59,7 +59,7 @@ export const BarberController = {
             const file = req.files?.[0];
             if (file) barberData.image_path = file.filename;
             const updateBarber = await BarberService.update(id, barberData);
-            updateBarber.image_path = generateImageUrl(req, newBarber.image_path);
+            updateBarber.image_path = generateImageUrl(newBarber.image_path);
             res.status(200).json(updateBarber)
         } catch(error) {
             res.status(500).json({ error: error.message })
