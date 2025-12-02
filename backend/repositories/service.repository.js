@@ -2,6 +2,7 @@ import { Service } from "../models/service.model.js";
 import { Op } from "sequelize";
 
 const RETURN_ATTRS = [
+  "id",
   "name",
   "description",
   "price",
@@ -11,7 +12,7 @@ const RETURN_ATTRS = [
 ];
 
 export const ServiceRepository = {
-  async list({ page = 1, limit = 10, q = "", sort = "name", dir = "ASC" }) {
+  async list({ page = 1, limit = 10, q = "", sort = "id", dir = "ASC" }) {
     page = Number(page);
     limit = Number(limit);
     const offset = (page - 1) * limit;
@@ -25,7 +26,7 @@ export const ServiceRepository = {
         }
       : undefined;
 
-    const sortable = new Set(["name", "price", "duration", "type", "id"]);
+    const sortable = new Set(["id","name", "price", "duration", "type", "status"]);
     if (!sortable.has(sort)) {
       sort = "name";
     }
@@ -42,14 +43,6 @@ export const ServiceRepository = {
       data: rows,
       meta: { page, limit, total: count, pages: Math.ceil(count / limit) },
     };
-  },
-
-  async getByName(name) {
-    const service = await Service.findOne({
-      where: { name },
-      attributes: RETURN_ATTRS,
-    });
-    return service;
   },
 
   async getById(id){
