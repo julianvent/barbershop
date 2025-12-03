@@ -1,22 +1,22 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { getAppointment } from "../../api/appointments";
-import CreateNewLayout from "@/app/components/base_layout/CreateNew/CreateNewLayout";
 import { appointmentsRoute } from "@/app/utils/routes";
 import AppointmentForm from "../../AppointmentForm/AppointmentForm";
+import Layout from "@/app/components/base_layout/Layout";
 
 export default function UpdateAppointment({ params }) {
   const { id } = React.use(params);
   const appointment = useAppointment(id);
 
   return (
-    <CreateNewLayout title={"Actualizar cita"} returnRoute={appointmentsRoute}>
+    <Layout mainTitle={"Actualizar cita"} headerTitle={"Modificar datos"}>
       {appointment ? (
         <AppointmentForm appointment={appointment}></AppointmentForm>
       ) : (
         <p style={{ textAlign: "center" }}>Cargando...</p>
       )}
-    </CreateNewLayout>
+    </Layout>
   );
 }
 
