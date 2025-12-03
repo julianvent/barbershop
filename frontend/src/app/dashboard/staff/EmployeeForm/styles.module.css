@@ -46,7 +46,7 @@
     display: flex;
 }
 
-.columns > div {
+.columns > article {
     width: 70%;
 }
 .columns > .imageContainer {
@@ -56,6 +56,10 @@
 .errorMessage {
   color: #dc2626;
   margin-bottom: 1rem;   
+}
+
+.header{
+    padding: 2%;
 }
 
 
@@ -91,34 +95,53 @@
 
 
 @media (width <=800px) {
-    .fieldsContainer {
-        min-width: fit-content;
+    .columns {
         display: grid;
-        margin: 0
+    }
+    .fieldsContainer {
+        display: grid;
+        width: 99%;
+        margin: 0%;
     }
 
     .row {
         display: grid;
-        margin: 1%;
-        display: flexbox;
+        padding: 0;
+        margin: 0;
+        
     }
 
     .row div {
-        width: 100%;
+        width: 90%;
     }
 
-    .columns{
-        display: grid ;
+    .row input[type="file"] {
+        color: transparent;
     }
 
     .columns > .imageContainer {
-        width: 100%;
+        justify-content: center;
+        width: 94%;
+        height: 100vw;
     }
-    .columns > div {
+
+    .imageFitBack{
+        height: 100vw;
+        object-fit:contain;
+        background-color: #252525;
+    }
+    .columns > article {
         width: 100%;
         margin: 0;
         margin-left:1%;
         display: flexbox;
+    }
+
+    .buttons{
+        margin-top: 10%;
+        margin-bottom: 10%;
+        gap: 1em;
+        justify-self: center;
     }
 
 }

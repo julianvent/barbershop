@@ -6,9 +6,6 @@ import { useRouter } from "next/navigation";
 
 export default function Buttons({model,modelType}){
     let id = model.id
-    if(modelType == 'service'){
-        id = encodeURIComponent(model.name)
-    }
     const router = useRouter();
     let routes = {}
     switch (modelType){

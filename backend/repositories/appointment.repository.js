@@ -158,8 +158,55 @@ export const AppointmentRepository = {
     if (!existingAppointment) {
       throw new Error("Appointment not found");
     }
+
+    
+    if (appointment.services_ids && appointment.services_ids.length > 0) {
+      let sum_duration = 0;
+      const services = [];
+
+      
+      for (const service_id of appointment.services_ids) {
+        const service = await ServiceRepository.getById(service_id);
+        sum_duration += service.duration;
+        services.push(service);
+      }
+
+      
+      if (appointment.total_duration == null) {
+        appointment.total_duration = sum_duration;
+      }
+
+      
+      await ServiceAppointment.destroy({
+        where: { appointment_id: id },
+      });
+
+      
+      for (const service of services) {
+        await ServiceAppointment.create({
+          service_id: service.id,
+          appointment_id: id,
+          price: service.price,
+        });
+      }
+    }
+
+    
     await existingAppointment.update(appointment);
-    return existingAppointment;
+
+    
+    const updatedServices = await this.getServiceByAppointmentId(id);
+    const serviceDetails = await Promise.all(
+      updatedServices.map(async (sa) => {
+        const service = await ServiceRepository.getById(sa.service_id);
+        return { id: service.id, name: service.name };
+      })
+    );
+
+    return {
+      ...existingAppointment.toJSON(),
+      services: serviceDetails,
+    };
   },
   async delete(id) {
     const existingAppointment = await Appointment.findByPk(id);

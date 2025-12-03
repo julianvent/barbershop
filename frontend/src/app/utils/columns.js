@@ -42,7 +42,7 @@ export const serviceFields = [
     headerName: "Duracion Aproximada",
     field: "duration",
     valueFormatter: (params) =>
-      Math.floor(params.data.duration / 60) > 1
+      Math.floor(params.data.duration / 60) >= 1
         ? Math.floor(params.data.duration / 60) +
           " hr " +
           (params.data.duration % 60) +
