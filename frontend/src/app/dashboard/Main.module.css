@@ -40,6 +40,7 @@
 @media (width <=800px) {
     .layout {
         padding: 1em 0.6em;
+        min-height: auto;
     }
 
     .toolbar h1 {

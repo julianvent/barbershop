@@ -19,22 +19,23 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 export default function Page() {
   const router = useRouter();
   const [employees, setEmployees] = useState();
-  let message = 'No se han registrado los servicios';
-
+  const [message, setMessage] = useState(null);
+  
   useEffect(() => {
+    setMessage('No se han registrado los servicios');
     const fetch = async () => {
       try{
         const data = await getEmployees();
         setEmployees(data.data);
 
       }catch (err){
-        message = 'Error al obtener los registros de los barberos'
+        setEmployees([]);
+        setMessage(err);
       }
     }
 
     fetch();
   },[]);
-
 
   const actions = [
     {
@@ -92,6 +93,7 @@ export default function Page() {
           </button>
         </div>
         <div className={styles.tableContainer}>
+          
           <AgGridReact
             defaultColDef={defaultColDef}
             rowData={employees}

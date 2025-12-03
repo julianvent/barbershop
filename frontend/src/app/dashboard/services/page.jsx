@@ -19,12 +19,19 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 
 export default function Services() {
   const router = useRouter();
-  const [services, setServices] = useState([]);
+  const [services, setServices] = useState(null);
+  const [message,setMessage] = useState(null);
 
   useEffect(() => {
     const fetch = async() =>{
-      const data = await getServices();
-      setServices(data)
+      try{
+        const data = await getServices();
+        setServices(data)
+        
+      }catch(err){
+        setServices([]);
+        setMessage(err);
+      }
 
     }
     fetch();
@@ -68,7 +75,7 @@ export default function Services() {
       field: "id",
       cellRenderer: (params) => {
         const service = params.data;
-        return <ActionButton name={service.name} actions={actions} />;
+        return <ActionButton name={service.id} actions={actions} />;
       },
       flex: 1,
     },
@@ -94,7 +101,7 @@ export default function Services() {
             defaultColDef={defaultColDef}
             rowData={services}
             columnDefs={fields}
-              overlayNoRowsTemplate={`No se han registrado servicios`}
+            overlayNoRowsTemplate={message}
           />
         </div>
       </div>
