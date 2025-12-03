@@ -14,7 +14,7 @@ import {
   timeValidation,
 } from "@/app/utils/appointmentValidators";
 import { useEffect, useState } from "react";
-import { servicesEntries, status, timesAvailable } from "../../../utils/data";
+import { status, timesAvailable } from "../../../utils/data";
 import { useRouter } from "next/navigation";
 import { appointmentsRoute } from "@/app/utils/routes";
 import { createAppointment, updateAppointment } from "../api/appointments";
@@ -30,23 +30,23 @@ export default function AppointmentForm({ appointment, mode }) {
   const barbers = useBarbers();
   const services = useServices();
 
-  const parsedAppointment = appointment && parseAppointment(appointment);
-
-  const methods = useForm({
-    defaultValues: parsedAppointment || {},
-  });
+  const methods = useForm({ defaultValues: {} });
 
   const onSubmit = (data) => {
-    if (parsedAppointment) updateAppointment(data);
+    methods.clearErrors();
+    if (appointment) updateAppointment(data);
     else createAppointment(data);
+
     router.push(appointmentsRoute);
   };
 
   useEffect(() => {
-    if (parsedAppointment) {
+    if (appointment) {
+      const parsedAppointment = parseAppointment(appointment);
+      methods.reset(parsedAppointment);
       setSelectedBarber(parsedAppointment.barber_id);
     }
-  }, [selectedBarber]);
+  }, [appointment, methods]);
 
   return (
     <FormProvider {...methods}>
@@ -92,7 +92,7 @@ export default function AppointmentForm({ appointment, mode }) {
           </div>
           <div className={styles.buttons}>
             <button>
-              {parsedAppointment ? "Confirmar cambios" : "Programar cita"}
+              {appointment ? "Confirmar cambios" : "Programar cita"}
             </button>
           </div>
         </div>
@@ -130,21 +130,22 @@ function useServices() {
         console.error("Error fetching services");
       }
     }
-
     fetchServices();
   }, []);
   return services;
 }
 
 function parseAppointment(appointment) {
-  const parsed = appointment;
-  const barberIdToString = parsed.barber.barber_id.toString();
-  parsed.barber_id = barberIdToString;
+  const parsed = { ...appointment };
 
-  const services = parsed.services.map((service) => service.id + "");
-  parsed.services_ids = services;
+  // convert barber id into a string, since radio input works with string values
+  parsed.barber_id = String(parsed.barber?.barber_id ?? parsed.barber_id ?? "");
 
-  console.log(parsed);
+  // convert services ids into strings, since checkbox input works with string values
+  const services_ids = (parsed.services || []).map((service) =>
+    String(service.id)
+  );
+  parsed.services_ids = services_ids;
 
   return parsed;
 }

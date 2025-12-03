@@ -6,7 +6,7 @@ import { getServicesApiRoute } from "./routes";
 
 export const getServices = async () => {
   try {
-    const headers = axiosConfig();
+    const headers = await axiosConfig();
     const request = await axios.get(getServicesApiRoute, headers);
     const data = request.data.data;
     return data;

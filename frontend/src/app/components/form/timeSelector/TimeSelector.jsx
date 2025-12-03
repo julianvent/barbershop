@@ -9,7 +9,10 @@ export default function TimeSelector({ times, id, validation }) {
   } = useFormContext();
 
   return (
-    <fieldset {...register(id, validation)} className={styles.timeContainer}>
+    <fieldset
+      {...register(id, { ...validation })}
+      className={styles.timeContainer}
+    >
       <span className={styles.fieldsTitle}>Hora programada</span>
       <div className={styles.times}>
         {times.map((time) => (

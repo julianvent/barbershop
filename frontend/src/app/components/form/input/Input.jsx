@@ -30,7 +30,7 @@ const Input = ({
         disabled={disabled}
         aria-invalid={!!errors[id]}
         aria-describedby={errors[id] ? errorId : undefined}
-        {...register(id, validation)}
+        {...register(id, { ...validation })}
       />
       {errors[id] && (
         <span id={errorId} role="alert" aria-live="assertive">
