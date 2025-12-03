@@ -1,6 +1,10 @@
 import { axiosConfig } from "@/app/utils/requestBuilder";
 import axios from "axios";
-import { getAppointmentsApiRoute, updateAppointmentApiRoute } from "./routes";
+import {
+  createAppointmentApiRoute,
+  getAppointmentsApiRoute,
+  updateAppointmentApiRoute,
+} from "./routes";
 
 export async function getAppointments() {
   try {
@@ -39,8 +43,18 @@ export async function getAppointment(appointmentId) {
   }
 }
 
-export function createAppointment(data) {
-  console.log(data);
+export async function createAppointment(data) {
+  try {
+    // NOTE: This operation doesn't require auth
+    // -- parse data --
+    const parsedData = { ...data };
+    parsedData.appointment_datetime = convertDateToISOString(data);
+    const res = await axios.post(createAppointmentApiRoute, parsedData);
+
+    return res;
+  } catch (error) {
+    throw error;
+  }
 }
 
 export async function updateAppointment(data) {

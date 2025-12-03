@@ -1,4 +1,5 @@
 "use client";
+
 import Input from "@/app/components/form/input/Input";
 import Select from "@/app/components/form/input/Select";
 import styles from "./Appointment-Form.module.css";
@@ -16,13 +17,13 @@ import {
 import { useEffect, useState } from "react";
 import { status, timesAvailable } from "../../../utils/data";
 import { useRouter } from "next/navigation";
-import { appointmentsRoute } from "@/app/utils/routes";
 import { createAppointment, updateAppointment } from "../api/appointments";
 import BarberSelector from "@/app/components/form/barberSelector/BarberSelector";
 import TimeSelector from "@/app/components/form/timeSelector/TimeSelector";
 import ServiceSelector from "@/app/components/form/serviceSelector/ServiceSelector";
 import { getEmployees } from "../../staff/api/employees";
 import { getServices } from "../../services/api/services";
+import { appointmentsRoute } from "@/app/utils/routes";
 
 export default function AppointmentForm({ appointment, mode }) {
   const [selectedBarber, setSelectedBarber] = useState(null);
@@ -32,12 +33,17 @@ export default function AppointmentForm({ appointment, mode }) {
 
   const methods = useForm({ defaultValues: {} });
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     methods.clearErrors();
-    if (appointment) updateAppointment(data);
-    else createAppointment(data);
 
-    router.push(appointmentsRoute);
+    try {
+      if (appointment) await updateAppointment(data);
+      else await createAppointment(data);
+      router.push(appointmentsRoute);
+    } catch (error) {
+      // TODO: Show error properly
+      console.error(error);
+    }
   };
 
   useEffect(() => {
@@ -91,8 +97,14 @@ export default function AppointmentForm({ appointment, mode }) {
             </fieldset>
           </div>
           <div className={styles.buttons}>
-            <button>
-              {appointment ? "Confirmar cambios" : "Programar cita"}
+            <button disabled={methods.formState.isSubmitting}>
+              {methods.formState.isSubmitting
+                ? appointment
+                  ? "Actualizando..."
+                  : "Programando cita..."
+                : appointment
+                ? "Confirmar cambios"
+                : "Programar cita"}
             </button>
           </div>
         </div>
