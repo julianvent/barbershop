@@ -16,7 +16,7 @@ export default function TimeSelector({ times, id, validation }) {
       <span className={styles.fieldsTitle}>Hora programada</span>
       <div className={styles.times}>
         {times.map((time) => (
-          <TimeRadio key={time.id} time={time} id={id}></TimeRadio>
+          <TimeRadio key={time} time={time} id={id}></TimeRadio>
         ))}
       </div>
       {errors[id] && (

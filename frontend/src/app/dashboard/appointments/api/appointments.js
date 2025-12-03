@@ -3,6 +3,7 @@ import axios from "axios";
 import {
   createAppointmentApiRoute,
   getAppointmentsApiRoute,
+  getAvailabilityApiRoute,
   updateAppointmentApiRoute,
 } from "./routes";
 
@@ -73,6 +74,22 @@ export async function updateAppointment(data) {
     );
 
     return res;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function getAvailabity(barberId, date) {
+  const params = new URLSearchParams();
+  params.append("barber_id", barberId);
+
+  if (date) {
+    params.append("from", date);
+  }
+
+  try {
+    const res = await axios.get(getAvailabilityApiRoute, { params });
+    return res.data;
   } catch (error) {
     throw error;
   }
