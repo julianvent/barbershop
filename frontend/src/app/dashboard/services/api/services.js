@@ -29,6 +29,8 @@ export const createService = async (data) => {
         }
         throw message;
     }
+    throw message;
+  }
 };
 
 export const updateService = async (data,name) => {
@@ -45,12 +47,14 @@ export const updateService = async (data,name) => {
 };
 
 export const createBundle = async (data, servis) => {
-    const servs = servis.filter(s => data.services.includes(s.name));
-    let rows = '';
-    let duration = 0;
+  const servs = servis.filter((s) => data.services.includes(s.name));
+  let rows = "";
+  let duration = 0;
 
-    for(const service of servs){
-        rows = rows + `          
+  for (const service of servs) {
+    rows =
+      rows +
+      `
         <tr>
             <td style="padding:6px 8px; width:120px; font-weight:600;">${service.name}</td>
             <td style="padding:6px 8px;">
@@ -58,10 +62,9 @@ export const createBundle = async (data, servis) => {
             </td>
         </tr>
           `;
-        duration += service.duration;
-
-    }
-    const description = `
+    duration += service.duration;
+  }
+  const description = `
     <p>${data.description}</p>
     <h3 style="font-size:1.1rem; margin-top:4rem; margin-bottom:0.5rem;">Servicios que incluye</h3>
       <table style="border-collapse:collapse; width:100%; font-family:Arial, sans-serif;">
@@ -71,16 +74,15 @@ export const createBundle = async (data, servis) => {
       </table>
     `;
 
-    data.description = description;
-    data.duration = duration;
-    data.type = 'Paquete';
-    const {services, ...newData} = data;
-    try{
-        await createService(newData);
-    }catch(err){
-        throw err;
-    }
-
+  data.description = description;
+  data.duration = duration;
+  data.type = "Paquete";
+  const { services, ...newData } = data;
+  try {
+    await createService(newData);
+  } catch (err) {
+    throw err;
+  }
 };
 
 export const getService = async (name) => {

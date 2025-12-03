@@ -4,14 +4,10 @@ import ServiceCheckbox from "../checkbox/ServiceCheckbox";
 
 export default function ServiceSelector({ services, id, validation }) {
   const {
-    register,
     formState: { errors },
   } = useFormContext();
   return (
-    <fieldset
-      {...register(id, validation)}
-      className={styles.servicesContainer}
-    >
+    <fieldset className={styles.servicesContainer}>
       <span className={styles.fieldsTitle}>Servicios</span>
       <div className={styles.services}>
         {services.map((service) => (
@@ -19,6 +15,7 @@ export default function ServiceSelector({ services, id, validation }) {
             key={service.id}
             service={service}
             id={id}
+            validation={validation}
           ></ServiceCheckbox>
         ))}
       </div>

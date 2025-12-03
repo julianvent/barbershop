@@ -1,7 +1,7 @@
 import { useFormContext } from "react-hook-form";
 import styles from "./Barber-Card.module.css";
 
-export default function BarberCard({ id, barber, onChange }) {
+export default function BarberCard({ id, barber, onChange, validation }) {
   const { register } = useFormContext();
   return (
     <div className={styles.card}>
@@ -12,9 +12,7 @@ export default function BarberCard({ id, barber, onChange }) {
         <input
           type="radio"
           value={barber.id}
-          {...register(id, {
-            onChange: onChange,
-          })}
+          {...register(id, { ...validation, onChange: onChange })}
         />
         <label>
           <p>{barber.barber_name}</p>
