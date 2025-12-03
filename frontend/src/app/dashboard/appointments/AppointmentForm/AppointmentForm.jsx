@@ -3,7 +3,7 @@
 import Input from "@/app/components/form/input/Input";
 import Select from "@/app/components/form/input/Select";
 import styles from "./Appointment-Form.module.css";
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, useForm, useWatch } from "react-hook-form";
 import {
   barberValidation,
   customerEmailValidation,
@@ -15,9 +15,13 @@ import {
   timeValidation,
 } from "@/app/utils/appointmentValidators";
 import { useEffect, useState } from "react";
-import { status, timesAvailable } from "../../../utils/data";
+import { status } from "../../../utils/data";
 import { useRouter } from "next/navigation";
-import { createAppointment, updateAppointment } from "../api/appointments";
+import {
+  createAppointment,
+  getAvailabity,
+  updateAppointment,
+} from "../api/appointments";
 import BarberSelector from "@/app/components/form/barberSelector/BarberSelector";
 import TimeSelector from "@/app/components/form/timeSelector/TimeSelector";
 import ServiceSelector from "@/app/components/form/serviceSelector/ServiceSelector";
@@ -26,12 +30,20 @@ import { getServices } from "../../services/api/services";
 import { appointmentsRoute } from "@/app/utils/routes";
 
 export default function AppointmentForm({ appointment, mode }) {
-  const [selectedBarber, setSelectedBarber] = useState(null);
+  const [availableTimes, setAvailableTimes] = useState([]);
+
   const router = useRouter();
   const barbers = useBarbers();
   const services = useServices();
 
   const methods = useForm({ defaultValues: {} });
+
+  // -- watch values --
+  const barber_id = useWatch({
+    name: barberValidation.id,
+    control: methods.control,
+  });
+  const date = useWatch({ name: dateValidation.id, control: methods.control });
 
   const onSubmit = async (data) => {
     methods.clearErrors();
@@ -50,9 +62,27 @@ export default function AppointmentForm({ appointment, mode }) {
     if (appointment) {
       const parsedAppointment = parseAppointment(appointment);
       methods.reset(parsedAppointment);
-      setSelectedBarber(parsedAppointment.barber_id);
     }
   }, [appointment, methods]);
+
+  useEffect(() => {
+    if (barber_id) {
+      async function fetchAvailability(barberId) {
+        try {
+          const data = await getAvailabity(barberId, date);
+          const barberSlots = data.barbers.filter(
+            (barber) => barber.barberId === barberId
+          );
+          const times = barberSlots[0].slots;
+
+          setAvailableTimes(times);
+        } catch (error) {
+          console.error(error);
+        }
+      }
+      fetchAvailability(barber_id);
+    }
+  }, [barber_id, date]);
 
   return (
     <FormProvider {...methods}>
@@ -71,7 +101,6 @@ export default function AppointmentForm({ appointment, mode }) {
             <h2>Selecciona un barbero</h2>
             <BarberSelector
               barbers={barbers}
-              onChange={(e) => setSelectedBarber(e.target.value)}
               {...barberValidation}
             ></BarberSelector>
           </div>
@@ -79,16 +108,16 @@ export default function AppointmentForm({ appointment, mode }) {
           <div className={styles.fieldsContainer}>
             <h2>Datos de la cita</h2>
             <fieldset
-              disabled={!selectedBarber}
+              disabled={!barber_id}
               className={styles.appointmentFields}
             >
               {mode !== "customer" && (
                 <Select options={status} {...statusValidation}></Select>
               )}
-              <Input {...dateValidation}></Input>
+              <Input {...dateValidation} onChange={(e) => {}}></Input>
               <TimeSelector
                 {...timeValidation}
-                times={timesAvailable}
+                times={availableTimes}
               ></TimeSelector>
               <ServiceSelector
                 {...serviceValidation}

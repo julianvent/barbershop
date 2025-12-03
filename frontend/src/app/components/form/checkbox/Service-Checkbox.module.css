@@ -2,6 +2,7 @@
     display: flex;
     gap: 0.5em;
     max-width: fit-content;
+    max-height: fit-content;
     font-size: 0.9rem;
     align-items: center;
 }

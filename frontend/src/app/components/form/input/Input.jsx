@@ -10,6 +10,7 @@ const Input = ({
   autoComplete,
   defaultValue,
   disabled,
+  onChange,
 }) => {
   const {
     register,
@@ -30,7 +31,7 @@ const Input = ({
         disabled={disabled}
         aria-invalid={!!errors[id]}
         aria-describedby={errors[id] ? errorId : undefined}
-        {...register(id, { ...validation })}
+        {...register(id, { ...validation, onChange: onChange })}
       />
       {errors[id] && (
         <span id={errorId} role="alert" aria-live="assertive">

@@ -8,10 +8,10 @@ export default function TimeRadio({ id, time, onChange }) {
     <div className={styles.timeRadioContainer}>
       <input
         type="radio"
-        value={`${time.hour}:${time.minutes}`}
+        value={`${time}`}
         {...register(id, { onChange: onChange })}
       />
-      <label>{`${time.hour}:${time.minutes}`}</label>
+      <label>{`${time}`}</label>
     </div>
   );
 }
