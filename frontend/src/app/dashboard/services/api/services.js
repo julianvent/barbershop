@@ -1,7 +1,5 @@
 import { axiosConfig } from "@/app/utils/requestBuilder";
-import { servicesRoute } from "@/app/utils/routes";
 import axios from "axios";
-import { redirect } from "next/navigation";
 
 export const getServices = async () => {
     try{
@@ -11,20 +9,22 @@ export const getServices = async () => {
         return data;
 
     }catch(error){
-        console.log(error);
+        throw 'No se pudieron recuperar los servicios';
     }
 };
 
 export const createService = async (data) => {
     try{
-        const headers = axiosConfig();
+        const headers = await axiosConfig();
         await axios.post( '/api/services',data, headers);
     }catch(err){
         let message = 'Ocurrio un error en el servidor';
         const error = err.response?.data.error;
         if(error){
             if(error == 'A service with that name already exists'){
-                message = 'Un servicio ya tiene ese nombre'
+                message = 'Un servicio ya tiene ese nombre';
+            }else if(error == 'Missing required field: type'){
+                message = 'No se adjunto el tipo de servicio';
             }
         }
         throw message;
@@ -33,7 +33,8 @@ export const createService = async (data) => {
 
 export const updateService = async (data,name) => {
     try{
-        const headers = axiosConfig();
+        const headers = await axiosConfig();
+        delete data.id;
         await axios.put( '/api/services/'+name,data, headers);
         return null;
     }catch(err){
@@ -84,22 +85,21 @@ export const createBundle = async (data, servis) => {
 
 export const getService = async (name) => {
     try{
-        const headers = axiosConfig();
+        const headers = await axiosConfig();
         const uri = '/api/services/'+name;
         const request = await axios.get(uri,headers);
         return request.data;
     }catch(error){
-        console.log(error);
+        throw 'Error recuperando servicio';
     }
 };
 
 export const deleteService = async (name) => {
-    const headers = axiosConfig();
+    const headers = await axiosConfig();
     const uri = '/api/services/'+name;
     try{
         await axios.delete(uri,headers);
     }catch (err){
-        console.log(err);
         throw "Error en el servidor";
     }
 }

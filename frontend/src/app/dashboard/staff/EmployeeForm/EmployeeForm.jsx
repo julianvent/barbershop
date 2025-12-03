@@ -71,50 +71,48 @@ export default function EmployeeForm({onSubmit,employee}){
 
             }}>
                 
-                <div className={styles.fieldsContainer}>
+                <article className={styles.fieldsContainer}>
                     <div className={styles.columns}>
-                    <div className={styles.imageContainer}>
-                        <img
-                            src={employee && !preview ? '/api/' + employee.image_path : (preview ? preview : '/image.svg')}
-                            alt="Imagen del personal"
-                            className={(preview || employee) ? styles.imageFitBack :  styles.imageFit}
-                        />
-                    </div>
+                        <div className={styles.imageContainer}>
+                            <img
+                                src={employee && !preview ? employee.image_path : (preview ? preview : '/image.svg')}
+                                alt="Imagen del personal"
+                                className={(preview || employee) ? styles.imageFitBack :  styles.imageFit}
+                            />
+                        </div>
                         
-                    <div className={styles.subFields}>
-                        <div className={styles.row}>
-                            <Input {...nameValidation}></Input>
-                            {employee&&(<StatusSelect {...statusValidation}/>)}
-                        </div>
-                        <div className={styles.row}>
-                            <Input {...phoneValidation}/>
-                            <Input {...emailValidation}/>
-                        </div>
-
-                    </div>
-                </div>
-                <div className={styles.columns}>
-                    <div>
-                        <Input {...photoValidation(!!employee?.image_path)}/>
-                        {methods.formState.errors.root?.serverError && (
-                            <div className={styles.errorMessage}>
-                                {methods.formState.errors.root.serverError.message}
+                        <article className={styles.subFields}>
+                            <div className={styles.row}>
+                                <Input {...nameValidation}></Input>
+                                {employee&&(<StatusSelect {...statusValidation}/>)}
                             </div>
-                        )}
+                            <div className={styles.row}>
+                                <Input {...phoneValidation}/>
+                                <Input {...emailValidation}/>
+                            </div>
+
+                            <div className={styles.row}>
+                                    <Input {...photoValidation(!!employee?.image_path)}/>
+                                    {methods.formState.errors.root?.serverError && (
+                                        <div className={styles.errorMessage}>
+                                            {methods.formState.errors.root.serverError.message}
+                                        </div>
+                                    )}
+                            </div>
+                        </article>
                     </div>
-                </div>
-                <div className={styles.buttons}>
-                    <button
-                        className={styles.cancelButton}
-                        onClick={(e) => {
-                            e.preventDefault();
-                            router.push(staffRoute);
-                        }}>
-                        Cancelar
-                    </button>
-                    <button type="submit" disabled={isCreatingEmployee}>Confirmar</button>
-                </div>
-                </div>
+                    <div className={styles.buttons}>
+                        <button
+                            className={styles.cancelButton}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                router.push(staffRoute);
+                            }}>
+                            Cancelar
+                        </button>
+                        <button type="submit" disabled={isCreatingEmployee}>Confirmar</button>
+                    </div>
+                </article>
                 
 
             </form>

@@ -6,7 +6,6 @@ export function ActionButton({ name, actions }) {
   const router = useRouter();
 
   const handleClick = (action) => {
-    console.log()
     const finalRoute = action.route.replace("${id}", encodeURIComponent(name));
     router.push(finalRoute);
   };
