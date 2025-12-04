@@ -82,8 +82,12 @@ export const AppointmentService = {
 
     const { barber_id, ...appointment_data } = appointment.toJSON();
 
+
     return {
       ...appointment_data,
+      cost_total: costTotal,
+      services: serviceInfo,
+      barber_id: barber.id,
       cost_total: costTotal,
       services: serviceInfo,
       barber_id: barber.id,
@@ -187,6 +191,7 @@ export const AppointmentService = {
         barberId,
         slots: freeSlotsZone,
       });
+    }
     }
 
     return {
