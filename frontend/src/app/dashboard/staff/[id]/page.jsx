@@ -5,11 +5,9 @@ import styles from "../EmployeeForm/styles.module.css";
 import layout from "../../Main.module.css";
 import show from "./styles.module.css";
 import { Status } from "@/app/components/form/status/Status";
-import { useRouter } from "next/navigation";
 import Buttons from "@/app/components/form/model_buttons/Buttons";
 import { getEmployee } from "../api/employees";
 export default function EmployeeDetail({params}){
-    const router = useRouter();
     const {id} = React.use(params);
     const [employee, setEmployee] = useState(null);
     const [message, setMessage] = useState(null);

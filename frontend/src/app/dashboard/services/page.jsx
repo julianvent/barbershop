@@ -9,12 +9,12 @@ import {
   newServiceRoute,
   seeService,
 } from "@/app/utils/routes";
-import { serviceFields, defaultColDef } from "@/app/utils/columns";
-import { ActionButton } from "@/app/components/action/ActionButton";
+import { serviceFields, defaultColDef, actionsDef } from "@/app/utils/columns";
 import { AgGridReact } from "ag-grid-react";
 import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
 import { getServices } from "./api/services";
 import { useEffect, useState } from "react";
+import { ActionButton } from "@/app/components/action/ActionButton";
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 export default function Services() {
@@ -36,6 +36,7 @@ export default function Services() {
     }
     fetch();
   },[]);
+
 
   const actions = [
     {
@@ -71,14 +72,13 @@ export default function Services() {
     }
     ,
     {
-      headerName: "Acciones",
-      field: "id",
+      ...actionsDef,
       cellRenderer: (params) => {
         const service = params.data;
-        return <ActionButton name={service.id} actions={actions} />;
+        return <ActionButton id={service.id} actions={actions} />;
       },
-      flex: 1,
-    },
+    }
+
   ];
 
 

@@ -10,7 +10,7 @@ import {
 import { AgGridReact } from "ag-grid-react";
 import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
 ModuleRegistry.registerModules([AllCommunityModule]);
-import { defaultColDef, appointmentColumns } from "@/app/utils/columns";
+import { defaultColDef, appointmentColumns, actionsDef } from "@/app/utils/columns";
 import { ActionButton } from "@/app/components/action/ActionButton";
 import { getAppointments } from "./api/appointments";
 import { useEffect, useState } from "react";
@@ -58,13 +58,10 @@ export default function Appointments() {
       },
     },
     {
-      headerName: "",
-      field: "id",
-      resizable: false,
+      ...actionsDef,
       cellRenderer: (params) => (
-        <ActionButton name={params.data.id} actions={actions} />
+        <ActionButton id={params.data.id} actions={actions} />
       ),
-      flex: 1,
     },
   ];
 

@@ -5,6 +5,27 @@ export const defaultColDef = {
   minWidth: 100,
 };
 
+export const actionsDef = {
+  headerName: "Acciones",
+  field: "id",
+  suppressKeyboardEvent: (params) => {
+    const { event } = params;
+
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || 
+        event.key === 'Enter' || event.key === ' ' || 
+        event.key === 'Tab') {
+      return true; 
+    }else {
+      return false;
+    }
+  },
+  cellStyle: { 
+    overflow: 'visible',
+    padding: '4px'
+  },
+  flex: 1,
+};
+
 export const appointmentColumns = [
   {
     headerName: "Fecha",

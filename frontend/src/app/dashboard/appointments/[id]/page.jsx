@@ -30,29 +30,31 @@ export default function showAppointment({ params }) {
   }
 
   return (
-    <Layout>
+    <Layout headerTitle='Ver cita'>
       <div className={layout.layout}>
         <h2>
           Cita - {appointment && formatDate(appointment.appointment_datetime)}
         </h2>
 
+        <article>
         <div className={styles.columns}>
           {appointment != null && appointment.status == "completed" && (
-            <div className={styles.imageContainer}>
+            <figure className={styles.imageContainer}>
               <img
                 src={
                   appointment.photo
                     ? appointment.photo
-                    : "https://reservoimg.s3.amazonaws.com/fotos_blog/fd1fb362-b_foto_blog.jpg"
+                    : "/image.svg"
                 }
-                alt={"Imagen de la cita "}
+                alt={"Imagen de la cita " }
                 className={styles.imageFitBack}
               />
-            </div>
+              <figcaption>{'Foto de la cita - '+ formatDate(appointment.appointment_datetime)} </figcaption>
+            </figure>
           )}
 
-          <div>
-            <div style={{ marginTop: "2%" }}>
+          <article className={styles.content}>
+            <div>
               <h3>Datos del cliente</h3>
               <div className={styles.row}>
                 <div className={styles.field}>
@@ -67,7 +69,7 @@ export default function showAppointment({ params }) {
               </div>
             </div>
 
-            <div style={{ marginTop: "2%" }}>
+            <div>
               <h3>Datos de la cita</h3>
               <div className={styles.row}>
                 <div className={styles.field}>
@@ -92,48 +94,37 @@ export default function showAppointment({ params }) {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
 
-        <div className={styles.columns}>
-          <div>
-            <h3>Servicios Ofrecidos</h3>
-            <div className={styles.table}>
-              <table>
-                <tbody>
-                  {appointment &&
-                    appointment.services.map((e) => {
-                      if (e.tipo == "Paquete") {
-                        return (
-                          <tr key={e.id}>
-                            <td>{e.name}</td>
-                            <td className={styles.noBold}>
-                              <div
-                                dangerouslySetInnerHTML={{
-                                  __html: e.descripcion.trim(),
-                                }}
-                              />
-                            </td>
-                          </tr>
-                        );
-                      } else {
-                        return (
-                          <tr key={e.id}>
-                            <td>{e.name}</td>
-                          </tr>
-                        );
-                      }
+            <div>
+              <h3>Servicios Ofrecidos</h3>
+            
+              <ul className={styles.list}>
+
+                {appointment &&
+                  appointment.services.map((e) => {
+                    console.log(e);
+                        
+                    return (
+                      <li key={e.id}>
+                        {e.name}
+                        </li>
+                      );
+                      
                     })}
-                </tbody>
-              </table>
+              </ul>
+
             </div>
-          </div>
+          </article>
         </div>
 
+
+        </article>
         {appointment && (
           <Buttons model={appointment} modelType={"appointment"} />
         )}
-      </div>
+        </div>
+
+
     </Layout>
   );
 }

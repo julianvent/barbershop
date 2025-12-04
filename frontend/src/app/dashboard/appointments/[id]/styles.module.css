@@ -18,33 +18,16 @@
     font-size: 0.9rem;
 }
 
-.table table{
-    border-collapse:collapse; 
-    width:100%; 
-    margin-top:0.5rem;
+.list{
+    text-decoration: none;
+    list-style:none;
 }
 
-.table td{
-    padding:10px 8px;
-    vertical-align: top;
-}
-
-.table td:first-child {
-    padding:10px 8px; 
-    width:200px; 
-    font-weight:600;
-}
-
- td.noBold {
-    font-weight: normal !important;
-}
-
-/* Estilos de Imagen */
 
 .imageContainer {
-    position: relative; 
-    width: 450px;
-    height: 450px;
+    width: 100%;
+    aspect-ratio: 1 / 1; 
+    overflow: hidden;
 }
 
 .imageFit{
@@ -57,7 +40,7 @@
     width: 100%;
     height: 100%;
     object-fit:contain;
-    background-color: #252525;
+    background-color: #494949;
 }
 
 .row {
@@ -78,7 +61,7 @@
     display: flex;
 }
 
-.columns > div {
+.columns > .content {
     width: 70%;
 }
 .columns > .imageContainer {
@@ -86,8 +69,19 @@
 }
 
 .container{
+    padding: 2%;
+    gap: 5%;
     display: grid;
 }
+
+.content > div{
+    margin-top: 2%;
+}
+
+.content{
+    align-self: center;
+}
+
 
 
 @media (width <=800px) {
