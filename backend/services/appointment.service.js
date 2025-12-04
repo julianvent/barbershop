@@ -57,6 +57,7 @@ export const AppointmentService = {
   },
 
   async find(id) {
+
     const appointment = await AppointmentRepository.getById(id);
     if (!appointment) {
       throw new Error("Appointment not found");
@@ -192,11 +193,11 @@ export const AppointmentService = {
         slots: freeSlotsZone,
       });
     }
-    }
 
     return {
       date: from,
       barbers: results,
     };
+    
   },
 };
