@@ -5,10 +5,9 @@ import { BarberRepository } from "../repositories/barber.repository.js";
 import { Op } from "sequelize";
 import { DAYS } from "../validators/schedule.validator.js";
 import { ScheduleRepository } from "./schedule.repository.js";
-import { setTimeToDate, formatDateForTimezone, parseOffsetMinutes } from "../utils/appointment.utils.js";
+import { setTimeToDate, formatDateForTimezone } from "../utils/appointment.utils.js";
 
 const availability_states = ["pending", "confirmed"];
-const DB_TIMEZONE = "-06:00"; // GMT-06:00 offset for consistent database storage
 
 export const AppointmentRepository = {
   async getAll({
@@ -25,8 +24,8 @@ export const AppointmentRepository = {
 
     if (from || to) {
       where.appointment_datetime = {
-        ...(from ? { [Op.gte]: from } : {}),
-        ...(to ? { [Op.lte]: to } : {}),
+        ...(from ? { [Op.gte]: formatDateForTimezone(from) } : {}),
+        ...(to ? { [Op.lte]: formatDateForTimezone(to) } : {}),
       };
     }
     if (statusAppointment) where.status = statusAppointment;
@@ -51,10 +50,13 @@ export const AppointmentRepository = {
 
   async create(appointment) {
     let sum_duration = 0;
-
     await BarberRepository.getById(appointment.barber_id);
 
-    const appointmentDate = new Date(appointment.appointment_datetime);
+    const appointmentDateStr = formatDateForTimezone(
+      appointment.appointment_datetime
+    );
+    const appointmentDate = new Date(appointmentDateStr);
+
     const day_of_week = DAYS[appointmentDate.getDay()];
 
     const schedule = await ScheduleRepository.getByDay(day_of_week);
@@ -100,7 +102,6 @@ export const AppointmentRepository = {
     const appointmentStart = appointmentDate.getTime();
     const appointmentEnd = appointmentStart + totalDuration * 60 * 1000;
 
-    // Check overlapping appointments for that barber
     const existingAppointments = await this.getAvailabilityAppointments(
       appointment.barber_id,
       scheduleStartDate,
@@ -124,13 +125,12 @@ export const AppointmentRepository = {
       customer_name: appointment.customer_name,
       customer_phone: appointment.customer_phone,
       customer_email: appointment.customer_email || null,
-      appointment_datetime: appointment.appointment_datetime,
+      appointment_datetime: appointmentDateStr,
       total_duration: totalDuration,
       status: appointment.status,
       barber_id: appointment.barber_id,
     });
 
-    // Link services to appointment (services were already loaded above)
     const services_ids = [];
 
     for (const service of services) {
@@ -159,7 +159,6 @@ export const AppointmentRepository = {
     if (!existingAppointment) {
       throw new Error("Appointment not found");
     }
-
     
     if (appointment.services_ids && appointment.services_ids.length > 0) {
       let sum_duration = 0;
@@ -171,7 +170,6 @@ export const AppointmentRepository = {
         sum_duration += service.duration;
         services.push(service);
       }
-
       
       if (appointment.total_duration == null) {
         appointment.total_duration = sum_duration;
@@ -192,7 +190,12 @@ export const AppointmentRepository = {
       }
     }
 
-    
+    if (appointment.appointment_datetime) {
+      appointment.appointment_datetime = formatDateForTimezone(
+        appointment.appointment_datetime
+      );
+    }
+
     await existingAppointment.update(appointment);
 
     
@@ -217,10 +220,13 @@ export const AppointmentRepository = {
     await existingAppointment.destroy();
   },
   async getAvailabilityAppointments(barberId, from, to) {
+    const fromFormatted = formatDateForTimezone(from);
+    const toFormatted = formatDateForTimezone(to);
+    
     const where = {};
     where.appointment_datetime = {
-      [Op.gte]: from,
-      [Op.lte]: to,
+      [Op.gte]: fromFormatted,
+      [Op.lte]: toFormatted,
     };
     if (barberId != null) where.barber_id = barberId;
 

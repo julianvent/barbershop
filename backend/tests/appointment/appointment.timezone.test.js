@@ -3,10 +3,7 @@ import { QueryTypes } from "sequelize";
 import { sequelize } from "../../config/database.config.js";
 import { Appointment } from "../../models/appointment.model.js";
 import { Barber } from "../../models/barber.model.js";
-import {
-  formatDateForTimezone,
-  parseOffsetMinutes,
-} from "../../utils/appointment.utils.js";
+import { formatDateForTimezone } from "../../utils/appointment.utils.js";
 
 const DB_TIMEZONE = "-06:00"; // GMT-06:00 offset enforced on the DB session
 
@@ -47,9 +44,6 @@ describe("Appointment Timezone", () => {
     );
 
     expect(session_tz).toBe(DB_TIMEZONE);
-    expect(parseOffsetMinutes(session_tz)).toBe(
-      parseOffsetMinutes(DB_TIMEZONE)
-    );
   });
 
   it("stores UTC appointment datetimes converted to GMT-06:00", async () => {

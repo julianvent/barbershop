@@ -37,7 +37,7 @@ const OFFSET_REGEX = /^([+-])(\d{2}):(\d{2})$/;
 
 /**
  * Converts a timezone offset string to total minutes.
- * Useful for time arithmetic and database timezone conversions.
+ * Database timezone conversions.
  *
  * @param {string} [offsetStr="-06:00"] - Offset string in format ±HH:MM (e.g., "-06:00", "+05:30")
  * @returns {number} Total offset in minutes (negative for west, positive for east)
