@@ -31,6 +31,7 @@ import { appointmentsRoute } from "@/app/utils/routes";
 
 export default function AppointmentForm({ appointment, mode }) {
   const [availableTimes, setAvailableTimes] = useState([]);
+  const [minDate, setMinDate] = useState(null);
 
   const router = useRouter();
   const barbers = useBarbers();
@@ -38,16 +39,8 @@ export default function AppointmentForm({ appointment, mode }) {
 
   const methods = useForm({ defaultValues: {} });
 
-  // -- watch values --
-  const barber_id = useWatch({
-    name: barberValidation.id,
-    control: methods.control,
-  });
-  const date = useWatch({ name: dateValidation.id, control: methods.control });
-
   const onSubmit = async (data) => {
     methods.clearErrors();
-
     try {
       if (appointment) await updateAppointment(data);
       else await createAppointment(data);
@@ -58,15 +51,30 @@ export default function AppointmentForm({ appointment, mode }) {
     }
   };
 
+  // -- watch values --
+  const barberId = useWatch({
+    name: barberValidation.id,
+    control: methods.control,
+  });
+  const date = useWatch({
+    name: dateValidation.id,
+    control: methods.control,
+  });
+
+  // -- effects --
   useEffect(() => {
     if (appointment) {
       const parsedAppointment = parseAppointment(appointment);
+      setMinDate(date);
       methods.reset(parsedAppointment);
+    } else {
+      setMinDate(getToday());
+      methods.resetField("date", { defaultValue: minDate });
     }
-  }, [appointment, methods]);
+  }, [appointment, minDate, methods]);
 
   useEffect(() => {
-    if (barber_id) {
+    if (barberId) {
       async function fetchAvailability(barberId) {
         try {
           const data = await getAvailabity(barberId, date);
@@ -80,9 +88,9 @@ export default function AppointmentForm({ appointment, mode }) {
           console.error(error);
         }
       }
-      fetchAvailability(barber_id);
+      fetchAvailability(barberId);
     }
-  }, [barber_id, date]);
+  }, [barberId, date]);
 
   return (
     <FormProvider {...methods}>
@@ -107,14 +115,11 @@ export default function AppointmentForm({ appointment, mode }) {
 
           <div className={styles.fieldsContainer}>
             <h2>Datos de la cita</h2>
-            <fieldset
-              disabled={!barber_id}
-              className={styles.appointmentFields}
-            >
+            <fieldset disabled={!barberId} className={styles.appointmentFields}>
               {mode !== "customer" && (
                 <Select options={status} {...statusValidation}></Select>
               )}
-              <Input {...dateValidation} onChange={(e) => {}}></Input>
+              <Input {...dateValidation} minDate={minDate}></Input>
               <TimeSelector
                 {...timeValidation}
                 times={availableTimes}
@@ -189,4 +194,14 @@ function parseAppointment(appointment) {
   parsed.services_ids = services_ids;
 
   return parsed;
+}
+
+function getToday() {
+  const date = new Date();
+  var dd = String(date.getDate()).padStart(2, "0");
+  var mm = String(date.getMonth() + 1).padStart(2, "0");
+  var yyyy = date.getFullYear();
+
+  const today = yyyy + "-" + mm + "-" + dd;
+  return today;
 }

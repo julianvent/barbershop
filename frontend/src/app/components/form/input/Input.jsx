@@ -11,6 +11,7 @@ const Input = ({
   defaultValue,
   disabled,
   onChange,
+  minDate,
 }) => {
   const {
     register,
@@ -31,6 +32,7 @@ const Input = ({
         disabled={disabled}
         aria-invalid={!!errors[id]}
         aria-describedby={errors[id] ? errorId : undefined}
+        min={minDate}
         {...register(id, { ...validation, onChange: onChange })}
       />
       {errors[id] && (
