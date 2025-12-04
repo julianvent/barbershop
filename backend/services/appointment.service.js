@@ -9,7 +9,8 @@ import { DAYS } from "../validators/schedule.validator.js";
 const MARGIN = 15;
 export const AppointmentService = {
   async list(filters) {
-    const { barber_id, from, to, sort, page, limit } = await AppointmentValidator.validateFiltersListAppointments(filters);
+    const { barber_id, from, to, sort, page, limit } =
+      await AppointmentValidator.validateFiltersListAppointments(filters);
     const offset = (page - 1) * limit;
 
     const { rows: appointments, count } = await AppointmentRepository.getAll({
@@ -19,49 +20,65 @@ export const AppointmentService = {
       to,
       sort,
       offset,
-      limit
+      limit,
     });
 
     const response_appointments = await Promise.all(
       appointments.map(async (appointment) => {
-        const barber_data = await BarberRepository.getById(appointment.barber_id)
+        const barber_data = await BarberRepository.getById(
+          appointment.barber_id
+        );
+        const services = await AppointmentRepository.getServiceByAppointmentId(
+          appointment.id
+        );
 
-        const json = appointment.toJSON()
+        let costTotal = 0;
+        services.forEach((service) => {
+          costTotal += service.price;
+        });
+
+        const json = appointment.toJSON();
         return {
           ...json,
-          barber: { name: barber_data.barber_name, barber_id: barber_data.id }
+          cost_total: costTotal,
+          barber: { name: barber_data.barber_name, barber_id: barber_data.id },
         };
-      }));
+      })
+    );
     return {
       data: response_appointments,
       meta: {
         page: page,
         limit: limit,
         total: count,
-        pages: page
-      }
-    }
+        pages: page,
+      },
+    };
   },
 
   async find(id) {
-
     const appointment = await AppointmentRepository.getById(id);
     if (!appointment) {
       throw new Error("Appointment not found");
     }
     const services = await AppointmentRepository.getServiceByAppointmentId(id);
 
-    const barber = await BarberRepository.getById(appointment.barber_id)
+    const barber = await BarberRepository.getById(appointment.barber_id);
 
     let costTotal = 0;
 
     const serviceInfo = await Promise.all(
       services.map(async (service) => {
-
         const serviceData = await ServiceRepository.getById(service.service_id);
         costTotal += service.price;
-        return { id: serviceData.id, name: serviceData.name, price: service.price, duration: serviceData.duration };
-      }));
+        return {
+          id: serviceData.id,
+          name: serviceData.name,
+          price: service.price,
+          duration: serviceData.duration,
+        };
+      })
+    );
 
     const { barber_id, ...appointment_data } = appointment.toJSON();
 
@@ -72,8 +89,8 @@ export const AppointmentService = {
       barber_id: barber.id,
       barber: {
         barber_id: barber.id,
-        barber_name: barber.barber_name
-      }
+        barber_name: barber.barber_name,
+      },
     };
   },
 
@@ -110,21 +127,25 @@ export const AppointmentService = {
     return AppointmentRepository.delete(id);
   },
   async getAvailability(filters) {
+    const { from, to } =
+      await AppointmentValidator.validateAvailabilityAppointment(filters);
 
-    const { from, to } = await AppointmentValidator.validateAvailabilityAppointment(filters);
+    let barberIds = [];
 
-    let barberIds = []
-
-    if (filters.barber_id) barberIds = [filters.barber_id]
+    if (filters.barber_id) barberIds = [filters.barber_id];
     else {
-      barberIds = await BarberRepository.getAllIds()
-      barberIds = barberIds.map(barber => barber.id);
+      barberIds = await BarberRepository.getAllIds();
+      barberIds = barberIds.map((barber) => barber.id);
     }
     const results = [];
 
     for (const barberId of barberIds) {
-
-      const appointments = await AppointmentRepository.getAvailabilityAppointments(barberId, from, to);
+      const appointments =
+        await AppointmentRepository.getAvailabilityAppointments(
+          barberId,
+          from,
+          to
+        );
       const schedule = await ScheduleRepository.getByDay(DAYS[from.getDay()]);
 
       const workStart = new Date(from);
@@ -143,20 +164,20 @@ export const AppointmentService = {
         current = new Date(current.getTime() + MARGIN * 60000);
       }
 
-      const intervals = appointments.map(app => {
+      const intervals = appointments.map((app) => {
         const start = new Date(app.appointment_datetime).getTime();
         const end = start + app.total_duration * 60000;
         return { start, end };
       });
 
-      const freeSlots = slots.filter(slot => {
+      const freeSlots = slots.filter((slot) => {
         const slotTime = slot.getTime();
         return !intervals.some(({ start, end }) => {
           return slotTime >= start && slotTime < end;
         });
       });
 
-      const freeSlotsZone = freeSlots.map(slot => {
+      const freeSlotsZone = freeSlots.map((slot) => {
         const hours = slot.getHours().toString().padStart(2, "0");
         const minutes = slot.getMinutes().toString().padStart(2, "0");
         return `${hours}:${minutes}`;
@@ -170,7 +191,7 @@ export const AppointmentService = {
 
     return {
       date: from,
-      barbers: results
+      barbers: results,
     };
-  }
+  },
 };
