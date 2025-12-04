@@ -143,7 +143,6 @@ export const AppointmentService = {
       barberIds = barberIds.map((barber) => barber.id);
     }
     const results = [];
-    const results = [];
 
     for (const barberId of barberIds) {
       const appointments =
