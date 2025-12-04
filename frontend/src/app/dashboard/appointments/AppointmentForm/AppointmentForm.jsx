@@ -31,7 +31,7 @@ import { appointmentsRoute } from "@/app/utils/routes";
 
 export default function AppointmentForm({ appointment, mode }) {
   const [availableTimes, setAvailableTimes] = useState([]);
-  const [today, setToday] = useState(null);
+  const [minDate, setMinDate] = useState(null);
 
   const router = useRouter();
   const barbers = useBarbers();
@@ -63,14 +63,15 @@ export default function AppointmentForm({ appointment, mode }) {
 
   // -- effects --
   useEffect(() => {
-    setToday(getToday());
     if (appointment) {
       const parsedAppointment = parseAppointment(appointment);
+      setMinDate(date);
       methods.reset(parsedAppointment);
     } else {
-      methods.resetField("date", { defaultValue: today });
+      setMinDate(getToday());
+      methods.resetField("date", { defaultValue: minDate });
     }
-  }, [appointment, today, methods]);
+  }, [appointment, minDate, methods]);
 
   useEffect(() => {
     if (barberId) {
@@ -118,7 +119,7 @@ export default function AppointmentForm({ appointment, mode }) {
               {mode !== "customer" && (
                 <Select options={status} {...statusValidation}></Select>
               )}
-              <Input {...dateValidation} minDate={today}></Input>
+              <Input {...dateValidation} minDate={minDate}></Input>
               <TimeSelector
                 {...timeValidation}
                 times={availableTimes}

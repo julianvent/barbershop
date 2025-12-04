@@ -30,30 +30,16 @@ export default function showAppointment({ params }) {
   }
 
   return (
-    <Layout>
+    <Layout headerTitle={`Detalle de cita`}>
       <div className={styles.layout}>
         <h1>
           Cita - {appointment && formatDate(appointment.appointment_datetime)}
         </h1>
 
-        {appointment != null && appointment.status == "completed" && (
-          <div className={styles.imageContainer}>
-            <img
-              src={
-                appointment.photo
-                  ? appointment.photo
-                  : "https://reservoimg.s3.amazonaws.com/fotos_blog/fd1fb362-b_foto_blog.jpg"
-              }
-              alt={"Imagen de la cita "}
-              className={styles.imageFitBack}
-            />
-          </div>
-        )}
-
         <div className={styles.dataLayout}>
           <div className={styles.dataContainer}>
             <h2>Datos del cliente</h2>
-            <div className={styles.customerData}>
+            <div className={styles.dataDistribution}>
               <div className={styles.data}>
                 <label htmlFor="name">
                   <strong>Nombre</strong>
@@ -72,7 +58,7 @@ export default function showAppointment({ params }) {
 
           <div className={styles.dataContainer}>
             <h2>Datos de la cita</h2>
-            <div className={styles.customerData}>
+            <div className={styles.dataDistribution}>
               <div className={styles.data}>
                 <label htmlFor="date">
                   <strong>Fecha programada</strong>
@@ -104,10 +90,27 @@ export default function showAppointment({ params }) {
 
           <div className={styles.dataContainer}>
             <h2>Servicios</h2>
-            <div className={styles.table}>
-              {appointment && (
-                <ServiceGrid services={appointment.services}></ServiceGrid>
-              )}
+            <div className={styles.servicesWrapper}>
+              <div className={styles.services}>
+                {appointment && (
+                  <ServiceGrid services={appointment.services}></ServiceGrid>
+                )}
+                <p></p>
+              </div>
+            </div>
+            <div className={styles.dataDistribution}>
+              <div className={styles.data}>
+                <label htmlFor="time">
+                  <strong>Duración estimada</strong>
+                </label>
+                {appointment && <p>{appointment.total_duration} minutos</p>}
+              </div>
+              <div className={styles.data}>
+                <label htmlFor="time">
+                  <strong>Total</strong>
+                </label>
+                {appointment && <p>${appointment.cost_total}</p>}
+              </div>
             </div>
           </div>
 
@@ -145,10 +148,28 @@ export default function showAppointment({ params }) {
               </div>
             </div>
           </div> */}
-        </div>
-      </div>
 
-      {appointment && <Buttons model={appointment} modelType={"appointment"} />}
+          {appointment != null && appointment.status == "completed" && (
+            <div className={styles.dataContainer}>
+              <h2>Fotos adjuntas</h2>
+              <div className={styles.imageContainer}>
+                <img
+                  src={
+                    appointment.photo
+                      ? appointment.photo
+                      : "https://reservoimg.s3.amazonaws.com/fotos_blog/fd1fb362-b_foto_blog.jpg"
+                  }
+                  alt={"Imagen de la cita "}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+
+        {appointment && (
+          <Buttons model={appointment} modelType={"appointment"} />
+        )}
+      </div>
     </Layout>
   );
 }
