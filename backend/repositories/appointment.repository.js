@@ -5,9 +5,10 @@ import { BarberRepository } from "../repositories/barber.repository.js";
 import { Op } from "sequelize";
 import { DAYS } from "../validators/schedule.validator.js";
 import { ScheduleRepository } from "./schedule.repository.js";
-import { setTimeToDate } from "../utils/appointment.utils.js";
+import { setTimeToDate, formatDateForTimezone, parseOffsetMinutes } from "../utils/appointment.utils.js";
 
 const availability_states = ["pending", "confirmed"];
+const DB_TIMEZONE = "-06:00"; // GMT-06:00 offset for consistent database storage
 
 export const AppointmentRepository = {
   async getAll({
@@ -108,7 +109,7 @@ export const AppointmentRepository = {
 
     const overlaps = existingAppointments.some((app) => {
       const start = new Date(app.appointment_datetime).getTime();
-      // * n seconds * n milliseconds -> minutes
+      // Convert duration (minutes) to milliseconds
       const end = start + app.total_duration * 60 * 1000;
 
       // Overlap if intervals intersect: [start,end) vs [appointmentStart, appointmentEnd)
@@ -129,7 +130,7 @@ export const AppointmentRepository = {
       barber_id: appointment.barber_id,
     });
 
-    // Create service relations (we already loaded services above)
+    // Link services to appointment (services were already loaded above)
     const services_ids = [];
 
     for (const service of services) {
@@ -141,7 +142,7 @@ export const AppointmentRepository = {
         });
         services_ids.push(service);
       } catch (err) {
-        console.error("schedule error:", err.message);
+        console.error("Error linking service to appointment:", err.message);
       }
     }
 
