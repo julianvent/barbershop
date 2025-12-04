@@ -4,14 +4,23 @@ import { staffRoute } from "@/app/utils/routes";
 import EmployeeForm from "../../EmployeeForm/EmployeeForm";
 import { getEmployee, updateEmployee } from "../../api/employees";
 import React, { useState, useEffect }  from "react";
+import Layout from "@/app/components/base_layout/Layout";
+import styles from '../../EmployeeForm/styles.module.css'
 
 export default function updateStaff({params}){
     const [employee, setEmployee] = useState(null);
+    const [message, setMessage] = useState(null);
     const {id} = React.use(params);
     useEffect(() => {
            async function load() {
+            try{
                 const data = await getEmployee(id);
                 setEmployee(data);
+
+            }catch(err){
+                setMessage(err);
+                console.log(err);
+            }
            }
            load();
     }, [id]);
@@ -21,20 +30,29 @@ export default function updateStaff({params}){
         try{
             await updateEmployee(id, data);
         }catch(err){
-            return err;
+            return err.message;
         }
     };
 
     return (
-        <CreateNewLayout
-        title={"Actualizar registro del empleado - " + (employee ? employee.name + ' ' + employee.last_names : '...')}
+        <Layout
+        headerTitle="Actualizar Empleado"
+        mainTitle={"Actualizar registro del empleado - " + (employee ? employee.barber_name : '...')}
         returnRoute={staffRoute}
         >
+
+                            {
+                    message&&(
+                        <div className={styles.errorMessage}>
+                            {message}
+                        </div>
+                    )
+                }
             <EmployeeForm 
             onSubmit={submit}
             employee={employee}/>
 
-        </CreateNewLayout>
+        </Layout>
         
     )
 }

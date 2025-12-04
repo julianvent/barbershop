@@ -46,6 +46,8 @@ async function startServer() {
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });
+    console.log("TZ:", process.env.TZ);
+    console.log("Now:", new Date().toString());
   } catch (error) {
     console.error("Error starting server:", error);
     process.exit(1);

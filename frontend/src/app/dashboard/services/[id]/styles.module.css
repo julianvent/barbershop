@@ -9,3 +9,21 @@
     font-weight: 600;
     font-size: 1rem
 }
+
+.layout {
+    display: grid;
+    gap: 1em;
+    grid-template-rows: auto auto;
+    min-height: 100%;
+    padding: 1em 2em;
+    background-color: white;
+    border-radius: 1em;
+}
+
+@media (width <=800px) {
+    .layout {
+        padding: 1em 0.6em;
+        min-height: auto;
+    }
+
+}

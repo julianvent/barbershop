@@ -63,7 +63,7 @@ export default function ServiceForm({ onSubmit, service }) {
 
           <div className={styles.row}>
             <Input {...durationValidation}></Input>
-            {service &&(<Input {...typeValidation} disabled={service.type == 'Paquete'}></Input>)}
+            {service ?(<Input {...typeValidation} disabled={service.type == 'Paquete'}></Input>):(<Input {...typeValidation}></Input>)}
             {service && <StatusSelect {...statusValidation} />}
           </div>
 

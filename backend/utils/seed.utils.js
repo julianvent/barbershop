@@ -19,6 +19,11 @@ export async function seedDatabase(sequelize) {
       import("../models/schedule.model.js"),
     ]);
 
+    // Import timezone utilities for GMT-06:00 consistency
+    const { formatDateForTimezone } = await import(
+      "../utils/appointment.utils.js"
+    );
+
     await sequelize.sync({ alter: false });
     console.log("Database synced");
 
@@ -50,7 +55,8 @@ export async function seedDatabase(sequelize) {
       Appointment,
       ServiceAppointment,
       barbers,
-      services
+      services,
+      formatDateForTimezone
     );
 
     console.log("\nDatabase seeding completed successfully!");
@@ -236,14 +242,20 @@ async function seedAccount(Account) {
 }
 
 /**
- * Seed appointments
+ * Seed appointments with GMT-06:00 timezone consistency
+ *
+ * Converts all appointment datetimes to GMT-06:00 format before saving
+ * to ensure consistent timezone handling across the database
  */
 async function seedAppointment(
   Appointment,
   ServiceAppointment,
   barbers,
-  services
+  services,
+  formatDateForTimezone
 ) {
+  const DB_TIMEZONE = "-06:00";
+
   const appointmentsData = [
     {
       customer_name: "Juan Pérez",
@@ -300,7 +312,19 @@ async function seedAppointment(
   const appointments = [];
   for (const data of appointmentsData) {
     const { services: appointmentServices, ...appointmentData } = data;
-    const appointment = await Appointment.create(appointmentData);
+
+    // Convert appointment datetime to GMT-06:00 string format for database storage
+    // This ensures consistent timezone representation in the database
+    const formattedDateTime = formatDateForTimezone(
+      appointmentData.appointment_datetime,
+      DB_TIMEZONE
+    );
+
+    // Create appointment with timezone-aware datetime
+    const appointment = await Appointment.create({
+      ...appointmentData,
+      appointment_datetime: formattedDateTime,
+    });
 
     // Create service_appointment records
     for (const service of appointmentServices) {
@@ -314,6 +338,6 @@ async function seedAppointment(
     appointments.push(appointment);
   }
 
-  console.log(`✓ Created ${appointments.length} appointments`);
+  console.log(`✓ Created ${appointments.length} appointments (GMT-06:00)`);
   return appointments;
 }

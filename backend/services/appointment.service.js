@@ -57,6 +57,7 @@ export const AppointmentService = {
   },
 
   async find(id) {
+
     const appointment = await AppointmentRepository.getById(id);
     if (!appointment) {
       throw new Error("Appointment not found");
@@ -82,8 +83,12 @@ export const AppointmentService = {
 
     const { barber_id, ...appointment_data } = appointment.toJSON();
 
+
     return {
       ...appointment_data,
+      cost_total: costTotal,
+      services: serviceInfo,
+      barber_id: barber.id,
       cost_total: costTotal,
       services: serviceInfo,
       barber_id: barber.id,
@@ -138,6 +143,7 @@ export const AppointmentService = {
       barberIds = barberIds.map((barber) => barber.id);
     }
     const results = [];
+    const results = [];
 
     for (const barberId of barberIds) {
       const appointments =
@@ -187,6 +193,7 @@ export const AppointmentService = {
         barberId,
         slots: freeSlotsZone,
       });
+    }
     }
 
     return {

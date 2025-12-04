@@ -71,16 +71,6 @@
     display: block;
 }
 
-.cornerButtons {
-    align-items: center;
-    justify-self: end;
-    padding: 1%;
-    box-sizing: content-box;
-}
-
-.cornerButtons>button {
-    margin-left: 10px;
-}
 
 .errorMessage {
   color: #dc2626;
@@ -95,6 +85,16 @@
         margin: 0
     }
 
+    .fieldsConta {
+        display: flex;
+        margin-bottom: 5%;
+        justify-content: center;
+    }
+
+    .buttons {        
+        gap: 1em;
+    }
+    
     .row {
         display: grid;
         margin: 1%;

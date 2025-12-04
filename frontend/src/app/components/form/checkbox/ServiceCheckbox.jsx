@@ -1,18 +1,19 @@
 import { useFormContext } from "react-hook-form";
 import styles from "./Service-Checkbox.module.css";
 
-export default function ServiceCheckbox({ service, onChange, id }) {
+export default function ServiceCheckbox({ service, id, validation }) {
   const { register } = useFormContext();
+  const inputId = `${id}-${service.id}`;
+
   return (
     <div className={styles.checkbox}>
       <input
+        id={inputId}
         type="checkbox"
-        value={service.id}
-        {...register(id, {
-          onChange: onChange,
-        })}
+        value={String(service.id)}
+        {...register(id, validation)}
       />
-      <label>{service.name}</label>
+      <label htmlFor={inputId}>{service.name}</label>
     </div>
   );
 }

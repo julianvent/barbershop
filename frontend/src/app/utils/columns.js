@@ -36,13 +36,13 @@ export const serviceFields = [
   {
     headerName: "Precio",
     field: "price",
-    valueFormatter: (params) => params.data.price.toFixed(2),
+    valueFormatter: (params) => `$${params.data.price.toFixed(2)}`,
   },
   {
-    headerName: "Duracion Aproximada",
+    headerName: "Duración aproximada",
     field: "duration",
     valueFormatter: (params) =>
-      Math.floor(params.data.duration / 60) > 1
+      Math.floor(params.data.duration / 60) >= 1
         ? Math.floor(params.data.duration / 60) +
           " hr " +
           (params.data.duration % 60) +

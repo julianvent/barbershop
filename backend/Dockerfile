@@ -9,4 +9,6 @@ COPY . .
 
 EXPOSE 3000
 
+ENV TZ="America/Mexico_City"
+
 CMD ["npm", "start"]

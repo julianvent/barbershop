@@ -7,7 +7,7 @@ export const getEmployees = async () => {
         const response = await axios.get('/api/barbers?limit=50', headers);
         return response.data;
     }catch(err){
-        throw err;
+        throw 'No se pudieron recuperar los barberos';
     }
 };
 
@@ -31,17 +31,17 @@ export const createEmployee = async (data) => {
         await axios.post('/api/barbers', formData, headers);
 
     } catch (err) {
-        throw 'Error al registrar el cliente';
+        throw 'Error al registrar el empleado';
     }
 };
 
 export const getEmployee = async (id) => {
     try{
-        const headers = axiosConfig();
+        const headers = await axiosConfig();
         const response = await axios.get('/api/barbers/'+id, headers);
         return response.data;
     }catch(err){
-        throw 'Error al recuperar el cliente';
+        throw 'Error al recuperar el empleado';
     }
 
 };
