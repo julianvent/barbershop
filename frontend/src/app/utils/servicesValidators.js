@@ -3,7 +3,7 @@ export const durationValidation = {
   id:"duration",
   type: "number",
   name: "duration",
-  label: "Duracion",
+  label: "Duracion (minutos)",
   validation: {
     required: "Ingrese la duración ",
     min: {

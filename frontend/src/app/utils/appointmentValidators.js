@@ -3,7 +3,7 @@ export const customerNameValidation = {
   type: "text",
   label: "Nombre",
   validation: {
-    required: "Requerido",
+    required: "Requerido*",
   },
 };
 
@@ -12,10 +12,10 @@ export const phoneValidation = {
   type: "text",
   label: "Teléfono",
   validation: {
-    required: "Requerido",
+    required: "Requerido*",
     pattern: {
       value: /^\d{10}$/,
-      message: "Teléfono incorrecto",
+      message: "Formato: 9211231234",
     },
   },
 };
@@ -23,16 +23,17 @@ export const phoneValidation = {
 export const dateValidation = {
   id: "date",
   type: "date",
-  label: "Fecha programada",
+  label: "Fecha de la cita",
   validation: {
-    required: "Requerido",
+    required: "Requerido*",
   },
 };
 
 export const timeValidation = {
   id: "time",
+  label: "Horarios disponibles",
   validation: {
-    required: "Selecciona un horario",
+    required: "Selecciona un horario*",
   },
 };
 
@@ -40,21 +41,22 @@ export const statusValidation = {
   id: "status",
   label: "Estado de la cita",
   validation: {
-    required: "Requerido",
+    required: "Requerido*",
   },
 };
 
 export const barberValidation = {
   id: "barber_id",
   validation: {
-    required: "Selecciona un barbero",
+    required: "Selecciona un barbero*",
   },
 };
 
 export const serviceValidation = {
-  id: "services",
+  id: "services_ids",
   validation: {
-    required: "Selecciona uno o más servicios",
+    validate: (value) =>
+      value.length > 0 ? true : "Selecciona uno o más servicios*",
   },
 };
 
@@ -63,10 +65,10 @@ export const customerEmailValidation = {
   type: "email",
   label: "Correo electrónico",
   validation: {
-    required: "Requerido",
+    required: "Requerido*",
     pattern: {
       value: /\S+@\S+\.\S+/,
-      message: "Formato de correo inválido",
+      message: "Formato: correo@dominio.com",
     },
   },
 };

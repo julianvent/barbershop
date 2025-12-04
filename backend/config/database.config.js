@@ -3,15 +3,25 @@ import "dotenv/config";
 import mysql from "mysql2/promise";
 import { seedDatabase } from "../utils/seed.utils.js";
 
-const DB_NAME = process.env.DB_NAME || "barberia";
+const DB_NAME = process.env.DB_NAME || "barbershop";
+const TIMEZONE = "-06:00"; // GMT-6
 const DB_USER = process.env.DB_USER || "root";
 const DB_PASSWORD = process.env.DB_PASSWORD || "";
 const DB_HOST = process.env.DB_HOST || "localhost";
 const TIMEOUT = process.env.TIMEOUT || 20000;
+
+/**
+ * IMPORTANT: To store dates as GMT-6 in the database:
+ * Always create dates with explicit timezone offset: new Date("2024-12-03T14:00:00-06:00")
+ */
 export const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
   host: DB_HOST,
   dialect: "mysql",
-  logging: true,
+  logging: console.log,
+  timezone: TIMEZONE, // Tells Sequelize to convert UTC to GMT-6 when writing to DB
+  dialectOptions: {
+    timezone: TIMEZONE, // Sets MySQL session: SET time_zone = '-06:00'
+  },
 });
 
 export async function initDB() {

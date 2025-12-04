@@ -2,17 +2,13 @@ import { useFormContext } from "react-hook-form";
 import BarberCard from "../radio/BarberCard";
 import styles from "./Barber-Selector.module.css";
 
-export default function BarberFieldset({ barbers, id, validation, onChange }) {
+export default function BarberSelector({ barbers, id, onChange, validation }) {
   const {
-    register,
     formState: { errors },
   } = useFormContext();
 
   return (
-    <fieldset
-      {...register(id, validation)}
-      className={styles.fieldsetContainer}
-    >
+    <fieldset className={styles.fieldsetContainer}>
       <div className={styles.barbers}>
         {barbers.map((barber) => (
           <BarberCard
@@ -20,6 +16,7 @@ export default function BarberFieldset({ barbers, id, validation, onChange }) {
             barber={barber}
             onChange={onChange}
             id={id}
+            validation={validation}
           ></BarberCard>
         ))}
       </div>

@@ -82,7 +82,7 @@ export const servicesEntries = [
     precio: 150.0,
     duracion: 30,
     tipo: "Corte",
-    status: 'inactive'
+    status: "inactive",
   },
   {
     id: 2,
@@ -92,7 +92,7 @@ export const servicesEntries = [
     precio: 180.0,
     duracion: 40,
     tipo: "Corte",
-    status: 'inactive'
+    status: "inactive",
   },
   {
     id: 3,
@@ -102,7 +102,7 @@ export const servicesEntries = [
     precio: 120.0,
     duracion: 25,
     tipo: "Afeitado",
-    status: 'active'
+    status: "active",
   },
   {
     id: 4,
@@ -112,7 +112,7 @@ export const servicesEntries = [
     precio: 100.0,
     duracion: 20,
     tipo: "Barba",
-    status: 'active'
+    status: "active",
   },
   {
     id: 5,
@@ -122,7 +122,7 @@ export const servicesEntries = [
     precio: 250.0,
     duracion: 60,
     tipo: "Coloración",
-    status: 'active'
+    status: "active",
   },
   {
     id: 6,
@@ -131,7 +131,7 @@ export const servicesEntries = [
     precio: 200.0,
     duracion: 45,
     tipo: "Tratamiento",
-    status: 'active'
+    status: "active",
   },
   {
     id: 7,
@@ -141,7 +141,7 @@ export const servicesEntries = [
     precio: 120.0,
     duracion: 25,
     tipo: "Corte",
-    status: 'active'
+    status: "active",
   },
   {
     id: 8,
@@ -150,11 +150,11 @@ export const servicesEntries = [
     precio: 220.0,
     duracion: 50,
     tipo: "Combo",
-    status: 'active'
+    status: "active",
   },
   {
     id: 9,
-    name: 'Paquete reacondicionamiento',
+    name: "Paquete reacondicionamiento",
     descripcion: `
           <p>
         Este paquete incluye un servicio completo de reacondicionamiento, ideal para renovar tu estilo.
@@ -189,7 +189,7 @@ export const servicesEntries = [
     precio: 470.0,
     duracion: 75,
     tipo: "Paquete",
-    status: 'active'
+    status: "active",
   },
 ];
 
@@ -239,7 +239,7 @@ export const indexBarbers = [
     phone: "555-123-4567",
     email: "kevin@example.com",
     status: "inactive",
-    photo: "/kevin2.png"
+    photo: "/kevin2.png",
   },
   {
     id: 2,
@@ -248,7 +248,7 @@ export const indexBarbers = [
     phone: "555-234-5678",
     email: "adrian@example.com",
     status: "active",
-    photo: "/kevin.png"
+    photo: "/kevin.png",
   },
   {
     id: 3,
@@ -257,7 +257,6 @@ export const indexBarbers = [
     phone: "555-345-6789",
     email: "jose@example.com",
     status: "active",
-    photo: "/kevin.png"
+    photo: "/kevin.png",
   },
 ];
-
