@@ -23,7 +23,7 @@ export const phoneValidation = {
 export const dateValidation = {
   id: "date",
   type: "date",
-  label: "Fecha programada",
+  label: "Fecha de la cita",
   validation: {
     required: "Requerido*",
   },
@@ -31,6 +31,7 @@ export const dateValidation = {
 
 export const timeValidation = {
   id: "time",
+  label: "Horarios disponibles",
   validation: {
     required: "Selecciona un horario*",
   },

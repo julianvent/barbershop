@@ -1,11 +1,11 @@
 "use client";
 import Layout from "@/app/components/base_layout/Layout";
-import layout from "../../Main.module.css";
 import React, { useEffect, useState } from "react";
 import { getAppointment } from "../api/appointments";
-import styles from "./styles.module.css";
+import styles from "./Detail-Appointment.module.css";
 import { Status } from "@/app/components/form/status/Status";
 import Buttons from "@/app/components/form/model_buttons/Buttons";
+import ServiceGrid from "@/app/components/service_grid/ServiceGrid";
 
 export default function showAppointment({ params }) {
   const { id } = React.use(params);
@@ -31,109 +31,124 @@ export default function showAppointment({ params }) {
 
   return (
     <Layout>
-      <div className={layout.layout}>
-        <h2>
+      <div className={styles.layout}>
+        <h1>
           Cita - {appointment && formatDate(appointment.appointment_datetime)}
-        </h2>
+        </h1>
 
-        <div className={styles.columns}>
-          {appointment != null && appointment.status == "completed" && (
-            <div className={styles.imageContainer}>
-              <img
-                src={
-                  appointment.photo
-                    ? appointment.photo
-                    : "https://reservoimg.s3.amazonaws.com/fotos_blog/fd1fb362-b_foto_blog.jpg"
-                }
-                alt={"Imagen de la cita "}
-                className={styles.imageFitBack}
-              />
-            </div>
-          )}
-
-          <div>
-            <div style={{ marginTop: "2%" }}>
-              <h3>Datos del cliente</h3>
-              <div className={styles.row}>
-                <div className={styles.field}>
-                  <label htmlFor="name">Nombre</label>
-                  {appointment && <p>{appointment.customer_name}</p>}
-                </div>
-
-                <div className={styles.field}>
-                  <label htmlFor="phone">Telefono</label>
-                  {appointment && <p>{appointment.customer_phone}</p>}
-                </div>
-              </div>
-            </div>
-
-            <div style={{ marginTop: "2%" }}>
-              <h3>Datos de la cita</h3>
-              <div className={styles.row}>
-                <div className={styles.field}>
-                  <label htmlFor="time">Fecha Estimada</label>
-                  {appointment && <p>{appointment.date}</p>}
-                </div>
-
-                <div className={styles.field}>
-                  <label htmlFor="date">Hora Estimada</label>
-                  {appointment && <p>{appointment.time}</p>}
-                </div>
-
-                <div className={styles.field}>
-                  <label htmlFor="date">Estado</label>
-                  {appointment && (
-                    <Status
-                      id="state"
-                      state={appointment.status}
-                      type={"appointment"}
-                    />
-                  )}
-                </div>
-              </div>
-            </div>
+        {appointment != null && appointment.status == "completed" && (
+          <div className={styles.imageContainer}>
+            <img
+              src={
+                appointment.photo
+                  ? appointment.photo
+                  : "https://reservoimg.s3.amazonaws.com/fotos_blog/fd1fb362-b_foto_blog.jpg"
+              }
+              alt={"Imagen de la cita "}
+              className={styles.imageFitBack}
+            />
           </div>
-        </div>
-
-        <div className={styles.columns}>
-          <div>
-            <h3>Servicios Ofrecidos</h3>
-            <div className={styles.table}>
-              <table>
-                <tbody>
-                  {appointment &&
-                    appointment.services.map((e) => {
-                      if (e.tipo == "Paquete") {
-                        return (
-                          <tr key={e.id}>
-                            <td>{e.name}</td>
-                            <td className={styles.noBold}>
-                              <div
-                                dangerouslySetInnerHTML={{
-                                  __html: e.descripcion.trim(),
-                                }}
-                              />
-                            </td>
-                          </tr>
-                        );
-                      } else {
-                        return (
-                          <tr key={e.id}>
-                            <td>{e.name}</td>
-                          </tr>
-                        );
-                      }
-                    })}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        {appointment && (
-          <Buttons model={appointment} modelType={"appointment"} />
         )}
+
+        <div className={styles.dataLayout}>
+          <div className={styles.dataContainer}>
+            <h2>Datos del cliente</h2>
+            <div className={styles.customerData}>
+              <div className={styles.data}>
+                <label htmlFor="name">
+                  <strong>Nombre</strong>
+                </label>
+                {appointment && <p>{appointment.customer_name}</p>}
+              </div>
+
+              <div className={styles.data}>
+                <label htmlFor="phone">
+                  <strong>Telefono</strong>
+                </label>
+                {appointment && <p>{appointment.customer_phone}</p>}
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.dataContainer}>
+            <h2>Datos de la cita</h2>
+            <div className={styles.customerData}>
+              <div className={styles.data}>
+                <label htmlFor="date">
+                  <strong>Fecha programada</strong>
+                </label>
+                {appointment && <p>{appointment.date}</p>}
+              </div>
+
+              <div className={styles.data}>
+                <label htmlFor="time">
+                  <strong>Hora programada</strong>
+                </label>
+                {appointment && <p>{appointment.time}</p>}
+              </div>
+
+              <div className={styles.data}>
+                <label htmlFor="status">
+                  <strong>Estado</strong>
+                </label>
+                {appointment && (
+                  <Status
+                    id="state"
+                    state={appointment.status}
+                    type={"appointment"}
+                  />
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.dataContainer}>
+            <h2>Servicios</h2>
+            <div className={styles.table}>
+              {appointment && (
+                <ServiceGrid services={appointment.services}></ServiceGrid>
+              )}
+            </div>
+          </div>
+
+          {/* <div className={styles.dataContainer}>
+            <div>
+              <h3>Servicios Ofrecidos</h3>
+              <div className={styles.table}>
+                <table>
+                  <tbody>
+                    {appointment &&
+                      appointment.services.map((e) => {
+                        if (e.tipo == "Paquete") {
+                          return (
+                            <tr key={e.id}>
+                              <td>{e.name}</td>
+                              <td className={styles.noBold}>
+                                <div
+                                  dangerouslySetInnerHTML={{
+                                    __html: e.descripcion.trim(),
+                                  }}
+                                />
+                              </td>
+                            </tr>
+                          );
+                        } else {
+                          return (
+                            <tr key={e.id}>
+                              <td>{e.name}</td>
+                            </tr>
+                          );
+                        }
+                      })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div> */}
+        </div>
       </div>
+
+      {appointment && <Buttons model={appointment} modelType={"appointment"} />}
     </Layout>
   );
 }

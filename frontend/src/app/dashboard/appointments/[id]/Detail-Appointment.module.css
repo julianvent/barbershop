@@ -1,0 +1,168 @@
+.layout {
+    display: grid;
+    gap: 1em;
+    grid-template-rows: auto 1fr;
+    min-height: 100%;
+    padding: 0.5em;
+    border-radius: 1em;
+}
+
+.layout>h1 {
+    font-size: 1.25rem;
+}
+
+.dataLayout {
+    display: grid;
+    grid-auto-rows: min-content;
+    gap: 1em;
+}
+
+.dataContainer {
+    display: grid;
+    row-gap: 0.5em;
+    background-color: white;
+    padding: 1em;
+    border-radius: 1em;
+
+}
+
+.dataContainer>h2 {
+    font-size: 1rem;
+}
+
+.dataContainer label {
+    font-size: 0.9rem;
+}
+
+.customerData {
+    display: grid;
+    grid-auto-flow: column;
+    row-gap: 1em;
+}
+
+.data {
+    display: grid;
+}
+
+.table {
+
+}
+
+.field {
+    display: grid;
+    gap: 0.3em;
+    grid-template-rows: auto 1fr 0.5fr;
+}
+
+
+.field>label {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.table table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+.table td {
+    padding: 10px 8px;
+    vertical-align: top;
+}
+
+.table td:first-child {
+    padding: 10px 8px;
+    width: 200px;
+    font-weight: 600;
+}
+
+td.noBold {
+    font-weight: normal !important;
+}
+
+/* Estilos de Imagen */
+
+.imageContainer {
+    position: relative;
+    width: 450px;
+    height: 450px;
+}
+
+.imageFit {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.imageFitBack {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background-color: #252525;
+}
+
+.row {
+    box-sizing: content-box;
+    display: flex;
+    margin-bottom: 2%;
+    margin-top: 2%;
+}
+
+.labelText {
+    font-weight: 600;
+    font-size: '0.9rem'
+}
+
+.columns {
+    padding: 2%;
+    gap: 5%;
+    display: flex;
+}
+
+.columns>div {
+    width: 70%;
+}
+
+.columns>.imageContainer {
+    width: 30%;
+}
+
+.container {
+    display: grid;
+}
+
+
+@media (width <=800px) {
+    .fieldsContainer {
+        min-width: fit-content;
+        display: grid;
+        margin: 0
+    }
+
+    .row {
+        display: grid;
+        margin: 1%;
+        display: flexbox;
+    }
+
+    .row div {
+        width: 100%;
+    }
+
+    .columns {
+        display: grid;
+        margin-bottom: 20%;
+    }
+
+    .columns>.imageContainer {
+        width: 100%;
+    }
+
+    .columns>div {
+        width: 100%;
+        margin: 0;
+        margin-left: 1%;
+    }
+
+}

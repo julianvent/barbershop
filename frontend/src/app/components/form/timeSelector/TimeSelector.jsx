@@ -2,7 +2,7 @@ import { useFormContext } from "react-hook-form";
 import styles from "./Time-Selector.module.css";
 import TimeRadio from "../radio/TimeRadio";
 
-export default function TimeSelector({ times, id, validation }) {
+export default function TimeSelector({ times, id, validation, label }) {
   const {
     register,
     formState: { errors },
@@ -13,12 +13,16 @@ export default function TimeSelector({ times, id, validation }) {
       {...register(id, { ...validation })}
       className={styles.timeContainer}
     >
-      <span className={styles.fieldsTitle}>Hora programada</span>
-      <div className={styles.times}>
-        {times.map((time) => (
-          <TimeRadio key={time} time={time} id={id}></TimeRadio>
-        ))}
-      </div>
+      <span className={styles.fieldsTitle}>{label}</span>
+      {times.length === 0 ? (
+        <p>No se encontraron horarios disponibles en este día</p>
+      ) : (
+        <div className={styles.times}>
+          {times.map((time) => (
+            <TimeRadio key={time} time={time} id={id}></TimeRadio>
+          ))}
+        </div>
+      )}
       {errors[id] && (
         <p className={`error`} role="alert">
           {errors[id].message}
