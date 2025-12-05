@@ -26,7 +26,7 @@ export default function Header({
               </figure>
               <ul>
                 <li>
-                  <Link href="/">
+                  <Link href="/account">
                     <div className={styles.iconContainer}>
                       <img
                         src="/icons/gear-solid-full.svg"
