@@ -1,0 +1,46 @@
+.fields{
+    display: grid;
+    gap: 1em;
+}
+
+article{
+    margin-top: 5%;
+    gap: 5%;
+    display: flex;
+    height: 70%;
+}
+
+article > div{
+    width: 45%;
+    border-style:solid;
+    border-color: rgb(216, 216, 216);
+    border-radius: 1%;
+    padding: 5%;
+    align-content: center;
+}
+
+button {
+    background-color: #1B54FE;
+    color: white;
+    padding: 0.75em 3em;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+@media (width <=800px) {
+    article{
+        margin-top: 0%;
+        display: grid;
+        gap: 0%;
+    }
+
+    article > div{
+        height: auto;
+        width: 100%;
+        margin-top: 10%;
+        border-style:none;
+        padding: 0%;
+    }
+  
+}

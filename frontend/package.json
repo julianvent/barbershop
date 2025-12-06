@@ -13,6 +13,7 @@
     "next": "15.5.7",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "react-hook-form": "^7.65.0"
+    "react-hook-form": "^7.65.0",
+    "react-hot-toast": "^2.6.0"
   }
 }
