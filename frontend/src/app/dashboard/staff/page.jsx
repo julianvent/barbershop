@@ -7,8 +7,7 @@ import {
   newStaffRoute,
   seeStaffRoute,
 } from "@/app/utils/routes";
-import { indexBarbers } from "@/app/utils/data";
-import { defaultColDef, employeesEntries } from "@/app/utils/columns";
+import { actionsDef, defaultColDef, employeesEntries } from "@/app/utils/columns";
 import { AgGridReact } from "ag-grid-react";
 import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
 import { ActionButton } from "@/app/components/action/ActionButton";
@@ -71,13 +70,12 @@ export default function Page() {
       }
     },
     {
-      headerName: "Acciones",
-      field: "id",
-      cellRenderer: (params) => (
-        <ActionButton name={params.data.id} actions={actions} />
-      ),
-      flex: 1,
-    },
+      ...actionsDef,
+      cellRenderer: (params) => {
+        const employee = params.data;
+        return <ActionButton id={employee.id} actions={actions} />;
+      },
+    }
   ];
 
   return (

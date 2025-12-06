@@ -28,56 +28,58 @@ export default function showService({params}){
     return (
         <Layout headerTitle={'Ver ' + (service? (service.type == 'Paquete' ? 'Paquete': 'Servicio') :'...')}>
             <div className={layout.layout}>
-                <article className={styles.fieldsContainer}>
                 <h1>{service ? ((service.type == 'Paquete' ? 'Paquete': 'Servicio') + ' - ' + service.name):' Cargando'}</h1>
+                <article className={styles.fieldsContainer}>
             
-                <div>
-                    {
-                        service&&(<article className={styles.htmlContent} aria-label="Descripción del servicio"
-                            dangerouslySetInnerHTML={{__html: service.description.trim()}}/> )
+                    <div aria-label="Atributos del servicio">
+                        {
+                            service&&(<article className={styles.htmlContent} aria-label="Descripción del servicio"
+                                dangerouslySetInnerHTML={{__html: service.description.trim()}}/> )
+                            }
+        
+                        {
+                            error&&(
+                                <div className={warning.errorMessage}>
+                                    {error}
+                                </div>
+                            )
                         }
-    
-                    {
-                        error&&(
-                            <div className={warning.errorMessage}>
-                                {error}
-                            </div>
-                        )
-                    }
 
-                
-                    <div className={styles.price}>
-                        <p className={styles.labelText}>Precio</p>
-                        <p>{service ? service.price.toFixed(2) : '...'}</p>
-                    </div>
-
-                    <div className={styles.price}>
-                        <p className={styles.labelText}>Duracion Aproximada</p>
-                        <p>{service ? Math.floor(service.duration/60) > 1 ? Math.floor(service.duration/60) + ' hr ' + service.duration%60 + ' minutos' : service.duration + ' minutos' : '...'}</p>
-                    </div>
-
-                    <div className={styles.price}>
-                        <p className={styles.labelText}>Estado</p>
-                        {service && <Status id="state" state={service.status} name={'N/A'} />}
-                    </div>
-
-
-                    {service ? ((service.tipo != 'Paquete' ? (
+                    
                         <div className={styles.price}>
-                            <p className={styles.labelText}>Tipo</p>
-                            <p>{service ? service.type : '...'}</p>
+                            <p className={styles.labelText}>Precio</p>
+                            <p>{service ? service.price.toFixed(2) : '...'}</p>
                         </div>
-                    ): '')):''}
 
-                
-                </div>
+                        <div className={styles.price}>
+                            <p className={styles.labelText}>Duracion Aproximada</p>
+                            <p>{service ? Math.floor(service.duration/60) > 1 ? Math.floor(service.duration/60) + ' hr ' + service.duration%60 + ' minutos' : service.duration + ' minutos' : '...'}</p>
+                        </div>
+
+                        <div className={styles.price}>
+                            <p className={styles.labelText}>Estado</p>
+                            {service && <Status id="state" state={service.status} name={'N/A'} />}
+                        </div>
+
+
+                        {service ? ((service.tipo != 'Paquete' ? (
+                            <div className={styles.price}>
+                                <p className={styles.labelText}>Tipo</p>
+                                <p>{service ? service.type : '...'}</p>
+                            </div>
+                        ): '')):''}
+
+                    
+                    </div>
             
-                {
-                        service&&(<Buttons model={service} modelType={'service'}/>
-                        )
-                }
 
                 </article>
+            
+                {
+                    service&&(<Buttons model={service} modelType={'service'}/>
+                    )
+                }
+
             </div>
 
             

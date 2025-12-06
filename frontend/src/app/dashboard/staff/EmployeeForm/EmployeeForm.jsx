@@ -73,13 +73,14 @@ export default function EmployeeForm({onSubmit,employee}){
                 
                 <article className={styles.fieldsContainer}>
                     <div className={styles.columns}>
-                        <div className={styles.imageContainer}>
+                        <figure className={styles.imageContainer}>
                             <img
                                 src={employee && !preview ? employee.image_path : (preview ? preview : '/image.svg')}
-                                alt="Imagen del personal"
+                                alt="Imagen del empleado"
                                 className={(preview || employee) ? styles.imageFitBack :  styles.imageFit}
                             />
-                        </div>
+                            <figcaption>{!employee ? 'Vista Previa de la Imagen':'Imagen del empleado'}</figcaption>
+                        </figure>
                         
                         <article className={styles.subFields}>
                             <div className={styles.row}>

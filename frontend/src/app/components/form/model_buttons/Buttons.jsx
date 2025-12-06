@@ -27,7 +27,7 @@ export default function Buttons({model,modelType}){
     }
 
     return (
-        <div className={styles.buttons}>
+        <div className={styles.buttons} aria-label="Botones de Accion">
                     <button
                         className={styles.cancelButton}
                         onClick={(e) => {

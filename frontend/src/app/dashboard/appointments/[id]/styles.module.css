@@ -1,0 +1,118 @@
+.row {
+    box-sizing: content-box;
+    display: flex;
+    margin-bottom: 2%;
+    margin-top: 2%;
+    gap: 10%;
+}
+
+.field {
+    display: grid;
+    gap: 0.3em;
+    grid-template-rows: auto 1fr 0.5fr;
+}
+
+
+.field>label {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.list{
+    text-decoration: none;
+    list-style:none;
+}
+
+
+.imageContainer {
+    width: 100%;
+    aspect-ratio: 1 / 1; 
+    overflow: hidden;
+}
+
+.imageFit{
+    width: 100%;
+    height: 100%;
+    object-fit:contain;
+}
+
+.imageFitBack{
+    width: 100%;
+    height: 100%;
+    object-fit:contain;
+    background-color: #494949;
+}
+
+.row {
+    box-sizing: content-box;
+    display: flex;
+    margin-bottom: 2%;
+    margin-top: 2%;
+}
+
+.labelText{
+    font-weight: 600;
+    font-size: '0.9rem'
+}
+
+.columns{
+    padding: 2%;
+    gap: 5%;
+    display: flex;
+}
+
+.columns > .content {
+    width: 70%;
+}
+.columns > .imageContainer {
+    width: 30%;
+}
+
+.container{
+    padding: 2%;
+    gap: 5%;
+    display: grid;
+}
+
+.content > div{
+    margin-top: 2%;
+}
+
+.content{
+    align-self: center;
+}
+
+
+
+@media (width <=800px) {
+    .fieldsContainer {
+        min-width: fit-content;
+        display: grid;
+        margin: 0
+    }
+
+    .row {
+        display: grid;
+        margin: 1%;
+        display: flexbox;
+    }
+
+    .row div {
+        width: 100%;
+    }
+
+    .columns{
+        display: grid ;
+        margin-bottom: 20%;
+    }
+
+    .columns > .imageContainer {
+        width: 100%;
+    }
+    .columns > div {
+        width: 100%;
+        margin: 0;
+        margin-left:1%;
+    }
+
+}
