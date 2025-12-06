@@ -34,7 +34,6 @@ export const createService = async (data) => {
     }
     throw message;
   }
-  throw message;
 };
 
 export const updateService = async (data, name) => {
