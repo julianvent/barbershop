@@ -1,5 +1,6 @@
 import Link from "next/link";
 import styles from "./Header.module.css";
+import { logOut } from "@/app/utils/requestBuilder";
 
 export default function Header({
   isSidebarVisible,
@@ -26,7 +27,7 @@ export default function Header({
               </figure>
               <ul>
                 <li>
-                  <Link href="/">
+                  <Link href="/account">
                     <div className={styles.iconContainer}>
                       <img
                         src="/icons/gear-solid-full.svg"
@@ -37,7 +38,7 @@ export default function Header({
                   </Link>
                 </li>
                 <li>
-                  <Link href="/">
+                  <Link href="#"onClick={() => logOut()}>
                     <div className={styles.iconContainer}>
                       <img
                         src="/icons/arrow-right-from-bracket-solid-full.svg"

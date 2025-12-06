@@ -1,6 +1,6 @@
 import { Poppins } from "next/font/google";
-import axios from "axios";
 import "./globals.css";
+import { Toaster } from "react-hot-toast";
 
 const poppinsSans = Poppins({
   weight: "400",
@@ -17,6 +17,12 @@ export default function RootLayout({ children }) {
     <html lang="es">
       <body className={`${poppinsSans.variable}`}>
         <div className={`mainLayout`}>{children}</div>
+        <div role="notifier" aria-label="Notificaciones">
+          <Toaster
+            position="bottom-right"
+            reverseOrder={false}
+          />
+        </div>
       </body>
     </html>
   );
