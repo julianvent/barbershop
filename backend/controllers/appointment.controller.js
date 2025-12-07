@@ -32,6 +32,10 @@ export const AppointmentController = {
     async create(req, res) {
         try {
             const appointmentData = req.body;
+
+            if (req.user === null)
+                appointmentData.status = 'pending';
+
             const newAppointment = await AppointmentService.create(appointmentData);
             res.status(201).json(newAppointment);
         } catch (error) {
@@ -60,12 +64,12 @@ export const AppointmentController = {
         }
     },
 
-    async getAvailability(req, res){
+    async getAvailability(req, res) {
         try {
             const filters = {
                 from: req.query.from,
                 barber_id: req.query.barber_id
-            } ;
+            };
             const slots = await AppointmentService.getAvailability(filters);
 
             res.status(200).json(slots)

@@ -11,7 +11,7 @@ const router = Router();
 router.get('/availability', AppointmentController.getAvailability);
 router.get('/', requireAuth, property("receptionist"), AppointmentController.getAll);
 router.get('/:id', requireOptionalAuth, propertyAppointment, AppointmentController.getById);
-router.post('/', AppointmentController.create);
+router.post('/', requireOptionalAuth, AppointmentController.create);
 router.put('/:id', requireOptionalAuth, propertyAppointment, AppointmentController.update);
 router.delete('/:id', requireAuth, requireRole("receptionist"), AppointmentController.delete);
 
