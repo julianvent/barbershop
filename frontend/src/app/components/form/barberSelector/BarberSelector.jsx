@@ -2,7 +2,7 @@ import { useFormContext } from "react-hook-form";
 import BarberCard from "../radio/BarberCard";
 import styles from "./Barber-Selector.module.css";
 
-export default function BarberSelector({ barbers, id, onChange, validation }) {
+export default function BarberSelector({ barbers, id, validation }) {
   const {
     formState: { errors },
   } = useFormContext();
@@ -17,7 +17,6 @@ export default function BarberSelector({ barbers, id, onChange, validation }) {
             <BarberCard
               key={barber.id}
               barber={barber}
-              onChange={onChange}
               id={id}
               validation={validation}
             ></BarberCard>

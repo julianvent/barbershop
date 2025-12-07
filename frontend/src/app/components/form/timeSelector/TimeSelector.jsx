@@ -17,7 +17,12 @@ export default function TimeSelector({ times, id, validation, label }) {
       ) : (
         <div className={styles.times}>
           {times.map((time) => (
-            <TimeRadio key={time} time={time} id={id}></TimeRadio>
+            <TimeRadio
+              key={time}
+              time={time}
+              id={id}
+              validation={validation}
+            ></TimeRadio>
           ))}
         </div>
       )}

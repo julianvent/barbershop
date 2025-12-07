@@ -24,9 +24,9 @@ export default function SebasModal({
     MicroModal.show(id);
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (onConfirm) {
-      onConfirm();
+      await onConfirm();
     }
     MicroModal.close(id);
   };

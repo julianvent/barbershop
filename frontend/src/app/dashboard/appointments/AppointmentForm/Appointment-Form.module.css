@@ -52,6 +52,13 @@
     background-color: #4e4e4e;
 }
 
+.total {
+    display: flex;
+    gap: 1em;
+    flex-wrap: wrap;
+    font-size: 0.9rem;
+}
+
 @media (width <=800) {
     .fieldsContainer {
         padding: 0.75em 1em;

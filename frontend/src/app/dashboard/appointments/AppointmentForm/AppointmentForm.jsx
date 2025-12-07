@@ -16,7 +16,7 @@ import {
   statusValidation,
   timeValidation,
 } from "@/app/utils/appointmentValidators";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { status } from "../../../utils/data";
 import { useRouter } from "next/navigation";
 import {
@@ -33,6 +33,7 @@ import { appointmentsRoute } from "@/app/utils/routes";
 
 export default function AppointmentForm({ appointment, mode }) {
   const [availableTimes, setAvailableTimes] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [minDate, setMinDate] = useState(null);
   const [formData, setFormData] = useState(null);
   const [error, setError] = useState(null);
@@ -53,6 +54,7 @@ export default function AppointmentForm({ appointment, mode }) {
     if (!formData) return;
 
     methods.clearErrors();
+    setIsSubmitting(true);
     try {
       if (appointment) await updateAppointment(formData);
       else await createAppointment(formData);
@@ -61,6 +63,8 @@ export default function AppointmentForm({ appointment, mode }) {
       setError("Ocurrió un error al procesar la cita...");
       MicroModal.close("confirm-appointment-modal");
       MicroModal.show("error-appointment-modal");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -73,6 +77,16 @@ export default function AppointmentForm({ appointment, mode }) {
     name: dateValidation.id,
     control: methods.control,
   });
+  const servicesIds = useWatch({
+    name: serviceValidation.id,
+    control: methods.control,
+  });
+
+  // -- memos --
+  const { totalPrice, totalDuration } = useMemo(
+    () => calculateTotal(servicesIds, services),
+    [servicesIds, services]
+  );
 
   // -- effects --
   useEffect(() => {
@@ -142,14 +156,28 @@ export default function AppointmentForm({ appointment, mode }) {
                 services={services}
               ></ServiceSelector>
             </fieldset>
+            <div className={styles.total}>
+              <p>
+                <strong>Total: </strong>
+                {totalPrice
+                  ? `$${totalPrice}`
+                  : "Selecciona servicios para calcular el precio"}
+              </p>
+              <p>
+                <strong>Duración estimada: </strong>
+                {totalDuration
+                  ? `${totalDuration} minutos`
+                  : "Selecciona servicios para calcular la duración"}
+              </p>
+            </div>
           </div>
           <div className={styles.buttons}>
             <button
               className={styles.button}
               type="submit"
-              disabled={methods.formState.isSubmitting}
+              disabled={isSubmitting}
             >
-              {methods.formState.isSubmitting
+              {isSubmitting
                 ? appointment
                   ? "Actualizando..."
                   : "Programando cita..."
@@ -163,7 +191,7 @@ export default function AppointmentForm({ appointment, mode }) {
               title={appointment ? "Confirmar cambios" : "Confirmar nueva cita"}
               confirmText={appointment ? "Guardar cambios" : "Crear cita"}
               cancelText="Cancelar"
-              disabled={methods.formState.isSubmitting}
+              disabled={isSubmitting}
               onConfirm={confirmSubmit}
             >
               <p>
@@ -180,6 +208,7 @@ export default function AppointmentForm({ appointment, mode }) {
                   <p>
                     <strong>Teléfono:</strong> {formData.customer_phone}
                   </p>
+                  <br />
                   <p>
                     <strong>Barbero:</strong>{" "}
                     {
@@ -187,13 +216,14 @@ export default function AppointmentForm({ appointment, mode }) {
                         .barber_name
                     }
                   </p>
-                  <p>
-                    <strong>Fecha:</strong> {formData.date}
-                  </p>
-                  <p>
-                    <strong>Hora:</strong> {formData.time}
-                  </p>
 
+                  <p>
+                    <strong>Fecha: </strong> {formData.date}
+                  </p>
+                  <p>
+                    <strong>Hora: </strong> {formData.time}
+                  </p>
+                  <br />
                   <p>
                     <strong>Servicios: </strong>
                     {formData.services_ids
@@ -204,6 +234,13 @@ export default function AppointmentForm({ appointment, mode }) {
                         return service.name;
                       })
                       .toString()}
+                  </p>
+                  <p>
+                    <strong>Total: </strong>${totalPrice}
+                  </p>
+                  <p>
+                    <strong>Duración estimada: </strong>
+                    {totalDuration} minutos
                   </p>
                 </div>
               )}
@@ -282,4 +319,17 @@ function getToday() {
 
   const today = yyyy + "-" + mm + "-" + dd;
   return today;
+}
+
+function calculateTotal(servicesIds = [], services) {
+  let totalPrice = 0;
+  let totalDuration = 0;
+  servicesIds.forEach((id) => {
+    const service = services.find((service) => service.id == id);
+    if (service) {
+      totalPrice += service.price;
+      totalDuration += service.duration;
+    }
+  });
+  return { totalPrice, totalDuration };
 }

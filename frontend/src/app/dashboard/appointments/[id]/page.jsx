@@ -7,7 +7,7 @@ import { Status } from "@/app/components/form/status/Status";
 import Buttons from "@/app/components/form/model_buttons/Buttons";
 import ServiceGrid from "@/app/components/service_grid/ServiceGrid";
 
-export default function showAppointment({ params }) {
+export default function AppointmentDetail({ params }) {
   const { id } = React.use(params);
   const appointment = useAppointment(id);
 
@@ -96,6 +96,12 @@ export default function showAppointment({ params }) {
               </div>
               <div className={styles.dataDistribution}>
                 <div className={styles.data}>
+                  <label htmlFor="barber">
+                    <strong>Barbero</strong>
+                  </label>
+                  {<p>{appointment.barber.barber_name}</p>}
+                </div>
+                <div className={styles.data}>
                   <label htmlFor="time">
                     <strong>Duración estimada</strong>
                   </label>
@@ -145,7 +151,7 @@ export default function showAppointment({ params }) {
             </div>
           </div> */}
 
-            {appointment != null && appointment.status == "completed" && (
+            {appointment.status == "completed" && (
               <div className={styles.dataContainer}>
                 <h2>Fotos adjuntas</h2>
                 <div className={styles.imageContainer}>
@@ -162,9 +168,7 @@ export default function showAppointment({ params }) {
             )}
           </div>
 
-          {appointment && (
-            <Buttons model={appointment} modelType={"appointment"} />
-          )}
+          <Buttons model={appointment} modelType={"appointment"} />
         </div>
       ) : (
         <p style={{ textAlign: "center" }}>Cargando cita...</p>
