@@ -2,15 +2,25 @@
     display: grid;
     gap: 1em;
 }
+.container button {
+    background-color: #011655;
+    color: white;
+    padding: 0.25em 8em;
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+}
 
-article{
+.container{
     margin-top: 5%;
     gap: 5%;
     display: flex;
     height: 70%;
 }
 
-article > div{
+.container > div{
     width: 45%;
     border-style:solid;
     border-color: rgb(216, 216, 216);
@@ -19,23 +29,15 @@ article > div{
     align-content: center;
 }
 
-button {
-    background-color: #1B54FE;
-    color: white;
-    padding: 0.75em 3em;
-    border-radius: 6px;
-    font-weight: bold;
-    font-size: 0.9rem;
-}
 
 @media (width <=800px) {
-    article{
+    .container {
         margin-top: 0%;
         display: grid;
         gap: 0%;
     }
 
-    article > div{
+    .container > div{
         height: auto;
         width: 100%;
         margin-top: 10%;

@@ -6,7 +6,7 @@ import { getAccount, updateAccount } from "./api/account";
 import Input from "../components/form/input/Input";
 import { emailValidation, fullNameValidation, passwordValidation } from "../utils/accountValidators";
 import { useForm, FormProvider } from "react-hook-form";
-import './styles/styles.css';
+import styles from './styles/styles.module.css';
 import toast from "react-hot-toast";
 
 export default function Account(){
@@ -72,13 +72,15 @@ export default function Account(){
 
     return (
         <Layout headerTitle="Detalles de Cuenta">
+            <title>SG BarberShop - Cuenta</title>
+
             {userInfo&&<div className={layout.layout}>
                 <header>
                     <h1>Informacion de cuenta</h1>
                     <hr />
                 </header>
 
-                <article>
+                <article className={styles.container} >
                     <div>
                         <FormProvider {...methods}>
                             <form
@@ -87,7 +89,7 @@ export default function Account(){
                                 update();
                                 }}
                             >
-                                <div className="fields">
+                                <div className={styles.fields}>
                                     <h3>Actualizar cuenta</h3>
 
                                     <Input {...fullNameValidation}/>
@@ -110,7 +112,7 @@ export default function Account(){
                                 submitPassword();
                                 }}
                             >
-                                <div className="fields">
+                                <div className={styles.fields}>
                                     <h3>Cambiar Contraseña</h3>
                                     <Input {...passwordValidation}/>
 

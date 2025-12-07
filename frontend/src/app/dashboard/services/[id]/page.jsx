@@ -27,6 +27,7 @@ export default function showService({params}){
         
     return (
         <Layout headerTitle={'Ver ' + (service? (service.type == 'Paquete' ? 'Paquete': 'Servicio') :'...')}>
+            <title>SG BarberShop - Servicio</title>
             <div className={layout.layout}>
                 <h1>{service ? ((service.type == 'Paquete' ? 'Paquete': 'Servicio') + ' - ' + service.name):' Cargando'}</h1>
                 <article className={styles.fieldsContainer}>

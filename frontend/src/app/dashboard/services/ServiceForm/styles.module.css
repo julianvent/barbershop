@@ -33,6 +33,7 @@
     display:flex;
     flex-wrap: wrap;
     gap: 2em;
+    border-style: none;
 
 }
 
@@ -70,7 +71,10 @@
 .fieldsConta {
     display: block;
 }
-
+.fieldsTitle {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
 
 .errorMessage {
   color: #dc2626;

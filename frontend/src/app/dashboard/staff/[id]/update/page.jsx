@@ -40,6 +40,7 @@ export default function updateStaff({params}){
         mainTitle={"Actualizar registro del empleado - " + (employee ? employee.barber_name : '...')}
         returnRoute={staffRoute}
         >
+            <title>SG BarberShop - Actualizar empleado</title>
 
                             {
                     message&&(

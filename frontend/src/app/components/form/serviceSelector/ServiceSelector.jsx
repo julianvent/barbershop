@@ -8,7 +8,7 @@ export default function ServiceSelector({ services, id, validation }) {
   } = useFormContext();
   return (
     <fieldset className={styles.servicesContainer}>
-      <span className={styles.fieldsTitle}>Servicios</span>
+      <legend><span className={styles.fieldsTitle}>Servicios</span></legend>
       <div className={styles.services}>
         {services.map((service) => (
           <ServiceCheckbox

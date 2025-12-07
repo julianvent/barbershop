@@ -61,8 +61,8 @@ export default function BundleForm({ onSubmit }) {
             <InputDecimal {...priceValidation} />
           </div>
           <div className={styles.soloRow}>
-            <label className={styles.fieldsTitle}>Servicios</label>
-            <div className={styles.servicesContainer}>
+            <fieldset id="services_container" className={styles.servicesContainer}>
+              <legend>Servicios</legend>
               {services&&(services.map((service) => {
                 service.id = service.name;
                 return (<ServiceCheckbox
@@ -71,7 +71,7 @@ export default function BundleForm({ onSubmit }) {
                   service={service}
                 ></ServiceCheckbox>)
               }))}
-            </div>
+            </fieldset>
           </div>
 
           <div className={styles.soloRow}>

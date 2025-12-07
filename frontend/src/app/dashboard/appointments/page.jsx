@@ -38,10 +38,10 @@ export default function Appointments() {
       resizable: false,
       cellRenderer: (params) => {
         const Map = {
-          pending: { color: "#6B7280", text: "Pendiente" },
-          confirmed: { color: "#3B82F6", text: "Confirmada" },
-          completed: { color: "#10B981", text: "Completada" },
-          cancelled: { color: "#EF4444", text: "Cancelada" },
+          pending: { color: "#4e4e4e", text: "Pendiente" },
+          confirmed: { color: "#0247b6ff", text: "Confirmada" },
+          completed: { color: "#006c0eff", text: "Completada" },
+          cancelled: { color: "#9d0000ff", text: "Cancelada" },
         };
 
         return (
@@ -67,6 +67,7 @@ export default function Appointments() {
 
   return (
     <Layout>
+      <title>SG BarberShop - Citas</title>
       <div className={styles.layout}>
         <div className={styles.toolbar}>
           <h1>Citas programadas</h1>

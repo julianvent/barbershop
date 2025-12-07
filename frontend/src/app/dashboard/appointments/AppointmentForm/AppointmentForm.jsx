@@ -97,8 +97,8 @@ export default function AppointmentForm({ appointment, mode }) {
       <form onSubmit={methods.handleSubmit(onSubmit)}>
         <div className={styles.formLayout}>
           <div className={styles.fieldsContainer}>
-            <h2>Datos del cliente</h2>
             <fieldset className={styles.customerFields}>
+              <legend><h2>Datos del cliente</h2></legend>
               <Input {...customerNameValidation}></Input>
               <Input {...phoneValidation}></Input>
               <Input {...customerEmailValidation}></Input>
@@ -106,7 +106,6 @@ export default function AppointmentForm({ appointment, mode }) {
           </div>
 
           <div className={styles.fieldsContainer}>
-            <h2>Selecciona un barbero</h2>
             <BarberSelector
               barbers={barbers}
               {...barberValidation}
@@ -114,8 +113,8 @@ export default function AppointmentForm({ appointment, mode }) {
           </div>
 
           <div className={styles.fieldsContainer}>
-            <h2>Datos de la cita</h2>
             <fieldset disabled={!barberId} className={styles.appointmentFields}>
+              <legend><h2>Datos de la cita</h2></legend>
               {mode !== "customer" && (
                 <Select options={status} {...statusValidation}></Select>
               )}

@@ -35,6 +35,7 @@ export default function updateServices({params}) {
       mainTitle={"Actualizar servicio - " + (service == null ? "Cargando..." : service.name) }
       headerTitle="Editar Servicios y Paquetes"
     >
+      <title>SG BarberShop - Actualizar Servicios</title>
       {
           error&&(
               <div className={warning.errorMessage}>

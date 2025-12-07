@@ -17,6 +17,7 @@ export default function NewEmployee() {
       headerTitle={"Nuevo empleado"}
       mainTitle={"Registrar nuevo empleado"}
     >
+      <title>SG BarberShop - Registrar Empleado</title>
       <EmployeeForm onSubmit={submit} />
     </Layout>
   );

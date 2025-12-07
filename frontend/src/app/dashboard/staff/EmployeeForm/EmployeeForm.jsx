@@ -76,7 +76,7 @@ export default function EmployeeForm({onSubmit,employee}){
                         <figure className={styles.imageContainer}>
                             <img
                                 src={employee && !preview ? employee.image_path : (preview ? preview : '/image.svg')}
-                                alt="Imagen del empleado"
+                                alt="Previsualizacion de la imagen del empleado"
                                 className={(preview || employee) ? styles.imageFitBack :  styles.imageFit}
                             />
                             <figcaption>{!employee ? 'Vista Previa de la Imagen':'Imagen del empleado'}</figcaption>
