@@ -55,7 +55,7 @@ export default function Services() {
       resizable: false,
       cellRenderer: (params) => {
         const Map = {
-          'active': {color:'#006c0eff', text: 'Activo' },
+          'active': {color:'#004b0aff', text: 'Activo' },
           'inactive': {color:'#9d0000ff', text: 'Inactivo' },
         };
 

@@ -54,7 +54,7 @@ export default function Page() {
       resizable: false,
       cellRenderer: (params) => {        
         const Map = {  
-          true : {color:'#006c0eff', text: 'Activo' },
+          true : {color:'#004b0aff', text: 'Activo' },
           false : {color:'#9d0000ff', text: 'Inactivo' }, 
         };
         
