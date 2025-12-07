@@ -31,90 +31,86 @@ export default function showAppointment({ params }) {
 
   return (
     <Layout headerTitle={`Detalle de cita`}>
-      <div className={styles.layout}>
-        <h1>
-          Cita - {appointment && formatDate(appointment.appointment_datetime)}
-        </h1>
+      {appointment ? (
+        <div className={styles.layout}>
+          <h1>Cita - {formatDate(appointment.appointment_datetime)}</h1>
 
-        <div className={styles.dataLayout}>
-          <div className={styles.dataContainer}>
-            <h2>Datos del cliente</h2>
-            <div className={styles.dataDistribution}>
-              <div className={styles.data}>
-                <label htmlFor="name">
-                  <strong>Nombre</strong>
-                </label>
-                {appointment && <p>{appointment.customer_name}</p>}
-              </div>
+          <div className={styles.dataLayout}>
+            <div className={styles.dataContainer}>
+              <h2>Datos del cliente</h2>
+              <div className={styles.dataDistribution}>
+                <div className={styles.data}>
+                  <label htmlFor="name">
+                    <strong>Nombre</strong>
+                  </label>
+                  {<p>{appointment.customer_name}</p>}
+                </div>
 
-              <div className={styles.data}>
-                <label htmlFor="phone">
-                  <strong>Telefono</strong>
-                </label>
-                {appointment && <p>{appointment.customer_phone}</p>}
+                <div className={styles.data}>
+                  <label htmlFor="phone">
+                    <strong>Telefono</strong>
+                  </label>
+                  {<p>{appointment.customer_phone}</p>}
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className={styles.dataContainer}>
-            <h2>Datos de la cita</h2>
-            <div className={styles.dataDistribution}>
-              <div className={styles.data}>
-                <label htmlFor="date">
-                  <strong>Fecha programada</strong>
-                </label>
-                {appointment && <p>{appointment.date}</p>}
-              </div>
+            <div className={styles.dataContainer}>
+              <h2>Datos de la cita</h2>
+              <div className={styles.dataDistribution}>
+                <div className={styles.data}>
+                  <label htmlFor="date">
+                    <strong>Fecha programada</strong>
+                  </label>
+                  {<p>{appointment.date}</p>}
+                </div>
 
-              <div className={styles.data}>
-                <label htmlFor="time">
-                  <strong>Hora programada</strong>
-                </label>
-                {appointment && <p>{appointment.time}</p>}
-              </div>
+                <div className={styles.data}>
+                  <label htmlFor="time">
+                    <strong>Hora programada</strong>
+                  </label>
+                  {<p>{appointment.time}</p>}
+                </div>
 
-              <div className={styles.data}>
-                <label htmlFor="status">
-                  <strong>Estado</strong>
-                </label>
-                {appointment && (
+                <div className={styles.data}>
+                  <label htmlFor="status">
+                    <strong>Estado</strong>
+                  </label>
+
                   <Status
                     id="state"
                     state={appointment.status}
                     type={"appointment"}
                   />
-                )}
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className={styles.dataContainer}>
-            <h2>Servicios</h2>
-            <div className={styles.servicesWrapper}>
-              <div className={styles.services}>
-                {appointment && (
+            <div className={styles.dataContainer}>
+              <h2>Servicios</h2>
+              <div className={styles.servicesWrapper}>
+                <div className={styles.services}>
                   <ServiceGrid services={appointment.services}></ServiceGrid>
-                )}
-                <p></p>
+                  <p></p>
+                </div>
+              </div>
+              <div className={styles.dataDistribution}>
+                <div className={styles.data}>
+                  <label htmlFor="time">
+                    <strong>Duración estimada</strong>
+                  </label>
+                  {<p>{appointment.total_duration} minutos</p>}
+                </div>
+                <div className={styles.data}>
+                  <label htmlFor="time">
+                    <strong>Total</strong>
+                  </label>
+                  <p>${appointment.cost_total}</p>
+                </div>
               </div>
             </div>
-            <div className={styles.dataDistribution}>
-              <div className={styles.data}>
-                <label htmlFor="time">
-                  <strong>Duración estimada</strong>
-                </label>
-                {appointment && <p>{appointment.total_duration} minutos</p>}
-              </div>
-              <div className={styles.data}>
-                <label htmlFor="time">
-                  <strong>Total</strong>
-                </label>
-                {appointment && <p>${appointment.cost_total}</p>}
-              </div>
-            </div>
-          </div>
 
-          {/* <div className={styles.dataContainer}>
+            {/* <div className={styles.dataContainer}>
             <div>
               <h3>Servicios Ofrecidos</h3>
               <div className={styles.table}>
@@ -149,27 +145,30 @@ export default function showAppointment({ params }) {
             </div>
           </div> */}
 
-          {appointment != null && appointment.status == "completed" && (
-            <div className={styles.dataContainer}>
-              <h2>Fotos adjuntas</h2>
-              <div className={styles.imageContainer}>
-                <img
-                  src={
-                    appointment.photo
-                      ? appointment.photo
-                      : "https://reservoimg.s3.amazonaws.com/fotos_blog/fd1fb362-b_foto_blog.jpg"
-                  }
-                  alt={"Imagen de la cita "}
-                />
+            {appointment != null && appointment.status == "completed" && (
+              <div className={styles.dataContainer}>
+                <h2>Fotos adjuntas</h2>
+                <div className={styles.imageContainer}>
+                  <img
+                    src={
+                      appointment.photo
+                        ? appointment.photo
+                        : "https://reservoimg.s3.amazonaws.com/fotos_blog/fd1fb362-b_foto_blog.jpg"
+                    }
+                    alt={"Imagen de la cita "}
+                  />
+                </div>
               </div>
-            </div>
+            )}
+          </div>
+
+          {appointment && (
+            <Buttons model={appointment} modelType={"appointment"} />
           )}
         </div>
-
-        {appointment && (
-          <Buttons model={appointment} modelType={"appointment"} />
-        )}
-      </div>
+      ) : (
+        <p style={{ textAlign: "center" }}>Cargando cita...</p>
+      )}
     </Layout>
   );
 }
@@ -179,8 +178,12 @@ function useAppointment(appointmentId) {
 
   useEffect(() => {
     const fetchAppointment = async () => {
-      const data = await getAppointment(appointmentId);
-      setAppointment(data);
+      try {
+        const data = await getAppointment(appointmentId);
+        setAppointment(data);
+      } catch (error) {
+        return null;
+      }
     };
 
     fetchAppointment();
