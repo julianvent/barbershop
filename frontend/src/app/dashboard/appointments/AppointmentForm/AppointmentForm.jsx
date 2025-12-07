@@ -36,7 +36,6 @@ export default function AppointmentForm({ appointment, mode }) {
   const [minDate, setMinDate] = useState(null);
   const [formData, setFormData] = useState(null);
   const [error, setError] = useState(null);
-  const [timesError, setTimesError] = useState(null);
 
   const router = useRouter();
   const barbers = useBarbers();

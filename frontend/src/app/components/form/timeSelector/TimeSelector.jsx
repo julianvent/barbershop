@@ -4,15 +4,11 @@ import TimeRadio from "../radio/TimeRadio";
 
 export default function TimeSelector({ times, id, validation, label }) {
   const {
-    register,
     formState: { errors },
   } = useFormContext();
 
   return (
-    <fieldset
-      {...register(id, { ...validation })}
-      className={styles.timeContainer}
-    >
+    <fieldset className={styles.timeContainer}>
       <span>
         <strong>{label}</strong>
       </span>

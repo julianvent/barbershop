@@ -96,22 +96,24 @@ export async function getAvailabity(barberId, date) {
 }
 
 const splitDateTime = (isoString) => {
-  // split the appointment_datetime ISO string into separate date and time fields
-  const pad = (n) => String(n).padStart(2, "0");
-
   if (!isoString) return { date: null, time: null };
+
+  const pad = (n) => String(n).padStart(2, "0");
   const d = new Date(isoString);
-  const date = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(
-    d.getDate()
+
+  // Use UTC getters to avoid timezone conversion
+  // Funny because the database stores it as UTC when it is actually CTS
+  const date = `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(
+    d.getUTCDate()
   )}`;
-  const time = `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  const time = `${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}`;
   return { date, time };
 };
 
 function convertDateToISOString(data) {
   const date = data.date;
   const time = data.time;
-  const datetime = new Date(`${date}T${time}:00`);
 
+  const datetime = new Date(`${date}T${time}:00`);
   return datetime.toISOString();
 }
