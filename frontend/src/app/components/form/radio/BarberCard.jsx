@@ -6,7 +6,7 @@ export default function BarberCard({ id, barber, onChange, validation }) {
   return (
     <div className={styles.card}>
       <div className={styles.photoContainer}>
-        <img src={barber.image_path} alt={`${barber.name} photo`} />
+        <img src={barber.image_path} alt={`${barber.barber_name} photo`} />
       </div>
       <div className={styles.radioContainer}>
         <input

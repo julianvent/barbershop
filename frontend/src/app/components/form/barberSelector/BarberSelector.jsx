@@ -10,15 +10,19 @@ export default function BarberSelector({ barbers, id, onChange, validation }) {
   return (
     <fieldset className={styles.fieldsetContainer}>
       <div className={styles.barbers}>
-        {barbers.map((barber) => (
-          <BarberCard
-            key={barber.id}
-            barber={barber}
-            onChange={onChange}
-            id={id}
-            validation={validation}
-          ></BarberCard>
-        ))}
+        {barbers.length === 0 ? (
+          <p>No se encontraron barberos.</p>
+        ) : (
+          barbers.map((barber) => (
+            <BarberCard
+              key={barber.id}
+              barber={barber}
+              onChange={onChange}
+              id={id}
+              validation={validation}
+            ></BarberCard>
+          ))
+        )}
       </div>
       {errors[id] && (
         <span className={`error`} role="alert">

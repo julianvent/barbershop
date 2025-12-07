@@ -2,6 +2,8 @@
 
 import Input from "@/app/components/form/input/Input";
 import Select from "@/app/components/form/input/Select";
+import SebasModal from "@/app/components/modal/SebasModal";
+import MicroModal from "micromodal";
 import styles from "./Appointment-Form.module.css";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import {
@@ -32,6 +34,9 @@ import { appointmentsRoute } from "@/app/utils/routes";
 export default function AppointmentForm({ appointment, mode }) {
   const [availableTimes, setAvailableTimes] = useState([]);
   const [minDate, setMinDate] = useState(null);
+  const [formData, setFormData] = useState(null);
+  const [error, setError] = useState(null);
+  const [timesError, setTimesError] = useState(null);
 
   const router = useRouter();
   const barbers = useBarbers();
@@ -39,15 +44,24 @@ export default function AppointmentForm({ appointment, mode }) {
 
   const methods = useForm({ defaultValues: {} });
 
-  const onSubmit = async (data) => {
+  const handleFormValidation = (data) => {
+    // Store form data and open confirmation modal
+    setFormData(data);
+    MicroModal.show("confirm-appointment-modal");
+  };
+
+  const confirmSubmit = async () => {
+    if (!formData) return;
+
     methods.clearErrors();
     try {
-      if (appointment) await updateAppointment(data);
-      else await createAppointment(data);
+      if (appointment) await updateAppointment(formData);
+      else await createAppointment(formData);
       router.push(appointmentsRoute);
     } catch (error) {
-      // TODO: Show error properly
-      console.error(error);
+      setError("Ocurrió un error al procesar la cita...");
+      MicroModal.close("confirm-appointment-modal");
+      MicroModal.show("error-appointment-modal");
     }
   };
 
@@ -78,14 +92,14 @@ export default function AppointmentForm({ appointment, mode }) {
       async function fetchAvailability(barberId) {
         try {
           const data = await getAvailabity(barberId, date);
-          const barberSlots = data.barbers.filter(
+          const barberSlots = data.barbers.find(
             (barber) => barber.barberId === barberId
           );
-          const times = barberSlots[0].slots;
+          const times = barberSlots.slots;
 
           setAvailableTimes(times);
         } catch (error) {
-          console.error(error);
+          setAvailableTimes([]);
         }
       }
       fetchAvailability(barberId);
@@ -94,7 +108,7 @@ export default function AppointmentForm({ appointment, mode }) {
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmit)}>
+      <form onSubmit={methods.handleSubmit(handleFormValidation)}>
         <div className={styles.formLayout}>
           <div className={styles.fieldsContainer}>
             <h2>Datos del cliente</h2>
@@ -131,7 +145,11 @@ export default function AppointmentForm({ appointment, mode }) {
             </fieldset>
           </div>
           <div className={styles.buttons}>
-            <button disabled={methods.formState.isSubmitting}>
+            <button
+              className={styles.button}
+              type="submit"
+              disabled={methods.formState.isSubmitting}
+            >
               {methods.formState.isSubmitting
                 ? appointment
                   ? "Actualizando..."
@@ -140,6 +158,67 @@ export default function AppointmentForm({ appointment, mode }) {
                 ? "Confirmar cambios"
                 : "Programar cita"}
             </button>
+
+            <SebasModal
+              id="confirm-appointment-modal"
+              title={appointment ? "Confirmar cambios" : "Confirmar nueva cita"}
+              confirmText={appointment ? "Guardar cambios" : "Crear cita"}
+              cancelText="Cancelar"
+              disabled={methods.formState.isSubmitting}
+              onConfirm={confirmSubmit}
+            >
+              <p>
+                {appointment
+                  ? "¿Estás seguro de que deseas actualizar esta cita?"
+                  : "¿Estás seguro de que deseas crear esta cita?"}
+              </p>
+              <br />
+              {formData && (
+                <div>
+                  <p>
+                    <strong>Cliente:</strong> {formData.customer_name}
+                  </p>
+                  <p>
+                    <strong>Teléfono:</strong> {formData.customer_phone}
+                  </p>
+                  <p>
+                    <strong>Barbero:</strong>{" "}
+                    {
+                      barbers.find((barber) => barber.id == barberId)
+                        .barber_name
+                    }
+                  </p>
+                  <p>
+                    <strong>Fecha:</strong> {formData.date}
+                  </p>
+                  <p>
+                    <strong>Hora:</strong> {formData.time}
+                  </p>
+
+                  <p>
+                    <strong>Servicios: </strong>
+                    {formData.services_ids
+                      .map((id) => {
+                        const service = services.find(
+                          (service) => id == service.id
+                        );
+                        return service.name;
+                      })
+                      .toString()}
+                  </p>
+                </div>
+              )}
+            </SebasModal>
+
+            <SebasModal
+              id="error-appointment-modal"
+              title="Error al procesar la cita"
+              confirmText="Entendido"
+              cancelButton={false}
+              onConfirm={() => setError("")}
+            >
+              <p>{error}</p>
+            </SebasModal>
           </div>
         </div>
       </form>
@@ -156,7 +235,7 @@ function useBarbers() {
         const data = await getEmployees();
         setBarbers(data.data);
       } catch (error) {
-        console.error("Error fetching barbers");
+        return barbers;
       }
     }
     fetchBarbers();
@@ -173,7 +252,7 @@ function useServices() {
         const data = await getServices();
         setServices(data);
       } catch (error) {
-        console.error("Error fetching services");
+        return services;
       }
     }
     fetchServices();

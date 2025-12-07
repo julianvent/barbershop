@@ -1,6 +1,7 @@
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
+import "@/styles/micromodal.css";
 
 const poppinsSans = Poppins({
   weight: "400",
@@ -18,10 +19,7 @@ export default function RootLayout({ children }) {
       <body className={`${poppinsSans.variable}`}>
         <div className={`mainLayout`}>{children}</div>
         <div role="notifier" aria-label="Notificaciones">
-          <Toaster
-            position="bottom-right"
-            reverseOrder={false}
-          />
+          <Toaster position="bottom-right" reverseOrder={false} />
         </div>
       </body>
     </html>

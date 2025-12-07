@@ -13,9 +13,11 @@ export default function TimeSelector({ times, id, validation, label }) {
       {...register(id, { ...validation })}
       className={styles.timeContainer}
     >
-      <span className={styles.fieldsTitle}>{label}</span>
+      <span>
+        <strong>{label}</strong>
+      </span>
       {times.length === 0 ? (
-        <p>No se encontraron horarios disponibles en este día</p>
+        <p>No se encontraron horarios disponibles.</p>
       ) : (
         <div className={styles.times}>
           {times.map((time) => (
