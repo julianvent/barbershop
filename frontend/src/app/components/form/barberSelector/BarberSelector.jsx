@@ -9,6 +9,7 @@ export default function BarberSelector({ barbers, id, onChange, validation }) {
 
   return (
     <fieldset className={styles.fieldsetContainer}>
+      <legend><h2>Selecciona un barbero</h2></legend>
       <div className={styles.barbers}>
         {barbers.map((barber) => (
           <BarberCard

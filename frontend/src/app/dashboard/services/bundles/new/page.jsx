@@ -19,6 +19,7 @@ export default function NewService() {
       mainTitle={"Registrar nuevo paquete"}
       returnRoute={servicesRoute}
     >
+      <title>SG BarberShop - Crear Paquetes</title>
       <BundleForm onSubmit={submit}></BundleForm>
     </Layout>
   );

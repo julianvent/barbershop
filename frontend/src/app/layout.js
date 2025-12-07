@@ -8,16 +8,13 @@ const poppinsSans = Poppins({
   subsets: ["latin"],
 });
 
-export const metadata = {
-  title: "SG Barbershop",
-};
 
 export default function RootLayout({ children }) {
   return (
     <html lang="es">
       <body className={`${poppinsSans.variable}`}>
         <div className={`mainLayout`}>{children}</div>
-        <div role="notifier" aria-label="Notificaciones">
+        <div role="status" aria-label="Notificaciones">
           <Toaster
             position="bottom-right"
             reverseOrder={false}

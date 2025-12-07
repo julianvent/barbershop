@@ -9,11 +9,12 @@ export default function TimeSelector({ times, id, validation, label }) {
   } = useFormContext();
 
   return (
+    
     <fieldset
       {...register(id, { ...validation })}
       className={styles.timeContainer}
     >
-      <span className={styles.fieldsTitle}>{label}</span>
+      <legend><span className={styles.fieldsTitle}>{label}</span></legend>
       {times.length === 0 ? (
         <p>No se encontraron horarios disponibles en este día</p>
       ) : (

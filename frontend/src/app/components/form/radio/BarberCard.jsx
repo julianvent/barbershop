@@ -10,11 +10,12 @@ export default function BarberCard({ id, barber, onChange, validation }) {
       </div>
       <div className={styles.radioContainer}>
         <input
+          id={'barbero-'+barber.id}
           type="radio"
           value={barber.id}
           {...register(id, { ...validation, onChange: onChange })}
         />
-        <label>
+        <label htmlFor={'barbero-'+barber.id}>
           <p>{barber.barber_name}</p>
         </label>
       </div>

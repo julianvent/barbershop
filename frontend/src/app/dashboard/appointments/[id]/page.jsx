@@ -31,6 +31,7 @@ export default function showAppointment({ params }) {
 
   return (
     <Layout headerTitle={`Detalle de cita`}>
+      <title>SG BarberShop - Detalle de Cita</title>
       <div className={styles.layout}>
         <h1>
           Cita - {appointment && formatDate(appointment.appointment_datetime)}
@@ -41,16 +42,12 @@ export default function showAppointment({ params }) {
             <h2>Datos del cliente</h2>
             <div className={styles.dataDistribution}>
               <div className={styles.data}>
-                <label htmlFor="name">
-                  <strong>Nombre</strong>
-                </label>
-                {appointment && <p>{appointment.customer_name}</p>}
+                <strong>Nombre</strong>
+                {appointment && <p id="name">{appointment.customer_name}</p>}
               </div>
 
               <div className={styles.data}>
-                <label htmlFor="phone">
-                  <strong>Telefono</strong>
-                </label>
+                <strong>Telefono</strong>
                 {appointment && <p>{appointment.customer_phone}</p>}
               </div>
             </div>
@@ -60,23 +57,17 @@ export default function showAppointment({ params }) {
             <h2>Datos de la cita</h2>
             <div className={styles.dataDistribution}>
               <div className={styles.data}>
-                <label htmlFor="date">
-                  <strong>Fecha programada</strong>
-                </label>
+                <strong>Fecha programada</strong>
                 {appointment && <p>{appointment.date}</p>}
               </div>
 
               <div className={styles.data}>
-                <label htmlFor="time">
-                  <strong>Hora programada</strong>
-                </label>
+                <strong>Hora programada</strong>
                 {appointment && <p>{appointment.time}</p>}
               </div>
 
               <div className={styles.data}>
-                <label htmlFor="status">
-                  <strong>Estado</strong>
-                </label>
+                <strong>Estado</strong>
                 {appointment && (
                   <Status
                     id="state"
@@ -100,15 +91,11 @@ export default function showAppointment({ params }) {
             </div>
             <div className={styles.dataDistribution}>
               <div className={styles.data}>
-                <label htmlFor="time">
-                  <strong>Duración estimada</strong>
-                </label>
+                <strong>Duración estimada</strong>
                 {appointment && <p>{appointment.total_duration} minutos</p>}
               </div>
               <div className={styles.data}>
-                <label htmlFor="time">
-                  <strong>Total</strong>
-                </label>
+                <strong>Total</strong>
                 {appointment && <p>${appointment.cost_total}</p>}
               </div>
             </div>

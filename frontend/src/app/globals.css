@@ -52,3 +52,9 @@ button:disabled {
   font-weight: normal;
   color: rgb(196, 0, 0);
 }
+
+legend{
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 1%;
+}

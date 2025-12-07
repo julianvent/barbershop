@@ -27,6 +27,8 @@ export default function EmployeeDetail({params}){
 
     return (
         <Layout headerTitle={'Barbero No.'+(employee?employee.id:'')}>
+            <title>SG BarberShop - Ver Empleado</title>
+
             <div  className={layout.layout}>
             
                 <div className={styles.header}>

@@ -72,6 +72,8 @@ export default function Account(){
 
     return (
         <Layout headerTitle="Detalles de Cuenta">
+            <title>SG BarberShop - Cuenta</title>
+
             {userInfo&&<div className={layout.layout}>
                 <header>
                     <h1>Informacion de cuenta</h1>
