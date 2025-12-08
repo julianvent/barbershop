@@ -16,5 +16,5 @@ router.post('/', requireOptionalAuth, AppointmentController.create);
 router.put('/:id', requireOptionalAuth, propertyAppointment, AppointmentController.update);
 router.delete('/:id', requireAuth, requireRole("receptionist"), AppointmentController.delete);
 router.post('/:id/complete', requireAuth, requireRole("receptionist"), uploadAppointmentImage.any(), AppointmentController.complete);
-router.post('/:id/cancel', requireAuth, property("receptionist"), AppointmentController.cancel);
+router.post('/:id/cancel', requireAuth, requireRole("receptionist"), AppointmentController.cancel);
 export default router;

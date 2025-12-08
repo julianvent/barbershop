@@ -7,8 +7,7 @@ const WhiteListQueryParams = [
   "customer_phone",
   "appointment_datetime",
   "status",
-  "services_ids",
-  "image_finish_path"
+  "services_ids"
 ];
 const orderValues = ["ASC", "DESC"]
 

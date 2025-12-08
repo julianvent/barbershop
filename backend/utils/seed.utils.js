@@ -1,3 +1,25 @@
+import { DataTypes } from "sequelize";
+
+async function ensureAppointmentImageFinishColumn(sequelize) {
+  const queryInterface = sequelize.getQueryInterface();
+  try {
+    const tableDefinition = await queryInterface.describeTable("appointment");
+    if (!tableDefinition.image_finish_path) {
+      console.log("Adding missing column image_finish_path to appointment...");
+      await queryInterface.addColumn("appointment", "image_finish_path", {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+      });
+      console.log("Column image_finish_path added");
+    }
+  } catch (error) {
+    // If the table doesn't exist yet, it will be created by sequelize.sync below
+    if (error.original?.code !== "ER_NO_SUCH_TABLE") {
+      throw error;
+    }
+  }
+}
+
 export async function seedDatabase(sequelize, options = { seedDB: false }) {
   try {
     console.log("Starting database seeding...");
@@ -25,6 +47,7 @@ export async function seedDatabase(sequelize, options = { seedDB: false }) {
     );
 
     await sequelize.sync({ alter: false });
+    await ensureAppointmentImageFinishColumn(sequelize);
     console.log("Database synced");
 
     const [serviceCount, barberCount, accountCount, scheduleCount] =
