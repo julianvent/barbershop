@@ -23,6 +23,7 @@
     display: grid;
     grid-auto-flow: column;
     grid-template-columns: repeat(3, 1fr);
+    align-items: end;
     column-gap: 5em;
 }
 
@@ -53,9 +54,8 @@
 }
 
 .total {
-    display: flex;
+    display: grid;
     gap: 1em;
-    flex-wrap: wrap;
     font-size: 0.9rem;
 }
 

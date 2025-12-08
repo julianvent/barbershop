@@ -28,12 +28,23 @@ export async function getAppointments() {
   }
 }
 
-export async function getAppointment(appointmentId) {
+export async function getAppointment(appointmentId, auth) {
+  const params = new URLSearchParams();
+
+  if (auth) {
+    params.append("auth", auth);
+  }
   try {
     const headers = await axiosConfig();
+
+    const config = {
+      ...headers,
+      params: params,
+    };
+
     const res = await axios.get(
       getAppointmentsApiRoute + appointmentId,
-      headers
+      config
     );
     const appointment = res.data;
 

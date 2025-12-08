@@ -1,0 +1,22 @@
+.notFoundLayout {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    min-height: 100%;
+    row-gap: 1em;
+}
+
+.notFoundLayout figure {
+    max-width: 300px;
+}
+
+.notFoundLayout img {
+    width: 100%;
+    object-fit: cover;
+}
+
+.notFoundLayout a {
+    color: black;
+    font-size: 1.5rem;
+}

@@ -38,7 +38,7 @@ export default function Header({
                   </Link>
                 </li>
                 <li>
-                  <Link href="#"onClick={() => logOut()}>
+                  <Link href="#" onClick={() => logOut()}>
                     <div className={styles.iconContainer}>
                       <img
                         src="/icons/arrow-right-from-bracket-solid-full.svg"

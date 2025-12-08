@@ -124,7 +124,7 @@ export default function AppointmentForm({ appointment, mode }) {
       <form onSubmit={methods.handleSubmit(handleFormValidation)}>
         <div className={styles.formLayout}>
           <div className={styles.fieldsContainer}>
-            <h2>Datos del cliente</h2>
+            <h2>{mode === "customer" ? "Mis datos": "Datos del cliente"}</h2>
             <fieldset className={styles.customerFields}>
               <Input {...customerNameValidation}></Input>
               <Input {...phoneValidation}></Input>
