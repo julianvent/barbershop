@@ -118,13 +118,20 @@ async function seedBarber(Barber) {
     "JOSÉ JULIÁN VENTURA USCANGA",
     "CARLOS ALBERTO CARMONA LÓPEZ",
   ];
-
+  const teamNameEmail = [
+    "sebastian.jesus.hernandez.montero",
+    "adrian.herrera.jeronimo",
+    "jose.julian.ventura.uscanga",
+    "carlos.alberto.carmona.lopez",
+  ];
   const barbers = [];
   for (let name of teamName) {
     const barber = await Barber.create({
       barber_name: name,
       image_path: "/assets/images/monkeyBarber.png",
       is_active: true,
+      phone: `555${Math.floor(1000000 + Math.random() * 9000000)}`,
+      email: `${teamNameEmail[teamName.indexOf(name)]}@barbershop.com`,
     });
     barbers.push(barber);
   }
@@ -133,6 +140,8 @@ async function seedBarber(Barber) {
     barber_name: "KEVIN SEBASTIÁN FRIAS GARCÍA",
     image_path: "/assets/images/monkeyBarberKeff.jpg",
     is_active: true,
+    phone: `555${Math.floor(1000000 + Math.random() * 9000000)}`,
+    email: `kevin.sebastian.frias.garcia@barbershop.com`,
   });
   barbers.push(keffBarber);
 

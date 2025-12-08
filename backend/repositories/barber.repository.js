@@ -51,7 +51,7 @@ export const BarberRepository = {
             });
         }
         catch(error){
-            throw new Error("Error creating barber: " + error.message);
+            throw new Error("Error updating barber: " + error.message);
         }
     },
     async delete(id){

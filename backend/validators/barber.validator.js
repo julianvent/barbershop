@@ -1,8 +1,8 @@
 import {states} from './appointment.validator.js'
 
-const validFields = ["barber_name"];
-const orderValues = ["ASC", "DESC"]
-const validUpdateFields = ["barber_name", "is_active"]
+const validFields = ["barber_name","is_active","email","phone"];
+const validUpdateFields = [...validFields, "image_path"];
+const orderValues = ["ASC", "DESC"];
 
 export const BarberValidator = {
     validateCreate(barberData) {
@@ -19,12 +19,12 @@ export const BarberValidator = {
         if (!barberData || typeof barberData !== "object") {
             throw new Error("Body is empty or invalid");
         }
-        /*
+        
         for (const field in barberData) {
             if (!validUpdateFields.includes(field)) {
                 throw new Error(`Invalid field in update: ${field}`);
             }
-        }*/
+        }
     },
     validateFiltersListbarbers(filters){
         const sort = filters.sort != null? filters.sort : null ;
