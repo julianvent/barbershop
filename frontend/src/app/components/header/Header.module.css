@@ -6,22 +6,12 @@
 }
 
 .headerContainer {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: repeat(3, 1fr);
     align-items: center;
     padding: 0.5em 2em;
     background-color: rgb(34, 34, 34);
-}
-
-.headerContainer figure {
-    max-width: 2.5em;
-    max-height: 2.5em;
-    padding-inline: 0.5em;
-}
-
-.headerContainer img {
-    width: 100%;
-    filter: brightness(0) saturate(100%) invert(100%) sepia(96%) saturate(0%) hue-rotate(47deg) brightness(104%) contrast(107%);
 }
 
 .headerContainer h1 {
@@ -38,45 +28,46 @@
     text-decoration: none;
 }
 
-.profileContainer {
+.titleContainer {
     display: flex;
-    gap: 1em;
-    align-items: center;
+    gap: 0.5em;
+    justify-self: baseline;
 }
 
-.profileContainer span {
-    font-weight: bold;
-    color: white;
+.logo {
+    max-width: 100px;
+    justify-self: center;
 }
 
-.dropdown {
-    list-style: none;
-    margin: 0;
-    max-width: fit-content;
-    position: relative;
+.logo img {
+    width: 100%;
 }
 
-.iconContainer {
-    max-width: 1.7em;
-    max-height: 1.7em;
+.profileContainer {
+    justify-self: end;
 }
 
 .sidebarButton {
     display: none;
 }
 
-.titleContainer {
-    display: flex;
-    gap: 1em;
-}
 
 @media (width <=800px) {
     .headerContainer {
         padding: 0.5em 1em;
+        gap: .5em;
     }
 
     .headerContainer h1 {
         margin-left: 0.4em;
+    }
+
+    .titleContainer>h1 {
+        font-size: 0.9rem;
+    }
+
+    .logo {
+        max-width: 80px;
     }
 
     .sidebarButton {

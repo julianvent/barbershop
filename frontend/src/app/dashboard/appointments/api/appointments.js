@@ -1,6 +1,7 @@
 import { axiosConfig } from "@/app/utils/requestBuilder";
 import axios from "axios";
 import {
+  cancelAppointmentApiRoute,
   completeAppointmentApiRoute,
   createAppointmentApiRoute,
   getAppointmentsApiRoute,
@@ -91,21 +92,27 @@ export async function updateAppointment(data) {
   }
 }
 
-export async function completeAppointment(data, id){
-  try{
+export async function completeAppointment(data, id) {
+  try {
     const headers = await axiosConfig();
-    delete headers.headers['Content-Type'];
-    const url = completeAppointmentApiRoute.replace('${id}', id);
-    
+    delete headers.headers["Content-Type"];
+    const url = completeAppointmentApiRoute.replace("${id}", id);
+
     const formData = new FormData();
     formData.append("image", data.image[0]);
 
     axios.post(url, formData, headers);
-    
-  }catch(err){
-    throw 'La cita no se pudo completar correctamente';
+  } catch (err) {
+    throw "La cita no se pudo completar correctamente";
   }
+}
 
+export async function cancelAppointment(id) {
+  try {
+    const headers = await axiosConfig();
+    const res = axios.post(cancelAppointmentApiRoute(id), headers);
+    return res;
+  } catch (error) {}
 }
 
 export async function getAvailabity(barberId, date) {
@@ -130,12 +137,11 @@ const splitDateTime = (isoString) => {
   const pad = (n) => String(n).padStart(2, "0");
   const d = new Date(isoString);
 
-  // Use UTC getters to avoid timezone conversion
-  // Funny because the database stores it as UTC when it is actually CTS
-  const date = `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(
-    d.getUTCDate()
+  // Use normal getters for time conversion
+  const date = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(
+    d.getDate()
   )}`;
-  const time = `${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}`;
+  const time = `${pad(d.getHours())}:${pad(d.getMinutes())}`;
   return { date, time };
 };
 

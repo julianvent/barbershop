@@ -7,56 +7,70 @@ import ServiceGrid from "@/app/components/service_grid/ServiceGrid";
 import SebasModal from "@/app/components/modal/SebasModal";
 import { FormProvider, useForm } from "react-hook-form";
 import Input from "@/app/components/form/input/Input";
-import { emailValidation } from "@/app/utils/accountValidators";
 import { appoinmentPhotoValidation } from "@/app/utils/appointmentValidators";
 import MicroModal from "micromodal";
 import { appointmentsRoute } from "@/app/utils/routes";
 import { useRouter } from "next/navigation";
 
-export default function AppointmentDetail({ appointmentId, auth }) {
+export default function AppointmentDetail({
+  appointmentId,
+  auth,
+  customerMode,
+}) {
   const router = useRouter();
   const appointment = useAppointment(appointmentId, auth);
-  const [isSubmitting, setisSubmiting] = useState(false);
-  const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
   const methods = useForm();
-  const { handleSubmit, watch, setValue, formState: { errors } } = methods;
+  const {
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = methods;
   const [preview, setPreview] = useState(null);
   const file = watch("image");
 
-    const onSubmit = methods.handleSubmit(
-      async (data) => {
-        setisSubmiting(true);
-  
-        try {
-          await completeAppointment(data,appointmentId);
-          router.push(appointmentsRoute);
-        } catch (error) {
-          setError('La cita no se pudo completar correctamente');
-          MicroModal.close('complete-appointment-modal');
-          MicroModal.show('error-appointment-modal');
+  const onSubmit = methods.handleSubmit(async (data) => {
+    setIsSubmitting(true);
 
-        } finally {
-          setisSubmiting(false);
-        }
-      }
-    );
+    try {
+      await completeAppointment(data, appointmentId);
+      router.push(appointmentsRoute);
+    } catch (error) {
+      setError("La cita no se pudo completar correctamente");
+      MicroModal.close("complete-appointment-modal");
+      MicroModal.show("error-appointment-modal");
+    } finally {
+      setIsSubmitting(false);
+    }
+  });
+
+  function onCancel() {
+    setIsSubmitting(true);
+
+    try {
+    } catch (error) {
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
 
   useEffect(() => {
-      if (file && file.length > 0) {
-          const selectedFile = file[0];
-          const allowedTypes = ["image/jpeg", "image/png"];
-          if (allowedTypes.includes(selectedFile.type)) {
-              const reader = new FileReader();
-              reader.onloadend = () => setPreview(reader.result);
-              reader.readAsDataURL(selectedFile);
-          } else {
-              setPreview(null);
-          }
+    if (file && file.length > 0) {
+      const selectedFile = file[0];
+      const allowedTypes = ["image/jpeg", "image/png"];
+      if (allowedTypes.includes(selectedFile.type)) {
+        const reader = new FileReader();
+        reader.onloadend = () => setPreview(reader.result);
+        reader.readAsDataURL(selectedFile);
       } else {
-      setPreview(null);
+        setPreview(null);
       }
+    } else {
+      setPreview(null);
+    }
   }, [file, setValue]);
-  
 
   function formatDate(date) {
     const dayNames = [
@@ -95,11 +109,11 @@ export default function AppointmentDetail({ appointmentId, auth }) {
 
                 <div className={styles.data}>
                   <p htmlFor="customer phone">
-                    <strong>Telefono</strong>
+                    <strong>Teléfono</strong>
                   </p>
                   <p>
                     {appointment.customer_phone ||
-                      "No se proporcionó número de teléfono"}
+                      "No se proporcionó número de teléfono."}
                   </p>
                 </div>
 
@@ -107,7 +121,10 @@ export default function AppointmentDetail({ appointmentId, auth }) {
                   <p htmlFor="customer email">
                     <strong>Correo electrónico</strong>
                   </p>
-                  {<p>{appointment.customer_email}</p>}
+                  <p>
+                    {appointment.customer_email ||
+                      "No se proporcionó correo electrónico."}
+                  </p>
                 </div>
               </div>
             </div>
@@ -173,41 +190,6 @@ export default function AppointmentDetail({ appointmentId, auth }) {
               </div>
             </div>
 
-            {/* <div className={styles.dataContainer}>
-            <div>
-              <h3>Servicios Ofrecidos</h3>
-              <div className={styles.table}>
-                <table>
-                  <tbody>
-                    {appointment &&
-                      appointment.services.map((e) => {
-                        if (e.tipo == "Paquete") {
-                          return (
-                            <tr key={e.id}>
-                              <td>{e.name}</td>
-                              <td className={styles.noBold}>
-                                <div
-                                  dangerouslySetInnerHTML={{
-                                    __html: e.descripcion.trim(),
-                                  }}
-                                />
-                              </td>
-                            </tr>
-                          );
-                        } else {
-                          return (
-                            <tr key={e.id}>
-                              <td>{e.name}</td>
-                            </tr>
-                          );
-                        }
-                      })}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div> */}
-
             {appointment.status == "completed" && (
               <div className={styles.dataContainer}>
                 <h2>Fotos adjuntas</h2>
@@ -224,62 +206,84 @@ export default function AppointmentDetail({ appointmentId, auth }) {
               </div>
             )}
           </div>
-          <div>
+
+          {customerMode ? (
+            <div
+              className={styles.cancelContainer}
+              onClick={() => MicroModal.show("cancel-appointment-modal")}
+            >
+              <button className={styles.cancelAppointment}>
+                Cancelar cita
+              </button>
+            </div>
+          ) : (
             <Buttons model={appointment} modelType={"appointment"} />
-          </div>
-          <SebasModal
-              id="complete-appointment-modal"
-              title={'Confirme la cita'}
-              confirmText={"Terminar cita"}
-              cancelText="Cancelar"
-              disabled={isSubmitting}
-              onConfirm={onSubmit}>
-              <FormProvider {...methods}>
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                  }}
-                  noValidate
-                  aria-busy={isSubmitting}
-                >
-                  <div className={styles.fieldsContainerInside}>
-                    <Input {...appoinmentPhotoValidation}></Input>
-                    <figure className={styles.imageContainerInside}>
-                      <img
-                        src={(preview ? preview : '/image.svg')}
-                        alt="Previsualizacion de la cita completada"
-                        className={preview  ? styles.imageFitBackInside :  styles.imageFitInside}
-                      />
-                    </figure>
-
-                  </div>
-                </form>
-              </FormProvider>
-          </SebasModal>
-
-          <SebasModal
-              id="error-appointment-modal"
-              title={'Hubo una excepcion'}
-              confirmText='Confirmar'
-              cancelButton={false}
-              disabled={false}
-              onConfirm={()=>{
-                MicroModal.close('error-appointment-modal');
-                MicroModal.show('complete-appointment-modal');
-              }}>
-                <div className={styles.errorMessage}>
-                  <p>{error}</p>
-                </div>
-
-
-          </SebasModal>
-
-
-
+          )}
         </div>
       ) : (
         <p style={{ textAlign: "center" }}>Cargando cita...</p>
       )}
+
+      <SebasModal
+        id="complete-appointment-modal"
+        title={"Confirme la cita"}
+        confirmText={"Terminar cita"}
+        cancelText="Cancelar"
+        disabled={isSubmitting}
+        onConfirm={onSubmit}
+      >
+        <FormProvider {...methods}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+            }}
+            noValidate
+            aria-busy={isSubmitting}
+          >
+            <div className={styles.fieldsContainerInside}>
+              <Input {...appoinmentPhotoValidation}></Input>
+              <figure className={styles.imageContainerInside}>
+                <img
+                  src={preview ? preview : "/image.svg"}
+                  alt="Previsualizacion de la cita completada"
+                  className={
+                    preview ? styles.imageFitBackInside : styles.imageFitInside
+                  }
+                />
+              </figure>
+            </div>
+          </form>
+        </FormProvider>
+      </SebasModal>
+
+      <SebasModal
+        id="error-appointment-modal"
+        title={"Hubo una excepcion"}
+        confirmText="Confirmar"
+        cancelButton={false}
+        disabled={false}
+        onConfirm={() => {
+          MicroModal.close("error-appointment-modal");
+          MicroModal.show("complete-appointment-modal");
+        }}
+      >
+        <div className={styles.errorMessage}>
+          <p>{error}</p>
+        </div>
+      </SebasModal>
+
+      <SebasModal
+        id="cancel-appointment-modal"
+        title={"Cancelar cita"}
+        confirmText="Confirmar"
+        cancelText="Volver"
+        disabled={isSubmitting}
+      >
+        <p>
+          ¿Estás seguro de cancelar la cita?
+          <br /> Después de la operación, no se podrá acceder a la cita.
+        </p>
+      </SebasModal>
     </>
   );
 }
