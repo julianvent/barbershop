@@ -5,7 +5,8 @@
     align-items: flex-start
 }
 
-.labelText{
-    font-weight: 600;
-    font-size: '1rem'
+.div{
+    box-sizing: border-box;
+    max-width: 100%;
+    overflow-wrap: break-word;
 }

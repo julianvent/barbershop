@@ -3,6 +3,7 @@ import { deleteEmployee } from "@/app/dashboard/staff/api/employees";
 import { appointmentsRoute, editAppointments, editService, editStaffRoute, servicesRoute, staffRoute } from "@/app/utils/routes";
 import styles from "./styles.module.css";
 import { useRouter } from "next/navigation";
+import MicroModal from "micromodal";
 
 export default function Buttons({model,modelType}){
     let id = model.id
@@ -54,6 +55,12 @@ export default function Buttons({model,modelType}){
                             routes.deleteFunction(id);
                             router.push(routes.index);
                     }}>Eliminar</button>
+
+                    {modelType == 'appointment' && (<button className={styles.completeAppointment}
+                        onClick={ (e) => {
+                            e.preventDefault();
+                            MicroModal.show('complete-appointment-modal');
+                    }}>Completar</button>)}
                 </div>
     )
 }

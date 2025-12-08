@@ -22,35 +22,7 @@ export default function Header({
         </div>
         <div className={styles.profileContainer}>
           <ul className={styles.dropdown}>
-            <li>
-              <figure>
-                <img src="/circle-user-solid-full.svg" alt="" />
-              </figure>
-              <ul>
-                <li>
-                  <Link href="/account">
-                    <div className={styles.iconContainer}>
-                      <img
-                        src="/icons/gear-solid-full.svg"
-                        alt="sign-out-icon"
-                      />
-                    </div>
-                    Configuración de la cuenta
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" onClick={() => logOut()}>
-                    <div className={styles.iconContainer}>
-                      <img
-                        src="/icons/arrow-right-from-bracket-solid-full.svg"
-                        alt="sign-out-icon"
-                      />
-                    </div>
-                    Cerrar sesión
-                  </Link>
-                </li>
-              </ul>
-            </li>
+            <Dropdown></Dropdown>
           </ul>
         </div>
       </div>

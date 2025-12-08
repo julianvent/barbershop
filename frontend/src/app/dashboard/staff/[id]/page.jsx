@@ -53,20 +53,20 @@ export default function EmployeeDetail({params}){
                     <article className={styles.subFields}>
                         <div className={styles.row}>
                             <div>
-                                <p className={show.labelText}>Nombre Completo </p>
+                                <p><strong>Nombre Completo</strong></p>
                                 <p>{(employee != null)?employee.barber_name: '...'}</p>
                             </div>
                             
                         </div>
 
                         <div className={styles.row}>
-                            <div>
-                                <p className={show.labelText}>Correo</p>
+                            <div className={show.div}>
+                                <p><strong>Correo</strong></p>
                                 <p>{(employee != null)?employee.email: '...'}</p>
                             </div>
 
                             <div>
-                                <p className={show.labelText}>Telefono</p>
+                                <p><strong>Telefono</strong></p>
                                 <p>{(employee != null)?employee.phone: '...'}</p>
                             </div>
                             
@@ -74,7 +74,7 @@ export default function EmployeeDetail({params}){
 
                         <div className={styles.row}>
                             <div className={show.statusContainer}>
-                                <p className={show.labelText}>Estado</p>
+                                <p> <strong>Estado</strong></p>
 
                                 {employee && <Status id="state" state={employee.is_active ? 'active' : 'inactive'} type={"barber"} />}
 

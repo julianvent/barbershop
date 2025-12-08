@@ -1,12 +1,62 @@
 import React, { useEffect, useState } from "react";
-import { getAppointment } from "../api/appointments";
+import { completeAppointment, getAppointment } from "../api/appointments";
 import styles from "./Appointment-Detail.module.css";
 import { Status } from "@/app/components/form/status/Status";
 import Buttons from "@/app/components/form/model_buttons/Buttons";
 import ServiceGrid from "@/app/components/service_grid/ServiceGrid";
+import SebasModal from "@/app/components/modal/SebasModal";
+import { FormProvider, useForm } from "react-hook-form";
+import Input from "@/app/components/form/input/Input";
+import { emailValidation } from "@/app/utils/accountValidators";
+import { appoinmentPhotoValidation } from "@/app/utils/appointmentValidators";
+import MicroModal from "micromodal";
+import { appointmentsRoute } from "@/app/utils/routes";
+import { useRouter } from "next/navigation";
 
 export default function AppointmentDetail({ appointmentId, auth }) {
+  const router = useRouter();
   const appointment = useAppointment(appointmentId, auth);
+  const [isSubmitting, setisSubmiting] = useState(false);
+  const [error, setError] = useState('');
+  const methods = useForm();
+  const { handleSubmit, watch, setValue, formState: { errors } } = methods;
+  const [preview, setPreview] = useState(null);
+  const file = watch("image");
+
+    const onSubmit = methods.handleSubmit(
+      async (data) => {
+        setisSubmiting(true);
+  
+        try {
+          await completeAppointment(data,appointmentId);
+          router.push(appointmentsRoute);
+        } catch (error) {
+          setError('La cita no se pudo completar correctamente');
+          MicroModal.close('complete-appointment-modal');
+          MicroModal.show('error-appointment-modal');
+
+        } finally {
+          setisSubmiting(false);
+        }
+      }
+    );
+
+  useEffect(() => {
+      if (file && file.length > 0) {
+          const selectedFile = file[0];
+          const allowedTypes = ["image/jpeg", "image/png"];
+          if (allowedTypes.includes(selectedFile.type)) {
+              const reader = new FileReader();
+              reader.onloadend = () => setPreview(reader.result);
+              reader.readAsDataURL(selectedFile);
+          } else {
+              setPreview(null);
+          }
+      } else {
+      setPreview(null);
+      }
+  }, [file, setValue]);
+  
 
   function formatDate(date) {
     const dayNames = [
@@ -37,16 +87,16 @@ export default function AppointmentDetail({ appointmentId, auth }) {
               <h2>Datos del cliente</h2>
               <div className={styles.dataDistribution}>
                 <div className={styles.data}>
-                  <label htmlFor="customer name">
+                  <p htmlFor="customer name">
                     <strong>Nombre</strong>
-                  </label>
+                  </p>
                   {<p>{appointment.customer_name}</p>}
                 </div>
 
                 <div className={styles.data}>
-                  <label htmlFor="customer phone">
+                  <p htmlFor="customer phone">
                     <strong>Telefono</strong>
-                  </label>
+                  </p>
                   <p>
                     {appointment.customer_phone ||
                       "No se proporcionó número de teléfono"}
@@ -54,9 +104,9 @@ export default function AppointmentDetail({ appointmentId, auth }) {
                 </div>
 
                 <div className={styles.data}>
-                  <label htmlFor="customer email">
+                  <p htmlFor="customer email">
                     <strong>Correo electrónico</strong>
-                  </label>
+                  </p>
                   {<p>{appointment.customer_email}</p>}
                 </div>
               </div>
@@ -66,23 +116,23 @@ export default function AppointmentDetail({ appointmentId, auth }) {
               <h2>Datos de la cita</h2>
               <div className={styles.dataDistribution}>
                 <div className={styles.data}>
-                  <label htmlFor="date">
+                  <p htmlFor="date">
                     <strong>Fecha programada</strong>
-                  </label>
+                  </p>
                   {<p>{appointment.date}</p>}
                 </div>
 
                 <div className={styles.data}>
-                  <label htmlFor="time">
+                  <p htmlFor="time">
                     <strong>Hora programada</strong>
-                  </label>
+                  </p>
                   {<p>{appointment.time}</p>}
                 </div>
 
                 <div className={styles.data}>
-                  <label htmlFor="status">
+                  <p htmlFor="status">
                     <strong>Estado</strong>
-                  </label>
+                  </p>
 
                   <Status
                     id="state"
@@ -103,21 +153,21 @@ export default function AppointmentDetail({ appointmentId, auth }) {
               </div>
               <div className={styles.dataDistribution}>
                 <div className={styles.data}>
-                  <label htmlFor="barber">
+                  <p htmlFor="barber">
                     <strong>Barbero</strong>
-                  </label>
+                  </p>
                   {<p>{appointment.barber.barber_name}</p>}
                 </div>
                 <div className={styles.data}>
-                  <label htmlFor="time">
+                  <p htmlFor="time">
                     <strong>Duración estimada</strong>
-                  </label>
+                  </p>
                   {<p>{appointment.total_duration} minutos</p>}
                 </div>
                 <div className={styles.data}>
-                  <label htmlFor="time">
+                  <p htmlFor="time">
                     <strong>Total</strong>
-                  </label>
+                  </p>
                   <p>${appointment.cost_total}</p>
                 </div>
               </div>
@@ -164,8 +214,8 @@ export default function AppointmentDetail({ appointmentId, auth }) {
                 <div className={styles.imageContainer}>
                   <img
                     src={
-                      appointment.photo
-                        ? appointment.photo
+                      appointment.image_finish_path
+                        ? appointment.image_finish_path
                         : "https://reservoimg.s3.amazonaws.com/fotos_blog/fd1fb362-b_foto_blog.jpg"
                     }
                     alt={"Imagen de la cita "}
@@ -174,8 +224,58 @@ export default function AppointmentDetail({ appointmentId, auth }) {
               </div>
             )}
           </div>
+          <div>
+            <Buttons model={appointment} modelType={"appointment"} />
+          </div>
+          <SebasModal
+              id="complete-appointment-modal"
+              title={'Confirme la cita'}
+              confirmText={"Terminar cita"}
+              cancelText="Cancelar"
+              disabled={isSubmitting}
+              onConfirm={onSubmit}>
+              <FormProvider {...methods}>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                  }}
+                  noValidate
+                  aria-busy={isSubmitting}
+                >
+                  <div className={styles.fieldsContainerInside}>
+                    <Input {...appoinmentPhotoValidation}></Input>
+                    <figure className={styles.imageContainerInside}>
+                      <img
+                        src={(preview ? preview : '/image.svg')}
+                        alt="Previsualizacion de la cita completada"
+                        className={preview  ? styles.imageFitBackInside :  styles.imageFitInside}
+                      />
+                    </figure>
 
-          <Buttons model={appointment} modelType={"appointment"} />
+                  </div>
+                </form>
+              </FormProvider>
+          </SebasModal>
+
+          <SebasModal
+              id="error-appointment-modal"
+              title={'Hubo una excepcion'}
+              confirmText='Confirmar'
+              cancelButton={false}
+              disabled={false}
+              onConfirm={()=>{
+                MicroModal.close('error-appointment-modal');
+                MicroModal.show('complete-appointment-modal');
+              }}>
+                <div className={styles.errorMessage}>
+                  <p>{error}</p>
+                </div>
+
+
+          </SebasModal>
+
+
+
         </div>
       ) : (
         <p style={{ textAlign: "center" }}>Cargando cita...</p>

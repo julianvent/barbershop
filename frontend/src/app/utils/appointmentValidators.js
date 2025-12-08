@@ -71,4 +71,28 @@ export const customerEmailValidation = {
   },
 };
 
+export const appoinmentPhotoValidation = {
+  id: "image",
+  type: "file",
+  label: "Adjunte la imagen final de la cita",
+  validation: {
+    required: 'Se debe adjuntar una imagen',
+    validate: {
+      acceptedFormats: (fileList) => {
+        const file = fileList?.[0];
+        const allowed = ["image/jpeg", "image/png", "image/jpg"];
+        return file && allowed.includes(file.type)
+          ? true
+          : "Solo se aceptan imágenes JPG o PNG";
+      },
+      maxSize: (fileList) => {
+        const file = fileList?.[0];
+        return file && file.size <= 3 * 1024 * 1024
+          ? true
+          : "La imagen debe pesar máximo 3MB";
+      },
+  },
+  }
+};
+
 export const appointmentAuthQueryParam = "auth";
