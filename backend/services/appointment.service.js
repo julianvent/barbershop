@@ -204,7 +204,7 @@ export const AppointmentService = {
     };
 
   },
-  async finalizate(id, image_filename) {
+  async finalizeAppointment(id, image_filename) {
     const appointment = await AppointmentRepository.getById(id);
 
     if (!appointment) {
