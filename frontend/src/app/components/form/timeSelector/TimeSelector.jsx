@@ -4,23 +4,25 @@ import TimeRadio from "../radio/TimeRadio";
 
 export default function TimeSelector({ times, id, validation, label }) {
   const {
-    register,
     formState: { errors },
   } = useFormContext();
 
   return (
-    
-    <fieldset
-      {...register(id, { ...validation })}
-      className={styles.timeContainer}
-    >
-      <legend><span className={styles.fieldsTitle}>{label}</span></legend>
+    <fieldset className={styles.timeContainer}>
+      <span>
+        <strong>{label}</strong>
+      </span>
       {times.length === 0 ? (
-        <p>No se encontraron horarios disponibles en este día</p>
+        <p>No se encontraron horarios disponibles.</p>
       ) : (
         <div className={styles.times}>
           {times.map((time) => (
-            <TimeRadio key={time} time={time} id={id}></TimeRadio>
+            <TimeRadio
+              key={time}
+              time={time}
+              id={id}
+              validation={validation}
+            ></TimeRadio>
           ))}
         </div>
       )}

@@ -1,0 +1,47 @@
+.micromodal_slide {
+    display: none;
+}
+
+.micromodal_slide.is-open {
+    display: block;
+}
+
+@keyframes mmfadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes mmfadeOut {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes mmslideIn {
+    from {
+        transform: translateY(15%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+@keyframes mmslideOut {
+    from {
+        transform: translateY(0);
+    }
+
+    to {
+        transform: translateY(-10%);
+    }
+}
