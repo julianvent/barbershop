@@ -204,13 +204,12 @@ export const AppointmentService = {
     };
 
   },
-  async finalizeAppointment(id, image_filename) {
+  async complete(id, image_filename) {
     const appointment = await AppointmentRepository.getById(id);
 
     if (!appointment) {
       throw new Error("Appointment not found");
     }
-
 
     const new_image_finish_path = `/${path.relative(process.cwd(), path.join(APPOINTMENT_UPLOAD_DIR, image_filename))}`;
 
@@ -219,12 +218,24 @@ export const AppointmentService = {
 
       if (existsImage(oldFilename, APPOINTMENT_UPLOAD_DIR)) {
         removeImage(oldFilename, APPOINTMENT_UPLOAD_DIR);
-        console.log("Eliminó imagen anterior:", oldFilename);
       }
     }
     const updatedAppointment = await AppointmentRepository.update(id, {
       status: "completed",
       image_finish_path: new_image_finish_path,
+    });
+
+    return updatedAppointment;
+  },
+  async cancel(id) {
+    const appointment = await AppointmentRepository.getById(id);
+
+    if (!appointment) {
+      throw new Error("Appointment not found");
+    }
+
+    const updatedAppointment = await AppointmentRepository.update(id, {
+      status: "cancelled"
     });
 
     return updatedAppointment;
