@@ -54,8 +54,8 @@ export default function Page() {
       resizable: false,
       cellRenderer: (params) => {        
         const Map = {  
-          true : {color:'#10B981', text: 'Activo' },
-          false : {color:'#EF4444', text: 'Inactivo' }, 
+          true : {color:'#004b0aff', text: 'Activo' },
+          false : {color:'#9d0000ff', text: 'Inactivo' }, 
         };
         
         return (
@@ -80,6 +80,7 @@ export default function Page() {
 
   return (
     <Layout>
+      <title>SG BarberShop - Empleados</title>
       <div className={styles.layout}>
         <div className={styles.toolbar}>
           <h1>Personal</h1>

@@ -55,8 +55,8 @@ export default function Services() {
       resizable: false,
       cellRenderer: (params) => {
         const Map = {
-          'active': {color:'#10B981', text: 'Activo' },
-          'inactive': {color:'#EF4444', text: 'Inactivo' },
+          'active': {color:'#004b0aff', text: 'Activo' },
+          'inactive': {color:'#9d0000ff', text: 'Inactivo' },
         };
 
         return (
@@ -84,6 +84,7 @@ export default function Services() {
 
   return (
     <Layout>
+      <title>SG BarberShop - Servicios</title>
       <div className={styles.layout}>
         <div className={styles.toolbar}>
           <h1>Servicios Disponibles</h1>

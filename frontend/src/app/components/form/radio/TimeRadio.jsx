@@ -7,11 +7,12 @@ export default function TimeRadio({ id, time, validation }) {
   return (
     <div className={styles.timeRadioContainer}>
       <input
+        id={`${time}`}
         type="radio"
         value={`${time}`}
         {...register(id, { ...validation })}
       />
-      <label>{`${time}`}</label>
+      <label htmlFor={`${time}`}>{`${time}`}</label>
     </div>
   );
 }

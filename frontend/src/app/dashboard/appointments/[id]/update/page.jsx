@@ -11,6 +11,7 @@ export default function UpdateAppointment({ params }) {
 
   return (
     <Layout mainTitle={"Actualizar cita"} headerTitle={"Modificar datos"}>
+      <title>SG BarberShop - Actualizar Cita</title>
       {appointment ? (
         <AppointmentForm appointment={appointment}></AppointmentForm>
       ) : (

@@ -9,9 +9,6 @@ const poppinsSans = Poppins({
   subsets: ["latin"],
 });
 
-export const metadata = {
-  title: "SG Barbershop",
-};
 
 export default function RootLayout({ children }) {
   return (

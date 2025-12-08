@@ -22,6 +22,7 @@ export default function NewService() {
       headerTitle={"Nuevo servicio"}
       mainTitle={"Registrar nuevo servicio"}
     >
+      <title>SG BarberShop - Crear Servicio</title>
       <ServiceForm onSubmit={submit}></ServiceForm>
     </Layout>
   );

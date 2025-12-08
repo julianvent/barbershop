@@ -6,6 +6,7 @@ export default function expired(){
 
   return (
     <Layout>
+        <title>SG BarberShop</title>
         <ExpiredModal/>
     </Layout>
   );

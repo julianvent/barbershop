@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 export default function middleware(request) {
   const token = request.cookies.get("token");
 
+
   if (!token) {
     return NextResponse.redirect(new URL("/", request.url));
   }
@@ -21,8 +22,9 @@ export default function middleware(request) {
   const now = Math.floor(Date.now() / 1000);
 
   if (payload.exp < now) {
-    const response = NextResponse.redirect(new URL("/", request.url));
-    response.cookies.delete("token");
+    const response = NextResponse.redirect(new URL('/expired', request.url));
+    response.cookies.set('expired_redirect', 'true', { httpOnly: true, maxAge: 10 });
+    response.cookies.delete('token');
     return response;
   }
 

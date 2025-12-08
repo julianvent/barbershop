@@ -9,6 +9,7 @@ export default function BarberSelector({ barbers, id, validation }) {
 
   return (
     <fieldset className={styles.fieldsetContainer}>
+      <legend><h2>Selecciona un barbero</h2></legend>
       <div className={styles.barbers}>
         {barbers.length === 0 ? (
           <p>No se encontraron barberos.</p>

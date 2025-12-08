@@ -1,11 +1,12 @@
 import Link from "next/link";
 import styles from "./Header.module.css";
 import { logOut } from "@/app/utils/requestBuilder";
+import { Dropdown } from "./dropdown/Dropdown";
 
 export default function Header({
   isSidebarVisible,
   onSidebarToggle,
-  title = "Dashboard",
+  title = "Panel Principal",
 }) {
   return (
     <header className={styles.header}>
