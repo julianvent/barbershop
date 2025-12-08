@@ -10,9 +10,8 @@ export const customerNameValidation = {
 export const phoneValidation = {
   id: "customer_phone",
   type: "text",
-  label: "Teléfono",
+  label: "Teléfono (opcional)",
   validation: {
-    required: "Requerido*",
     pattern: {
       value: /^\d{10}$/,
       message: "Formato: 9211231234",
@@ -63,12 +62,13 @@ export const serviceValidation = {
 export const customerEmailValidation = {
   id: "customer_email",
   type: "email",
-  label: "Correo electrónico",
+  label: "Correo electrónico (opcional)",
   validation: {
-    required: "Requerido*",
     pattern: {
       value: /\S+@\S+\.\S+/,
       message: "Formato: correo@dominio.com",
     },
   },
 };
+
+export const appointmentAuthQueryParam = "auth";

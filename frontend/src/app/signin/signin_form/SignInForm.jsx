@@ -67,7 +67,7 @@ export default function SignInForm() {
                   alt="Error image"
                 />
               </figure>
-              <p>{error}</p>
+              <p role="alert">{error}</p>
             </div>
           )}
         </div>

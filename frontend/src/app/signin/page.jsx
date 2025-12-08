@@ -7,7 +7,9 @@ export default function SignIn() {
       <div className={styles.hero}></div>
       <div className={styles.formContainer}>
         <main className={styles.main}>
-          <h1>Barbershop</h1>
+          <figure>
+            <img src="/Sagoz_Logo.png" alt="Sagoz Logo" />
+          </figure>
           <SignInForm></SignInForm>
         </main>
       </div>

@@ -8,6 +8,20 @@ const nextConfig = {
       },
     ];
   },
+  async redirects() {
+    return [
+      {
+        source: "/",
+        destination: "/signin",
+        permanent: true,
+      },
+      {
+        source: "/dashboard",
+        destination: "/dashboard/appointments",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

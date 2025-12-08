@@ -23,6 +23,7 @@
     display: grid;
     grid-auto-flow: column;
     grid-template-columns: repeat(3, 1fr);
+    align-items: end;
     column-gap: 5em;
 }
 
@@ -39,7 +40,7 @@
     justify-self: end;
 }
 
-.buttons button {
+.button {
     background-color: #1B54FE;
     color: white;
     padding: 0.75em 3em;
@@ -50,6 +51,12 @@
 
 .buttons .cancelButton {
     background-color: #4e4e4e;
+}
+
+.total {
+    display: grid;
+    gap: 1em;
+    font-size: 0.9rem;
 }
 
 @media (width <=800) {

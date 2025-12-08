@@ -23,6 +23,7 @@
     background-color: white;
     grid-template-rows: auto 1fr;
     padding: 1em;
+
     border-radius: 1em;
 }
 
@@ -37,12 +38,14 @@
 .dataDistribution {
     display: grid;
     grid-auto-flow: column;
+    column-gap: 2em;
     grid-auto-columns: minmax(5em, 15em);
 }
 
 .data {
     display: grid;
     grid-template-rows: auto 1fr;
+    font-size: 0.9rem;
 }
 
 .data p {
