@@ -87,16 +87,16 @@ export default function AppointmentDetail({ appointmentId, auth }) {
               <h2>Datos del cliente</h2>
               <div className={styles.dataDistribution}>
                 <div className={styles.data}>
-                  <label htmlFor="customer name">
+                  <p htmlFor="customer name">
                     <strong>Nombre</strong>
-                  </label>
+                  </p>
                   {<p>{appointment.customer_name}</p>}
                 </div>
 
                 <div className={styles.data}>
-                  <label htmlFor="customer phone">
+                  <p htmlFor="customer phone">
                     <strong>Telefono</strong>
-                  </label>
+                  </p>
                   <p>
                     {appointment.customer_phone ||
                       "No se proporcionó número de teléfono"}
@@ -104,9 +104,9 @@ export default function AppointmentDetail({ appointmentId, auth }) {
                 </div>
 
                 <div className={styles.data}>
-                  <label htmlFor="customer email">
+                  <p htmlFor="customer email">
                     <strong>Correo electrónico</strong>
-                  </label>
+                  </p>
                   {<p>{appointment.customer_email}</p>}
                 </div>
               </div>
@@ -116,23 +116,23 @@ export default function AppointmentDetail({ appointmentId, auth }) {
               <h2>Datos de la cita</h2>
               <div className={styles.dataDistribution}>
                 <div className={styles.data}>
-                  <label htmlFor="date">
+                  <p htmlFor="date">
                     <strong>Fecha programada</strong>
-                  </label>
+                  </p>
                   {<p>{appointment.date}</p>}
                 </div>
 
                 <div className={styles.data}>
-                  <label htmlFor="time">
+                  <p htmlFor="time">
                     <strong>Hora programada</strong>
-                  </label>
+                  </p>
                   {<p>{appointment.time}</p>}
                 </div>
 
                 <div className={styles.data}>
-                  <label htmlFor="status">
+                  <p htmlFor="status">
                     <strong>Estado</strong>
-                  </label>
+                  </p>
 
                   <Status
                     id="state"
@@ -153,21 +153,21 @@ export default function AppointmentDetail({ appointmentId, auth }) {
               </div>
               <div className={styles.dataDistribution}>
                 <div className={styles.data}>
-                  <label htmlFor="barber">
+                  <p htmlFor="barber">
                     <strong>Barbero</strong>
-                  </label>
+                  </p>
                   {<p>{appointment.barber.barber_name}</p>}
                 </div>
                 <div className={styles.data}>
-                  <label htmlFor="time">
+                  <p htmlFor="time">
                     <strong>Duración estimada</strong>
-                  </label>
+                  </p>
                   {<p>{appointment.total_duration} minutos</p>}
                 </div>
                 <div className={styles.data}>
-                  <label htmlFor="time">
+                  <p htmlFor="time">
                     <strong>Total</strong>
-                  </label>
+                  </p>
                   <p>${appointment.cost_total}</p>
                 </div>
               </div>
@@ -214,8 +214,8 @@ export default function AppointmentDetail({ appointmentId, auth }) {
                 <div className={styles.imageContainer}>
                   <img
                     src={
-                      appointment.photo
-                        ? appointment.photo
+                      appointment.image_finish_path
+                        ? appointment.image_finish_path
                         : "https://reservoimg.s3.amazonaws.com/fotos_blog/fd1fb362-b_foto_blog.jpg"
                     }
                     alt={"Imagen de la cita "}
@@ -242,13 +242,13 @@ export default function AppointmentDetail({ appointmentId, auth }) {
                   noValidate
                   aria-busy={isSubmitting}
                 >
-                  <div className={styles.fieldsContainer}>
+                  <div className={styles.fieldsContainerInside}>
                     <Input {...appoinmentPhotoValidation}></Input>
-                    <figure className={styles.imageContainer}>
+                    <figure className={styles.imageContainerInside}>
                       <img
                         src={(preview ? preview : '/image.svg')}
                         alt="Previsualizacion de la cita completada"
-                        className={preview  ? styles.imageFitBack :  styles.imageFit}
+                        className={preview  ? styles.imageFitBackInside :  styles.imageFitInside}
                       />
                     </figure>
 
