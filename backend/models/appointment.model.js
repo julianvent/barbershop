@@ -43,6 +43,10 @@ export const Appointment = sequelize.define(
         key: "id",
       },
     },
+    image_finish_path: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
   },
   { tableName: "appointment", timestamps: false, underscored: true }
 );

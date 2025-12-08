@@ -1,10 +1,11 @@
 import { AppointmentController } from "../controllers/appointment.controller.js";
 import { Router } from 'express';
 import { requireRole } from "../middlewares/require.admin.middleware.js";
-import { property }  from "../middlewares/require.property.middleware.js";
+import { property } from "../middlewares/require.property.middleware.js";
 import { propertyAppointment } from "../middlewares/require.property.appointment.middleware.js";
 import requireAuth from "../middlewares/require.auth.middleware.js";
 import requireOptionalAuth from "../middlewares/require.optional.auth.middleware.js"
+import { uploadAppointmentImage } from "../config/upload.images.js";
 
 const router = Router();
 
@@ -14,5 +15,5 @@ router.get('/:id', requireOptionalAuth, propertyAppointment, AppointmentControll
 router.post('/', requireOptionalAuth, AppointmentController.create);
 router.put('/:id', requireOptionalAuth, propertyAppointment, AppointmentController.update);
 router.delete('/:id', requireAuth, requireRole("receptionist"), AppointmentController.delete);
-
+router.post('/:id/completed', requireAuth, requireRole("receptionist"), uploadAppointmentImage.any(), AppointmentController.complete)
 export default router;

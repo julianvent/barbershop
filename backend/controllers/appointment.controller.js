@@ -1,5 +1,5 @@
 import { AppointmentService } from "../services/appointment.service.js";
-
+import { generateImageUrl } from "../utils/barber.utils.js";
 export const AppointmentController = {
 
     async getAll(req, res) {
@@ -77,5 +77,30 @@ export const AppointmentController = {
             res.status(400).json({ message: error.message });
         }
     },
+    async complete(req, res) {
+        try {
+            if (!req.is('multipart/form-data'))
+                return res.status(400).json({
+                    error: "Content-Type must be multipart/form-data"
+                });
+            const { id } = req.params;
 
+            const file = req.files?.[0];
+            const filename = file ? file.filename : null;
+
+            const appointment = await AppointmentService.finalizate(id, filename);
+
+            appointment.image_finish_path = generateImageUrl(
+                appointment.image_finish_path
+            );
+            if(appointment.image_finish_path == null) delete appointment.image_finish_path ;
+            res.status(200).json({
+                message: "Appointment completed successfully",
+                appointment
+            });
+
+        } catch (error) {
+            res.status(400).json({ error: error.message });
+        }
+    },
 };
