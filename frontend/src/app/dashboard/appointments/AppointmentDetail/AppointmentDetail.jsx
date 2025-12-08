@@ -37,17 +37,27 @@ export default function AppointmentDetail({ appointmentId, auth }) {
               <h2>Datos del cliente</h2>
               <div className={styles.dataDistribution}>
                 <div className={styles.data}>
-                  <label htmlFor="name">
+                  <label htmlFor="customer name">
                     <strong>Nombre</strong>
                   </label>
                   {<p>{appointment.customer_name}</p>}
                 </div>
 
                 <div className={styles.data}>
-                  <label htmlFor="phone">
+                  <label htmlFor="customer phone">
                     <strong>Telefono</strong>
                   </label>
-                  {<p>{appointment.customer_phone}</p>}
+                  <p>
+                    {appointment.customer_phone ||
+                      "No se proporcionó número de teléfono"}
+                  </p>
+                </div>
+
+                <div className={styles.data}>
+                  <label htmlFor="customer email">
+                    <strong>Correo electrónico</strong>
+                  </label>
+                  {<p>{appointment.customer_email}</p>}
                 </div>
               </div>
             </div>

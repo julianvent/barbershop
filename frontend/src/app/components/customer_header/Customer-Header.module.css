@@ -1,0 +1,22 @@
+.header {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2em;
+    background-color: rgb(33, 33, 33);
+    padding: 0.5em;
+}
+
+.header h1 {
+    font-size: 1.25rem;
+    color: white;
+}
+
+.header figure {
+    max-width: 100px;
+    justify-self: center;
+}
+
+.header img {
+    width: 100%;
+}

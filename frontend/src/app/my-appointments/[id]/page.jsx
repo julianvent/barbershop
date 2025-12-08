@@ -3,6 +3,7 @@ import AppointmentDetail from "@/app/dashboard/appointments/AppointmentDetail/Ap
 import { appointmentAuthQueryParam } from "@/app/utils/appointmentValidators";
 import { useParams, useSearchParams } from "next/navigation";
 import styles from "./Appointment-Detail-Customer.module.css";
+import CustomerHeader from "../../components/customer_header/CustomerHeader";
 
 export default function AppointmentDetailCustomer() {
   const { id } = useParams();
@@ -11,7 +12,7 @@ export default function AppointmentDetailCustomer() {
 
   return (
     <div className={styles.layout}>
-      <h1>Reservar cita</h1>
+      <CustomerHeader title={"Detalle de cita"}></CustomerHeader>
       <main className={styles.scrollableContent}>
         <AppointmentDetail appointmentId={id} auth={auth}></AppointmentDetail>
       </main>
