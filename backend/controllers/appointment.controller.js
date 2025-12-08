@@ -115,6 +115,7 @@ export const AppointmentController = {
             appointment.image_finish_path = generateImageUrl(
                 appointment.image_finish_path
             );
+
             if (appointment.image_finish_path == null) delete appointment.image_finish_path
             res.status(200).json({
                 message: "Appointment cancelled successfully",
