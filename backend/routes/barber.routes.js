@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { BarberController } from "../controllers/barber.controller.js";
 import { uploadBarberImage } from "../config/upload.images.js";
+import { handleMulterErrors, validateFileType } from "../middlewares/multer.error.middleware.js";
 import { requireRole } from "../middlewares/require.admin.middleware.js";
 import { property } from "../middlewares/require.property.middleware.js";
 import requireAuth from "../middlewares/require.auth.middleware.js";
