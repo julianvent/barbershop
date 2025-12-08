@@ -40,7 +40,7 @@ export default function Appointments() {
         const Map = {
           pending: { color: "#4e4e4e", text: "Pendiente" },
           confirmed: { color: "#0247b6ff", text: "Confirmada" },
-          completed: { color: "#006c0eff", text: "Completada" },
+          completed: { color: '#004b0aff', text: "Completada" },
           cancelled: { color: "#9d0000ff", text: "Cancelada" },
         };
 

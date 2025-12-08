@@ -8,9 +8,11 @@ export default function ServiceSelector({ services, id, validation }) {
   } = useFormContext();
   return (
     <fieldset className={styles.servicesContainer}>
-      <span>
-        <strong>Servicios</strong>
-      </span>
+      <legend>
+        <span>
+          <strong>Servicios</strong>
+        </span>
+      </legend>
       {services.length === 0 ? (
         <p>No se encontraron servicios.</p>
       ) : (

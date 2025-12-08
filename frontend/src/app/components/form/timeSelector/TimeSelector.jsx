@@ -9,9 +9,11 @@ export default function TimeSelector({ times, id, validation, label }) {
 
   return (
     <fieldset className={styles.timeContainer}>
-      <span>
-        <strong>{label}</strong>
-      </span>
+      <legend>
+        <span>
+          <strong>{label}</strong>
+        </span>
+      </legend>
       {times.length === 0 ? (
         <p>No se encontraron horarios disponibles.</p>
       ) : (

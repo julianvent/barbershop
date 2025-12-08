@@ -8,6 +8,7 @@ export default function AppointmentDetailAdmin() {
 
   return (
     <Layout headerTitle={`Detalle de cita`}>
+      <title>SG BarberShop - Detalle de Cita</title>
       <AppointmentDetail appointmentId={id}></AppointmentDetail>
     </Layout>
   );
