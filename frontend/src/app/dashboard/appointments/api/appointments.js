@@ -1,6 +1,7 @@
 import { axiosConfig } from "@/app/utils/requestBuilder";
 import axios from "axios";
 import {
+  completeAppointmentApiRoute,
   createAppointmentApiRoute,
   getAppointmentsApiRoute,
   getAvailabilityApiRoute,
@@ -88,6 +89,23 @@ export async function updateAppointment(data) {
   } catch (error) {
     throw error;
   }
+}
+
+export async function completeAppointment(data, id){
+  try{
+    const headers = await axiosConfig();
+    delete headers.headers['Content-Type'];
+    const url = completeAppointmentApiRoute.replace('${id}', id);
+    
+    const formData = new FormData();
+    formData.append("image", data.image[0]);
+
+    axios.post(url, formData, headers);
+    
+  }catch(err){
+    throw 'La cita no se pudo completar correctamente';
+  }
+
 }
 
 export async function getAvailabity(barberId, date) {

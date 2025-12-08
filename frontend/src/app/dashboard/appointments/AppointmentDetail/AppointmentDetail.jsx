@@ -1,12 +1,62 @@
 import React, { useEffect, useState } from "react";
-import { getAppointment } from "../api/appointments";
+import { completeAppointment, getAppointment } from "../api/appointments";
 import styles from "./Appointment-Detail.module.css";
 import { Status } from "@/app/components/form/status/Status";
 import Buttons from "@/app/components/form/model_buttons/Buttons";
 import ServiceGrid from "@/app/components/service_grid/ServiceGrid";
+import SebasModal from "@/app/components/modal/SebasModal";
+import { FormProvider, useForm } from "react-hook-form";
+import Input from "@/app/components/form/input/Input";
+import { emailValidation } from "@/app/utils/accountValidators";
+import { appoinmentPhotoValidation } from "@/app/utils/appointmentValidators";
+import MicroModal from "micromodal";
+import { appointmentsRoute } from "@/app/utils/routes";
+import { useRouter } from "next/navigation";
 
 export default function AppointmentDetail({ appointmentId, auth }) {
+  const router = useRouter();
   const appointment = useAppointment(appointmentId, auth);
+  const [isSubmitting, setisSubmiting] = useState(false);
+  const [error, setError] = useState('');
+  const methods = useForm();
+  const { handleSubmit, watch, setValue, formState: { errors } } = methods;
+  const [preview, setPreview] = useState(null);
+  const file = watch("image");
+
+    const onSubmit = methods.handleSubmit(
+      async (data) => {
+        setisSubmiting(true);
+  
+        try {
+          await completeAppointment(data,appointmentId);
+          router.push(appointmentsRoute);
+        } catch (error) {
+          setError('La cita no se pudo completar correctamente');
+          MicroModal.close('complete-appointment-modal');
+          MicroModal.show('error-appointment-modal');
+
+        } finally {
+          setisSubmiting(false);
+        }
+      }
+    );
+
+  useEffect(() => {
+      if (file && file.length > 0) {
+          const selectedFile = file[0];
+          const allowedTypes = ["image/jpeg", "image/png"];
+          if (allowedTypes.includes(selectedFile.type)) {
+              const reader = new FileReader();
+              reader.onloadend = () => setPreview(reader.result);
+              reader.readAsDataURL(selectedFile);
+          } else {
+              setPreview(null);
+          }
+      } else {
+      setPreview(null);
+      }
+  }, [file, setValue]);
+  
 
   function formatDate(date) {
     const dayNames = [
@@ -174,8 +224,58 @@ export default function AppointmentDetail({ appointmentId, auth }) {
               </div>
             )}
           </div>
+          <div>
+            <Buttons model={appointment} modelType={"appointment"} />
+          </div>
+          <SebasModal
+              id="complete-appointment-modal"
+              title={'Confirme la cita'}
+              confirmText={"Terminar cita"}
+              cancelText="Cancelar"
+              disabled={isSubmitting}
+              onConfirm={onSubmit}>
+              <FormProvider {...methods}>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                  }}
+                  noValidate
+                  aria-busy={isSubmitting}
+                >
+                  <div className={styles.fieldsContainer}>
+                    <Input {...appoinmentPhotoValidation}></Input>
+                    <figure className={styles.imageContainer}>
+                      <img
+                        src={(preview ? preview : '/image.svg')}
+                        alt="Previsualizacion de la cita completada"
+                        className={preview  ? styles.imageFitBack :  styles.imageFit}
+                      />
+                    </figure>
 
-          <Buttons model={appointment} modelType={"appointment"} />
+                  </div>
+                </form>
+              </FormProvider>
+          </SebasModal>
+
+          <SebasModal
+              id="error-appointment-modal"
+              title={'Hubo una excepcion'}
+              confirmText='Confirmar'
+              cancelButton={false}
+              disabled={false}
+              onConfirm={()=>{
+                MicroModal.close('error-appointment-modal');
+                MicroModal.show('complete-appointment-modal');
+              }}>
+                <div className={styles.errorMessage}>
+                  <p>{error}</p>
+                </div>
+
+
+          </SebasModal>
+
+
+
         </div>
       ) : (
         <p style={{ textAlign: "center" }}>Cargando cita...</p>

@@ -23,14 +23,22 @@
     background-color: #b30000;
 }
 
+.buttons .completeAppointment {
+    background-color: #000000;
+}
+
 @media (width <=800px) {
-        .buttons {
+    .buttons button {
+        width: 40%;
+    }
+    .buttons {
         display: flex;
         flex-wrap: wrap;
-        gap: 2em;
+        gap: 1em;
         margin-top: 10%;
         justify-content: center;
         margin-bottom: 1%;
         margin-right: 1%;
     }
+
 }
