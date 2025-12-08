@@ -26,7 +26,7 @@ export const AppointmentController = {
             appointment.image_finish_path = generateImageUrl(
                 appointment.image_finish_path
             );
-            if(appointment.image_finish_path == null) delete appointment.image_finish_path
+            if (appointment.image_finish_path == null) delete appointment.image_finish_path
             res.status(200).json(appointment);
         } catch (error) {
             res.status(404).json({ message: error.message });
@@ -92,12 +92,12 @@ export const AppointmentController = {
             const file = req.files?.[0];
             const filename = file ? file.filename : null;
 
-            const appointment = await AppointmentService.finalizate(id, filename);
+            const appointment = await AppointmentService.complete(id, filename);
 
             appointment.image_finish_path = generateImageUrl(
                 appointment.image_finish_path
             );
-            if(appointment.image_finish_path == null) delete appointment.image_finish_path ;
+            if (appointment.image_finish_path == null) delete appointment.image_finish_path;
             res.status(200).json({
                 message: "Appointment completed successfully",
                 appointment
@@ -107,4 +107,23 @@ export const AppointmentController = {
             res.status(400).json({ error: error.message });
         }
     },
+    async cancel(req, res) {
+        try {
+            const { id } = req.params;
+
+            const appointment = await AppointmentService.cancel(id);
+            appointment.image_finish_path = generateImageUrl(
+                appointment.image_finish_path
+            );
+            if (appointment.image_finish_path == null) delete appointment.image_finish_path
+            res.status(200).json({
+                message: "Appointment cancelled successfully",
+                appointment
+            });
+
+        } catch (error) {
+            res.status(400).json({ error: error.message });
+        }
+    }
+
 };
