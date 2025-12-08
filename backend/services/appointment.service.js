@@ -28,6 +28,7 @@ export const AppointmentService = {
 
     const response_appointments = await Promise.all(
       appointments.map(async (appointment) => {
+        delete appointment.image_finish_path;
         const barber_data = await BarberRepository.getById(
           appointment.barber_id
         );

@@ -23,6 +23,10 @@ export const AppointmentController = {
         try {
             const { id } = req.params;
             const appointment = await AppointmentService.find(id);
+            appointment.image_finish_path = generateImageUrl(
+                appointment.image_finish_path
+            );
+            if(appointment.image_finish_path == null) delete appointment.image_finish_path
             res.status(200).json(appointment);
         } catch (error) {
             res.status(404).json({ message: error.message });

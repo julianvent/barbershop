@@ -1,7 +1,7 @@
 
-import { BASE_URL } from "../services/jwt.service.js";
+import { BASE_URL_BACKEND } from "../services/jwt.service.js";
 export function generateImageUrl(relativePath) {
     if (relativePath == null)
         return null;
-    return `${BASE_URL}${relativePath}`.replace(/\\/g, "/");
+    return `${BASE_URL_BACKEND}${relativePath}`.replace(/\\/g, "/");
 }
