@@ -47,7 +47,7 @@ async function createDatabaseIfNotExists() {
       password: DB_PASSWORD,
     });
     await connection.query(`CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\``);
-    console.log(`Database '${DB_NAME}' created or already exists`);
+    console.log(`Database '${DB_NAME}' created.`);
   } catch (err) {
     console.error("Error creating database:", err.message);
     throw err;

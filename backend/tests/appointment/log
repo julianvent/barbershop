@@ -1,0 +1,286 @@
+docker >npm test
+
+> barberia@1.0.0 test
+> vitest run
+
+
+ RUN  v4.0.15 /app
+
+
+ ❯ tests/service/service.test.js [queued]
+
+ Test Files 0 passed (6)
+      Tests 0 passed (0)
+   Start at 13:43:14
+   Duration 693ms
+stdout | tests/appointment/appointment.test.js > AppointmentRepository.update > updates services relation when services_ids change
+
+=== Test: updates services relation when services_ids change ===
+Before update - serviceAppointments: [{"appointment_id":10,"service_id":1,"price":8}]
+
+stdout | tests/appointment/appointment.test.js > AppointmentRepository.update > updates services relation when services_ids change
+After update - result: undefined
+After update - serviceAppointments: [{"appointment_id":10,"service_id":1,"price":8}]
+
+stdout | tests/appointment/appointment.test.js > AppointmentRepository.update > updates appointment fields without touching service relations when services_ids omitted
+
+=== Test: updates without touching service relations ===
+Before update - serviceAppointments: [{"appointment_id":10,"service_id":1,"price":8}]
+
+stdout | tests/appointment/appointment.test.js > AppointmentRepository.update > updates appointment fields without touching service relations when services_ids omitted
+After update - serviceAppointments: [{"appointment_id":10,"service_id":1,"price":8}]
+Result: undefined
+
+stdout | tests/appointment/appointment.test.js > AppointmentRepository.update > calculates correct total_duration when updating with multiple services
+
+=== Test: calculates total_duration with multiple services ===
+Starting with appointment that has NO services
+
+stdout | tests/appointment/appointment.test.js > AppointmentRepository.update > calculates correct total_duration when updating with multiple services
+Duration calculation: 10 + 25 + 15 = 50
+
+stdout | tests/appointment/appointment.test.js > AppointmentRepository.update > handles single service duration calculation correctly
+
+=== Test: handles single service duration calculation correctly ===
+
+stdout | tests/appointment/appointment.test.js > AppointmentRepository.update > handles single service duration calculation correctly
+Single service duration: 25
+
+stdout | tests/appointment/appointment.test.js > AppointmentRepository.update > maintains appointment when services_ids not provided in update
+
+=== Test: maintains appointment when services_ids not provided ===
+Original appointment total_duration: undefined
+
+stdout | tests/appointment/appointment.test.js > AppointmentService.find - Total Cost Calculation > calculates correct total cost for single service
+
+=== Test: calculates total cost for single service ===
+
+stdout | tests/mail/email.client.test.js
+[dotenv@17.2.3] injecting env (6) from .env -- tip: ⚙️  override existing env vars with { override: true }
+
+stdout | tests/mail/email.client.test.js > Email Client > should send an email using the configured transporter
+[email] Sent to zs22017021@estudiantes.uv.mx
+
+stdout | tests/mail/email.client.test.js > Email Client > should support HTML content
+[email] Sent to zs22017021@estudiantes.uv.mx
+
+stdout | tests/mail/email.client.test.js > Email Client > should log preview URL in development
+[email] Sent to test@example.com
+[email] Preview URL: http://preview.url
+
+ ✓ tests/mail/email.client.test.js (3 tests) 9ms
+ ✓ tests/schedule/schedule.test.js (4 tests) 133ms
+ ✓ tests/service/service.test.js (10 tests) 172ms
+stdout | tests/appointment/appointment.timezone.test.js
+Executing (default): INSERT INTO `barber` (`id`,`barber_name`,`image_path`,`is_active`,`email`,`phone`,`createdAt`,`updatedAt`) VALUES (DEFAULT,?,?,?,?,?,?,?);
+
+stdout | tests/appointment/appointment.timezone.test.js > Appointment Timezone > keeps Sequelize and the DB session locked to GMT-06:00
+Executing (default): SELECT @@session.time_zone AS session_tz
+
+stdout | tests/appointment/appointment.timezone.test.js > Appointment Timezone > stores UTC appointment datetimes converted to GMT-06:00
+Executing (default): INSERT INTO `appointment` (`id`,`customer_name`,`customer_phone`,`customer_email`,`appointment_datetime`,`total_duration`,`status`,`barber_id`) VALUES (DEFAULT,?,?,?,?,?,?,?);
+
+stdout | tests/appointment/appointment.timezone.test.js > Appointment Timezone > stores UTC appointment datetimes converted to GMT-06:00
+Executing (default): SELECT DATE_FORMAT(appointment_datetime, '%Y-%m-%d %H:%i:%s') AS `date` FROM appointment WHERE id = 12       
+
+stdout | tests/appointment/appointment.timezone.test.js > Appointment Timezone > stores UTC appointment datetimes converted to GMT-06:00
+Executing (default): DELETE FROM `appointment` WHERE `id` = 12
+
+stdout | tests/appointment/appointment.timezone.test.js > Appointment Timezone > normalizes incoming non-GMT-06:00 offsets to GMT-06:00 before saving
+Executing (default): INSERT INTO `appointment` (`id`,`customer_name`,`customer_phone`,`customer_email`,`appointment_datetime`,`total_duration`,`status`,`barber_id`) VALUES (DEFAULT,?,?,?,?,?,?,?);
+
+stdout | tests/appointment/appointment.timezone.test.js > Appointment Timezone > normalizes incoming non-GMT-06:00 offsets to GMT-06:00 before saving
+Executing (default): SELECT DATE_FORMAT(appointment_datetime, '%Y-%m-%d %H:%i:%s') AS `date` FROM appointment WHERE id = 13       
+
+stdout | tests/appointment/appointment.timezone.test.js > Appointment Timezone > normalizes incoming non-GMT-06:00 offsets to GMT-06:00 before saving
+Executing (default): DELETE FROM `appointment` WHERE `id` = 13
+
+stdout | tests/appointment/appointment.timezone.test.js
+Executing (default): DELETE FROM `barber` WHERE `id` = 9
+
+ ✓ tests/appointment/appointment.timezone.test.js (3 tests) 192ms
+stdout | tests/appointment/appointment.test.js > AppointmentService.find - Total Cost Calculation > calculates correct total cost for single service
+[dotenv@17.2.3] injecting env (0) from .env -- tip: 🔄 add secrets lifecycle management: https://dotenvx.com/ops
+
+stdout | tests/appointment/appointment.client.test.js
+[dotenv@17.2.3] injecting env (0) from .env -- tip: 🗂️ backup and recover secrets: https://dotenvx.com/ops
+
+stdout | tests/appointment/appointment.test.js > AppointmentService.find - Total Cost Calculation > calculates correct total cost for single service
+[dotenv@17.2.3] injecting env (0) from .env -- tip: 🔐 prevent committing .env to code: https://dotenvx.com/precommit
+
+stdout | tests/appointment/appointment.test.js > AppointmentService.find - Total Cost Calculation > calculates correct total cost for single service
+Notifier created with email decorator
+
+stdout | tests/appointment/appointment.test.js > AppointmentService.find - Total Cost Calculation > calculates correct total cost for single service
+Mocking serviceAppointments to: [ { appointment_id: 10, service_id: 2, price: 20 } ]
+
+stdout | tests/appointment/appointment.test.js > AppointmentService.find - Total Cost Calculation > calculates correct total cost for multiple services
+
+=== Test: calculates total cost for multiple services ===
+
+stdout | tests/appointment/appointment.test.js > AppointmentService.find - Total Cost Calculation > calculates correct total cost for multiple services
+Using serviceAppointments from beforeEach: [{"appointment_id":10,"service_id":1,"price":8},{"appointment_id":10,"service_id":2,"price":20}]
+
+ ❯ tests/appointment/appointment.test.js (10 tests | 10 failed) 1894ms
+     × updates services relation when services_ids change 15ms
+     × updates appointment fields without touching service relations when services_ids omitted 3ms
+     × calculates correct total_duration when updating with multiple services 6ms
+     × handles single service duration calculation correctly 3ms
+     × maintains appointment when services_ids not provided in update 2ms
+     × calculates correct total cost for single service 1859ms
+     × calculates correct total cost for multiple services 1ms
+     × returns service details with price and duration 0ms
+     × calculates correct total cost for three services 1ms
+     × includes appointment details alongside cost and duration 0ms
+stdout | tests/appointment/appointment.client.test.js
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ⚙️  override existing env vars with { override: true }
+
+stdout | tests/appointment/appointment.client.test.js
+Notifier created with email decorator
+
+ ✓ tests/appointment/appointment.client.test.js (2 tests) 46ms
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Failed Tests 10 ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/appointment/appointment.test.js > AppointmentRepository.update > updates services relation when services_ids change  
+AssertionError: expected "vi.fn()" to be called with arguments: [ { where: { appointment_id: 10 } } ]
+
+Number of calls: 0
+
+ ❯ tests/appointment/appointment.test.js:115:44
+    113|     );
+    114|
+    115|     expect(ServiceAppointmentMock.destroy).toHaveBeenCalledWith({
+       |^
+    116|       where: { appointment_id: appointmentData.id },
+    117|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯
+
+ FAIL  tests/appointment/appointment.test.js > AppointmentRepository.update > updates appointment fields without touching service relations when services_ids omitted
+AssertionError: expected "vi.fn()" to be called with arguments: [ Array(1) ]
+
+Number of calls: 0
+
+ ❯ tests/appointment/appointment.test.js:172:40
+    170|     expect(ServiceAppointmentMock.destroy).not.toHaveBeenCalled();
+    171|     expect(ServiceAppointmentMock.create).not.toHaveBeenCalled();
+    172|     expect(appointmentInstance.update).toHaveBeenCalledWith({
+       |^
+    173|       customer_phone: "555-0000",
+    174|       status: "completed",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/10]⎯
+
+ FAIL  tests/appointment/appointment.test.js > AppointmentRepository.update > calculates correct total_duration when updating with multiple services
+TypeError: Cannot read properties of undefined (reading 'total_duration')
+ ❯ tests/appointment/appointment.test.js:205:50
+    203|       `Duration calculation: ${serviceFixtures[1].duration} + ${serviceFixtures[2].duration} + ${serviceFixtures[3].dura…
+    204|     );
+    205|     console.log(`Result total_duration: ${result.total_duration}`);
+       |^
+    206|
+    207|     expect(appointmentInstance.update).toHaveBeenCalledWith({
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/10]⎯
+
+ FAIL  tests/appointment/appointment.test.js > AppointmentRepository.update > handles single service duration calculation correctly
+TypeError: Cannot read properties of undefined (reading 'total_duration')
+ ❯ tests/appointment/appointment.test.js:225:50
+    223|
+    224|     console.log(`Single service duration: ${expectedDuration}`);
+    225|     console.log(`Result total_duration: ${result.total_duration}`);
+       |^
+    226|
+    227|     expect(appointmentInstance.update).toHaveBeenCalledWith({
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/10]⎯
+
+ FAIL  tests/appointment/appointment.test.js > AppointmentRepository.update > maintains appointment when services_ids not provided in update
+AssertionError: expected "vi.fn()" to be called with arguments: [ { status: 'confirmed' } ]
+
+Number of calls: 0
+
+ ❯ tests/appointment/appointment.test.js:249:40
+    247|
+    248|     // This test ensures that duration should NOT be recalculated or modified if services_ids not provided
+    249|     expect(appointmentInstance.update).toHaveBeenCalledWith({
+       |^
+    250|       status: "confirmed",
+    251|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/10]⎯
+
+ FAIL  tests/appointment/appointment.test.js > AppointmentService.find - Total Cost Calculation > calculates correct total cost for single service
+Error: Appointment not found
+ ❯ Object.find services/appointment.service.js:67:13
+     65|     const appointment = await AppointmentRepository.getById(id);
+     66|     if (!appointment) {
+     67|       throw new Error("Appointment not found");
+       |^
+     68|     }
+     69|     const services = await AppointmentRepository.getServiceByAppointmentId(id);
+ ❯ tests/appointment/appointment.test.js:336:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/10]⎯
+
+ FAIL  tests/appointment/appointment.test.js > AppointmentService.find - Total Cost Calculation > calculates correct total cost for multiple services
+Error: Appointment not found
+ ❯ Object.find services/appointment.service.js:67:13
+     65|     const appointment = await AppointmentRepository.getById(id);
+     66|     if (!appointment) {
+     67|       throw new Error("Appointment not found");
+       |^
+     68|     }
+     69|     const services = await AppointmentRepository.getServiceByAppointmentId(id);
+ ❯ tests/appointment/appointment.test.js:356:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/10]⎯
+
+ FAIL  tests/appointment/appointment.test.js > AppointmentService.find - Total Cost Calculation > returns service details with price and duration
+Error: Appointment not found
+ ❯ Object.find services/appointment.service.js:67:13
+     65|     const appointment = await AppointmentRepository.getById(id);
+     66|     if (!appointment) {
+     67|       throw new Error("Appointment not found");
+       |^
+     68|     }
+     69|     const services = await AppointmentRepository.getServiceByAppointmentId(id);
+ ❯ tests/appointment/appointment.test.js:374:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/10]⎯
+
+ FAIL  tests/appointment/appointment.test.js > AppointmentService.find - Total Cost Calculation > calculates correct total cost for three services
+Error: Appointment not found
+ ❯ Object.find services/appointment.service.js:67:13
+     65|     const appointment = await AppointmentRepository.getById(id);
+     66|     if (!appointment) {
+     67|       throw new Error("Appointment not found");
+       |^
+     68|     }
+     69|     const services = await AppointmentRepository.getServiceByAppointmentId(id);
+ ❯ tests/appointment/appointment.test.js:417:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/10]⎯
+
+ FAIL  tests/appointment/appointment.test.js > AppointmentService.find - Total Cost Calculation > includes appointment details alongside cost and duration
+Error: Appointment not found
+ ❯ Object.find services/appointment.service.js:67:13
+     65|     const appointment = await AppointmentRepository.getById(id);
+     66|     if (!appointment) {
+     67|       throw new Error("Appointment not found");
+       |^
+     68|     }
+     69|     const services = await AppointmentRepository.getServiceByAppointmentId(id);
+ ❯ tests/appointment/appointment.test.js:432:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/10]⎯
+
+
+ Test Files  1 failed | 5 passed (6)
+      Tests  10 failed | 22 passed (32)
+   Start at  13:43:14
+   Duration  3.04s (transform 924ms, setup 0ms, import 5.34s, tests 2.44s, environment 1ms)
+
+root@9b413f0a7520 /app [backend]
+docker >

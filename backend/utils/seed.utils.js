@@ -1,4 +1,4 @@
-export async function seedDatabase(sequelize) {
+export async function seedDatabase(sequelize, options = { seedDB: false }) {
   try {
     console.log("Starting database seeding...");
 
@@ -27,24 +27,51 @@ export async function seedDatabase(sequelize) {
     await sequelize.sync({ alter: false });
     console.log("Database synced");
 
-    // Disable foreign key checks temporarily
-    await sequelize.query("SET FOREIGN_KEY_CHECKS = 0");
+    const [serviceCount, barberCount, accountCount, scheduleCount] =
+      await Promise.all([
+        Service.count(),
+        Barber.count(),
+        Account.count(),
+        Schedule.count(),
+      ]);
 
-    // Clear all tables
-    await ServiceAppointment.destroy({
-      where: {},
-      truncate: true,
-      cascade: true,
-    });
-    await Appointment.destroy({ where: {}, truncate: true, cascade: true });
-    await Service.destroy({ where: {}, truncate: true, cascade: true });
-    await Barber.destroy({ where: {}, truncate: true, cascade: true });
-    await Account.destroy({ where: {}, truncate: true, cascade: true });
-    await Schedule.destroy({ where: {}, truncate: true, cascade: true });
+    const hasData =
+      serviceCount > 0 ||
+      barberCount > 0 ||
+      accountCount > 0 ||
+      scheduleCount > 0;
 
-    // Re-enable foreign key checks
-    await sequelize.query("SET FOREIGN_KEY_CHECKS = 1");
-    console.log("Existing data cleared");
+    if (hasData && !options.seedDB) {
+      console.log("Database already contains data. Skipping seed.");
+      console.log(` - Services: ${serviceCount}`);
+      console.log(` - Barbers: ${barberCount}`);
+      console.log(` - Accounts: ${accountCount}`);
+      console.log(` - Schedules: ${scheduleCount}`);
+      return;
+    }
+
+    if (!hasData && options.seedDB) {
+      console.log("Force flag enabled. Clearing existing data...");
+
+      // Disable foreign key checks temporarily
+      await sequelize.query("SET FOREIGN_KEY_CHECKS = 0");
+
+      // Clear all tables
+      await ServiceAppointment.destroy({
+        where: {},
+        truncate: true,
+        cascade: true,
+      });
+      await Appointment.destroy({ where: {}, truncate: true, cascade: true });
+      await Service.destroy({ where: {}, truncate: true, cascade: true });
+      await Barber.destroy({ where: {}, truncate: true, cascade: true });
+      await Account.destroy({ where: {}, truncate: true, cascade: true });
+      await Schedule.destroy({ where: {}, truncate: true, cascade: true });
+
+      // Re-enable foreign key checks
+      await sequelize.query("SET FOREIGN_KEY_CHECKS = 1");
+      console.log("Existing data cleared");
+    }
 
     // Seed all data
     const services = await seedService(Service);
