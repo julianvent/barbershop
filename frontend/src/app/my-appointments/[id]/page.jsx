@@ -14,7 +14,11 @@ export default function AppointmentDetailCustomer() {
     <div className={styles.layout}>
       <CustomerHeader title={"Detalle de cita"}></CustomerHeader>
       <main className={styles.scrollableContent}>
-        <AppointmentDetail appointmentId={id} auth={auth}></AppointmentDetail>
+        <AppointmentDetail
+          appointmentId={id}
+          auth={auth}
+          customerMode={true}
+        ></AppointmentDetail>
       </main>
     </div>
   );

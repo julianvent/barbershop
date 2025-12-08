@@ -1,66 +1,84 @@
 import { deleteService } from "@/app/dashboard/services/api/services";
 import { deleteEmployee } from "@/app/dashboard/staff/api/employees";
-import { appointmentsRoute, editAppointments, editService, editStaffRoute, servicesRoute, staffRoute } from "@/app/utils/routes";
+import {
+  appointmentsRoute,
+  editAppointments,
+  editService,
+  editStaffRoute,
+  servicesRoute,
+  staffRoute,
+} from "@/app/utils/routes";
 import styles from "./styles.module.css";
 import { useRouter } from "next/navigation";
 import MicroModal from "micromodal";
 
-export default function Buttons({model,modelType}){
-    let id = model.id
-    const router = useRouter();
-    let routes = {}
-    switch (modelType){
-        case 'service': 
-            routes.index = servicesRoute;
-            routes.edit = editService;
-            routes.deleteFunction = deleteService;
-            break;
-        case 'appointment': 
-            routes.index = appointmentsRoute;
-            routes.edit = editAppointments;
-            routes.deleteFunction = deleteService; // falta ruta de eliminar cita
-            break;
-        case 'staff':
-            routes.index = staffRoute;
-            routes.edit = editStaffRoute;
-            routes.deleteFunction = deleteEmployee;
-            break;
-    }
+export default function Buttons({ model, modelType }) {
+  let id = model.id;
+  const router = useRouter();
+  let routes = {};
+  switch (modelType) {
+    case "service":
+      routes.index = servicesRoute;
+      routes.edit = editService;
+      routes.deleteFunction = deleteService;
+      break;
+    case "appointment":
+      routes.index = appointmentsRoute;
+      routes.edit = editAppointments;
+      routes.deleteFunction = deleteService; // falta ruta de eliminar cita
+      break;
+    case "staff":
+      routes.index = staffRoute;
+      routes.edit = editStaffRoute;
+      routes.deleteFunction = deleteEmployee;
+      break;
+  }
 
-    return (
-        <div className={styles.buttons} aria-label="Botones de Accion">
-                    <button
-                        className={styles.cancelButton}
-                        onClick={(e) => {
-                            e.preventDefault();
-                            router.push(routes.index);
-                        }}>
-                        Regresar
-                    </button>
+  return (
+    <div className={styles.buttons} aria-label="Botones de Accion">
+      <button
+        className={styles.cancelButton}
+        onClick={(e) => {
+          e.preventDefault();
+          router.push(routes.index);
+        }}
+      >
+        Regresar
+      </button>
 
-                    <button
-                        onClick={(e) => {
-                            const url = routes.edit.replace('${id}', id);
-                            e.preventDefault();
-                            router.push(url);
+      <button
+        onClick={(e) => {
+          const url = routes.edit.replace("${id}", id);
+          e.preventDefault();
+          router.push(url);
+        }}
+      >
+        Editar
+      </button>
 
-                        }}>
-                        Editar
-                    </button>
+      <button
+        className={styles.deleteButton}
+        disabled={model.status == "inactive"}
+        onClick={(e) => {
+          e.preventDefault();
+          routes.deleteFunction(id);
+          router.push(routes.index);
+        }}
+      >
+        Eliminar
+      </button>
 
-                    <button className={styles.deleteButton}
-                        disabled={model.status == 'inactive'}
-                        onClick={ (e) => {
-                            e.preventDefault();
-                            routes.deleteFunction(id);
-                            router.push(routes.index);
-                    }}>Eliminar</button>
-
-                    {modelType == 'appointment' && (<button className={styles.completeAppointment}
-                        onClick={ (e) => {
-                            e.preventDefault();
-                            MicroModal.show('complete-appointment-modal');
-                    }}>Completar</button>)}
-                </div>
-    )
+      {modelType == "appointment" && (
+        <button
+          className={styles.completeAppointment}
+          onClick={(e) => {
+            e.preventDefault();
+            MicroModal.show("complete-appointment-modal");
+          }}
+        >
+          Completar
+        </button>
+      )}
+    </div>
+  );
 }
