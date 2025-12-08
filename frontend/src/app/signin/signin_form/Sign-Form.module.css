@@ -31,8 +31,8 @@
 }
 
 .error figure {
-    max-width: 1.5em;
-    max-height: 1.5em;
+    width: 1.5em;
+    height: 1.5em;
 }
 
 .error img {
