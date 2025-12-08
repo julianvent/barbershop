@@ -50,7 +50,7 @@ export async function seedDatabase(sequelize, options = { seedDB: false }) {
       return;
     }
 
-    if (!hasData && options.seedDB) {
+    if (hasData && options.seedDB) {
       console.log("Force flag enabled. Clearing existing data...");
 
       // Disable foreign key checks temporarily

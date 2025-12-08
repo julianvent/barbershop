@@ -18,7 +18,56 @@ export const BarberRepositoryMock = { getById: vi.fn() };
 export const AppointmentRepositoryMock = {
   getById: vi.fn(),
   getServiceByAppointmentId: vi.fn(),
-  update: vi.fn(),
+  update: vi.fn(async (id, appointment) => {
+    const existingAppointment = await AppointmentModelMock.findByPk(id);
+    if (!existingAppointment) {
+      throw new Error("Appointment not found");
+    }
+
+    if (appointment.services_ids && appointment.services_ids.length > 0) {
+      let sumDuration = 0;
+      const services = [];
+
+      for (const serviceId of appointment.services_ids) {
+        const service = await ServiceRepositoryMock.getById(serviceId);
+        sumDuration += service.duration;
+        services.push(service);
+      }
+
+      if (appointment.total_duration == null) {
+        appointment.total_duration = sumDuration;
+      }
+
+      await ServiceAppointmentMock.destroy({
+        where: { appointment_id: id },
+      });
+
+      for (const service of services) {
+        await ServiceAppointmentMock.create({
+          service_id: service.id,
+          appointment_id: id,
+          price: service.price,
+        });
+      }
+    }
+
+    await existingAppointment.update(appointment);
+
+    const updatedServices = await ServiceAppointmentMock.findAll({
+      where: { appointment_id: id },
+    });
+    const serviceDetails = await Promise.all(
+      updatedServices.map(async (sa) => {
+        const service = await ServiceRepositoryMock.getById(sa.service_id);
+        return { id: service.id, name: service.name };
+      })
+    );
+
+    return {
+      ...existingAppointment.toJSON(),
+      services: serviceDetails,
+    };
+  }),
 };
 
 // Service fixtures for testing
@@ -41,37 +90,52 @@ export const WRITABLE_FIELDS = new Set([
 
 // Setup mocks for client/integration tests (routes/controllers)
 export function setupAppointmentMocks() {
-  vi.mock("../../../repositories/appointment.repository.js", () => ({
+  vi.doMock("../../../repositories/appointment.repository.js", () => ({
     AppointmentRepository: appointmentRepoMock,
   }));
 
-  vi.mock("../../../middlewares/require.auth.middleware.js", () => ({
+  vi.doMock("../../../services/appointment.service.js", () => ({
+    AppointmentService: {
+      async cancel(id) {
+        const appointment = await appointmentRepoMock.getById(String(id));
+        if (!appointment) {
+          throw new Error("Appointment not found");
+        }
+
+        return appointmentRepoMock.update(String(id), {
+          status: "cancelled",
+        });
+      },
+    },
+  }));
+
+  vi.doMock("../../../middlewares/require.auth.middleware.js", () => ({
     default: (req, res, next) => next(),
   }));
 
-  vi.mock("../../../middlewares/require.optional.auth.middleware.js", () => ({
+  vi.doMock("../../../middlewares/require.optional.auth.middleware.js", () => ({
     default: (req, res, next) => {
       req.user = null;
       next();
     },
   }));
 
-  vi.mock("../../../middlewares/require.admin.middleware.js", () => ({
+  vi.doMock("../../../middlewares/require.admin.middleware.js", () => ({
     requireRole: () => (req, res, next) => next(),
   }));
 
-  vi.mock(
+  vi.doMock(
     "../../../middlewares/require.property.appointment.middleware.js",
     () => ({
       propertyAppointment: (req, res, next) => next(),
     })
   );
 
-  vi.mock("../../../middlewares/require.property.middleware.js", () => ({
+  vi.doMock("../../../middlewares/require.property.middleware.js", () => ({
     property: () => (req, res, next) => next(),
   }));
 
-  vi.mock("../../../config/upload.images.js", () => ({
+  vi.doMock("../../../config/upload.images.js", () => ({
     uploadAppointmentImage: {
       any: () => (req, res, next) => next(),
     },
@@ -80,23 +144,23 @@ export function setupAppointmentMocks() {
 
 // Setup mocks for unit tests (repository/service)
 export function setupAppointmentUnitMocks() {
-  vi.mock("../../../models/appointment.model.js", () => ({
+  vi.doMock("../../../models/appointment.model.js", () => ({
     Appointment: AppointmentModelMock,
   }));
 
-  vi.mock("../../../models/service.appointment.model.js", () => ({
+  vi.doMock("../../../models/service.appointment.model.js", () => ({
     ServiceAppointment: ServiceAppointmentMock,
   }));
 
-  vi.mock("../../../repositories/service.repository.js", () => ({
+  vi.doMock("../../../repositories/service.repository.js", () => ({
     ServiceRepository: ServiceRepositoryMock,
   }));
 
-  vi.mock("../../../repositories/barber.repository.js", () => ({
+  vi.doMock("../../../repositories/barber.repository.js", () => ({
     BarberRepository: BarberRepositoryMock,
   }));
 
-  vi.mock("../../../repositories/appointment.repository.js", () => ({
+  vi.doMock("../../../repositories/appointment.repository.js", () => ({
     AppointmentRepository: AppointmentRepositoryMock,
   }));
 }
