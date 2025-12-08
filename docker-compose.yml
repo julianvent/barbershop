@@ -48,7 +48,7 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: barberia
       TZ: America/Mexico_City
-    command: 
+    command:
       - --default-time-zone=-06:00
     ports:
       - 3306:3306

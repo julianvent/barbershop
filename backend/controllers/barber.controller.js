@@ -2,8 +2,8 @@ import { BarberService } from "../services/barber.service.js";
 import { generateImageUrl } from "../utils/barber.utils.js";
 
 export const BarberController = {
-    async getAll(req, res){
-        try{
+    async getAll(req, res) {
+        try {
             const filters = {
                 page: req.query.page,
                 limit: req.query.limit,
@@ -17,7 +17,7 @@ export const BarberController = {
                 data,
                 meta: result.meta
             })
-        }catch (e) {
+        } catch (e) {
             res.status(500).json({ error: e.message });
         }
     },
@@ -31,47 +31,50 @@ export const BarberController = {
             res.status(404).json({ message: error.message });
         }
     },
-    async create(req, res){
-        try{
+    async create(req, res) {
+        try {
             if (!req.is('multipart/form-data'))
                 return res.status(400).json({
                     error: "Content-Type must be multipart/form-data"
                 });
             const barberData = req.body;
-            delete barberData.image_path; // Prevent clients from setting image_path manually, since we don't use a request DTO and this field must only be assigned from the uploaded file
+            // Prevent clients from setting image_path and finish_path manually, since we don't use a request DTO and this field must only be assigned from the uploaded file
+            delete barberData.image_path;
+            delete data.image_finish_path;
             const file = req.files?.[0];
             if (file) barberData.image_path = file.filename;
             const newBarber = await BarberService.create(barberData);
             newBarber.image_path = generateImageUrl(newBarber.image_path)
             res.status(201).json(newBarber)
-        } catch(error) {
+        } catch (error) {
             res.status(500).json({ error: error.message })
         }
     },
-    async update(req, res){
-        try{
+    async update(req, res) {
+        try {
             if (!req.is('multipart/form-data'))
                 return res.status(400).json({
                     error: "Content-Type must be multipart/form-data"
                 });
-            const { id } = req.params ;
-            const barberData = req.body ;
+            const { id } = req.params;
+            const barberData = req.body;
             const file = req.files?.[0];
             if (file) barberData.image_path = file.filename;
             const updateBarber = await BarberService.update(id, barberData);
             updateBarber.image_path = generateImageUrl(updateBarber.image_path);
             res.status(200).json(updateBarber)
-        } catch(error) {
+        } catch (error) {
             res.status(500).json({ error: error.message })
         }
     },
-    async delete(req, res){
+    async delete(req, res) {
         try {
-              const { id } = req.params;
-              await BarberService.delete(id);
-              res.status(204).send();
+            const { id } = req.params;
+            await BarberService.delete(id);
+            res.status(204).send();
         } catch (error) {
-              res.status(404).json({ message: error.message });
+            res.status(404).json({ message: error.message });
         }
-    }
+    },
+
 }

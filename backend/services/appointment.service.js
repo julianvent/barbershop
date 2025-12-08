@@ -1,3 +1,5 @@
+import path from 'path';
+
 import { AppointmentRepository } from "../repositories/appointment.repository.js";
 import { BarberRepository } from "../repositories/barber.repository.js";
 import { ScheduleRepository } from "../repositories/schedule.repository.js";
@@ -5,6 +7,7 @@ import { ServiceRepository } from "../repositories/service.repository.js";
 import { AppointmentValidator } from "../validators/appointment.validator.js";
 import { NotificationService } from "./notifications/helper/notification.service.js";
 import { DAYS } from "../validators/schedule.validator.js";
+import { APPOINTMENT_UPLOAD_DIR, existsImage, removeImage } from "../config/upload.images.js";
 
 const MARGIN = 15;
 export const AppointmentService = {
@@ -25,6 +28,7 @@ export const AppointmentService = {
 
     const response_appointments = await Promise.all(
       appointments.map(async (appointment) => {
+        delete appointment.image_finish_path;
         const barber_data = await BarberRepository.getById(
           appointment.barber_id
         );
@@ -198,6 +202,33 @@ export const AppointmentService = {
       date: from,
       barbers: results,
     };
-    
+
   },
+  async finalizate(id, image_filename) {
+    const appointment = await AppointmentRepository.getById(id);
+
+    if (!appointment) {
+      throw new Error("Appointment not found");
+    }
+
+
+    const new_image_finish_path = `/${path.relative(process.cwd(), path.join(APPOINTMENT_UPLOAD_DIR, image_filename))}`;
+
+    if (appointment.image_finish_path) {
+      const oldFilename = path.basename(appointment.image_finish_path);
+
+      if (existsImage(oldFilename, APPOINTMENT_UPLOAD_DIR)) {
+        removeImage(oldFilename, APPOINTMENT_UPLOAD_DIR);
+        console.log("Eliminó imagen anterior:", oldFilename);
+      }
+    }
+    const updatedAppointment = await AppointmentRepository.update(id, {
+      status: "completed",
+      image_finish_path: new_image_finish_path,
+    });
+
+    return updatedAppointment;
+  }
+
+
 };
