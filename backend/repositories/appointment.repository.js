@@ -160,9 +160,9 @@ export const AppointmentRepository = {
       throw new Error("Appointment not found");
     }
 
-    const existingBarber = await BarberRepository.getById(appointment.barber_id);
+    const existingBarber = await BarberRepository.getById(existingAppointment.barber_id);
 
-    if (!existingBarber) {
+    if (existingAppointment.barber_id != null && !existingBarber) {
       throw new Error("Barber not found");
     }
 
