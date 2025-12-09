@@ -94,6 +94,7 @@ export const NotificationService = {
   },
 
   async appointmentUpdated(appt) {
+    const link = generateAppointmentLink(appt.id)
     const dto = new NotificationDTO({
       appointmentId: appt.id,
       to: toRecipient(appt),
@@ -101,6 +102,7 @@ export const NotificationService = {
       payload: {
         customerName: appt.customer_name,
         whenText: mexDate(appt.appointment_datetime),
+        appointmentLink: link
       },
     });
     await notifierChain.send(dto);
