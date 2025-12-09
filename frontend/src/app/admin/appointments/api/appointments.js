@@ -108,10 +108,16 @@ export async function completeAppointment(data, id) {
   }
 }
 
-export async function cancelAppointment(id) {
+export async function cancelAppointment(id, auth=null) {
   try {
-    const headers = await axiosConfig();
-    const res = axios.post(cancelAppointmentApiRoute(id), headers);
+    let headers;
+    if(auth != null){
+      headers = {headers : { 'Authorization': `Bearer ${auth}` }};
+    }else{
+      headers = await axiosConfig();
+    }
+    console.log(headers);
+    const res = axios.post(cancelAppointmentApiRoute(id),null,headers);
     return res;
   } catch (error) {}
 }

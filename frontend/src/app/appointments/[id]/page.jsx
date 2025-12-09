@@ -12,6 +12,7 @@ export default function AppointmentDetailCustomer() {
 
   return (
     <div className={styles.layout}>
+      <title>SG Barbershop - Detalle Cita</title>
       <CustomerHeader title={"Detalle de cita"}></CustomerHeader>
       <main className={styles.scrollableContent}>
         <AppointmentDetail

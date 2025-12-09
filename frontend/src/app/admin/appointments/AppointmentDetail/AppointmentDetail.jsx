@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { completeAppointment, getAppointment } from "../api/appointments";
+import { cancelAppointment, completeAppointment, getAppointment } from "../api/appointments";
 import styles from "./Appointment-Detail.module.css";
 import { Status } from "@/app/components/form/status/Status";
 import Buttons from "@/app/components/form/model_buttons/Buttons";
@@ -46,11 +46,14 @@ export default function AppointmentDetail({
     }
   });
 
-  function onCancel() {
+  async function onCancel() {
     setIsSubmitting(true);
 
     try {
+      await cancelAppointment(appointmentId,auth);
+      router.push(customerMode ? '/': appointmentsRoute);
     } catch (error) {
+      console.log(error);
     } finally {
       setIsSubmitting(false);
     }
@@ -217,7 +220,10 @@ export default function AppointmentDetail({
               </button>
             </div>
           ) : (
-            <Buttons model={appointment} modelType={"appointment"} />
+            <div>
+              <Buttons model={appointment} modelType={"appointment"} />
+
+            </div>
           )}
         </div>
       ) : (
@@ -278,6 +284,9 @@ export default function AppointmentDetail({
         confirmText="Confirmar"
         cancelText="Volver"
         disabled={isSubmitting}
+        onConfirm={() => {
+          onCancel();
+        }}
       >
         <p>
           ¿Estás seguro de cancelar la cita?

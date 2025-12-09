@@ -31,6 +31,7 @@ export const createEmployee = async (data) => {
         await axios.post('/api/barbers', formData, headers);
 
     } catch (err) {
+        console.log(err);
         throw 'Error al registrar el empleado';
     }
 };

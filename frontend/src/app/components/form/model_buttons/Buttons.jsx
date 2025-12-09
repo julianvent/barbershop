@@ -76,9 +76,16 @@ export default function Buttons({ model, modelType }) {
             e.preventDefault();
             MicroModal.show("complete-appointment-modal");
           }}
-        >
-          Completar
-        </button>
+        >Completar</button>
+      )}
+      {modelType == "appointment" && (
+        <button
+          className={styles.deleteButton}
+          onClick={(e) => {
+            e.preventDefault();
+            MicroModal.show("cancel-appointment-modal");
+          }}
+        >Cancelar</button>
       )}
     </div>
   );
