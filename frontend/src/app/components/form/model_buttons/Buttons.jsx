@@ -11,6 +11,7 @@ import {
 import styles from "./styles.module.css";
 import { useRouter } from "next/navigation";
 import MicroModal from "micromodal";
+import { deleteAppointment } from "@/app/admin/appointments/api/appointments";
 
 export default function Buttons({ model, modelType }) {
   let id = model.id;
@@ -25,7 +26,7 @@ export default function Buttons({ model, modelType }) {
     case "appointment":
       routes.index = appointmentsRoute;
       routes.edit = editAppointments;
-      routes.deleteFunction = deleteService; // falta ruta de eliminar cita
+      routes.deleteFunction = deleteAppointment;
       break;
     case "staff":
       routes.index = staffRoute;

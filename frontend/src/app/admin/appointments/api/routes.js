@@ -6,3 +6,7 @@ export const completeAppointmentApiRoute = "/api/appointments/${id}/complete";
 
 export const cancelAppointmentApiRoute = (id) =>
   `/api/appointments/${id}/cancel`;
+
+export const deleteAppointmentApiRoute = (id) =>
+  `/api/appointments/${id}`;
+

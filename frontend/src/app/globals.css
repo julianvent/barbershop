@@ -58,3 +58,9 @@ legend{
   font-size: 0.9rem;
   margin-bottom: 1%;
 }
+
+@media (width <= 800px) {
+  .ag-paging-row-summary-panel {
+    display: none !important;
+  }
+}

@@ -10,7 +10,7 @@ import {
 export const getServices = async () => {
   try {
     const headers = axiosConfig();
-    const request = await axios.get(getServicesApiRoute, headers);
+    const request = await axios.get(getServicesApiRoute+'?limit=99', headers);
     const data = request.data.data;
     return data;
   } catch (error) {

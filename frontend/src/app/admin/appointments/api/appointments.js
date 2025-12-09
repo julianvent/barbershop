@@ -4,6 +4,7 @@ import {
   cancelAppointmentApiRoute,
   completeAppointmentApiRoute,
   createAppointmentApiRoute,
+  deleteAppointmentApiRoute,
   getAppointmentsApiRoute,
   getAvailabilityApiRoute,
   updateAppointmentApiRoute,
@@ -111,6 +112,14 @@ export async function cancelAppointment(id) {
   try {
     const headers = await axiosConfig();
     const res = axios.post(cancelAppointmentApiRoute(id), headers);
+    return res;
+  } catch (error) {}
+}
+
+export async function deleteAppointment(id){
+  try {
+    const headers = await axiosConfig();
+    const res = axios.delete(deleteAppointmentApiRoute(id), headers);
     return res;
   } catch (error) {}
 }

@@ -75,6 +75,7 @@ export const deleteEmployee = async (id) =>{
         const headers = await axiosConfig();
         await axios.delete('/api/barbers/'+id, headers);
     }catch(err){
+        console.log(err);
         throw 'Error al eliminar el registro del empleado';
     }
 
