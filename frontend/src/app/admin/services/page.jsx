@@ -104,7 +104,7 @@ export default function Services() {
             columnDefs={fields}
             overlayNoRowsTemplate={message}
             pagination={true}
-            paginationPageSize={10}
+            paginationPageSize={20}
           />
         </div>
       </div>

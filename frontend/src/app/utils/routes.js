@@ -18,4 +18,4 @@ export const newStaffRoute = staffRoute + "/new";
 export const editStaffRoute = staffRoute + edit;
 export const seeStaffRoute = staffRoute + see;
 
-export const makeAppointmentRoute = "/appointment";
+export const makeAppointmentRoute = "/appointments";

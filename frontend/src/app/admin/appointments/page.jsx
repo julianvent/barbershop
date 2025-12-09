@@ -83,7 +83,7 @@ export default function Appointments() {
           rowData={appointments}
           columnDefs={fields}
           pagination={true}
-          paginationPageSize={10}
+          paginationPageSize={20}
         />
       </div>
     </Layout>
