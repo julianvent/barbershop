@@ -1,10 +1,17 @@
-## Levantar servicios
+# SG - Barbershop
+
+## WebPage
+[SG Barbershop](http://18.118.100.220/)
+
+## Wiki
+[SG Barbershop Information](https://github.com/julianvent/barbershop/wiki)
+## Raise services
 ```bash
 docker compose up --watch
 ```
 
-Abrir [http://localhost:3000](http://localhost:3000) para observar la página.
+Open [http://localhost:3000](http://localhost:3000) to visualize the page.
 ## Backend - Express
-Repositorio: [Backend](https://github.com/MrSheldonT/barberia.git)
+Repository: [Backend](https://github.com/MrSheldonT/barberia.git)
 ## Frontend - React
-Repositorio: [Frontend](https://github.com/julianvent/sgbarbershop-frontend.git)
+Repository: [Frontend](https://github.com/julianvent/sgbarbershop-frontend.git)
