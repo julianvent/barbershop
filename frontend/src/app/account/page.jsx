@@ -90,7 +90,7 @@ export default function Account(){
                                 }}
                             >
                                 <div className={styles.fields}>
-                                    <h3>Actualizar cuenta</h3>
+                                    <h2>Actualizar cuenta</h2>
 
                                     <Input {...fullNameValidation}/>
                                     <Input {...emailValidation}/>
@@ -113,7 +113,7 @@ export default function Account(){
                                 }}
                             >
                                 <div className={styles.fields}>
-                                    <h3>Cambiar Contraseña</h3>
+                                    <h2>Cambiar Contraseña</h2>
                                     <Input {...passwordValidation}/>
 
                                     <button disabled={isPassword || 

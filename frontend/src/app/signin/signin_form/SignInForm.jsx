@@ -50,6 +50,7 @@ export default function SignInForm() {
         aria-busy={isSigningIn}
       >
         <div className={styles.fieldsContainer}>
+          <h1>Inicio de Sesión</h1>
           <Input {...emailValidation}></Input>
           <Input {...passwordValidation}></Input>
           <button
@@ -64,7 +65,7 @@ export default function SignInForm() {
               <figure>
                 <img
                   src="/icons/circle-exclamation-solid-full.svg"
-                  alt="Error image"
+                  alt="Advertencia"
                 />
               </figure>
               <p role="alert">{error}</p>
