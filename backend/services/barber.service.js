@@ -6,10 +6,10 @@ import path from "path";
 const monkeyBarber = "assets/images/monkeyBarber.png";
 
 export const BarberService = {
-    async list(filters){
+    async list(filters) {
         const { limit, page, sort } = await BarberValidator.validateFiltersListbarbers(filters)
         const offset = (page - 1) * limit;
-        const {rows: barbers, count} = await BarberRepository.list(offset, limit, sort);
+        const { rows: barbers, count } = await BarberRepository.list(offset, limit, sort);
 
         return {
             data: barbers,
@@ -22,33 +22,43 @@ export const BarberService = {
         }
     },
     async find(id) {
-        return BarberRepository.getById(id)
+        const existing_barber = await BarberRepository.getById(id);
+
+        if (!existing_barber) {
+            throw new Error("Barber not found")
+        }
+        return existing_barber;
     },
     async create(barberData) {
 
-        if(barberData.image_path == undefined) barberData.image_path = monkeyBarber;
+        if (barberData.image_path == undefined) barberData.image_path = monkeyBarber;
         else barberData.image_path = `/${path.relative(process.cwd(), path.join(UPLOAD_DIR, barberData.image_path))}`;
         BarberValidator.validateCreate(barberData);
         return BarberRepository.create(barberData);
     },
-    async update(id, barberData){
+    async update(id, barberData) {
         BarberValidator.validateUpdate(barberData);
         const existing_barber = await BarberRepository.getById(id);
-        if(barberData.image_path && existsImage(existing_barber.image_path) && existing_barber.image_path != 'default.png') {
+        if (!existing_barber) {
+            throw new Error("Barber not found")
+        }
+        if (barberData.image_path && existsImage(existing_barber.image_path) && existing_barber.image_path != 'default.png') {
             removeImage(existing_barber.image_path);
         }
-        if(barberData.image_path !== undefined) { 
+        if (barberData.image_path !== undefined) {
             barberData.image_path = `/${path.relative(process.cwd(), path.join(UPLOAD_DIR, barberData.image_path))}`;
         }
 
         return BarberRepository.update(id, barberData)
     },
-    async delete(id){
+    async delete(id) {
         const existing_barber = await BarberRepository.getById(id);
-
-         if(existsImage(existing_barber.image_path) && existing_barber.image_path != 'default.png'){
-                removeImage(existing_barber.image_path);
-            }
+        if (!existing_barber) {
+            throw new Error("Barber not found")
+        }
+        if (existsImage(existing_barber.image_path) && existing_barber.image_path != 'default.png') {
+            removeImage(existing_barber.image_path);
+        }
         return BarberRepository.delete(id)
     }
 }

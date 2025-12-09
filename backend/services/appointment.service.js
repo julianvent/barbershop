@@ -45,7 +45,8 @@ export const AppointmentService = {
         return {
           ...json,
           cost_total: costTotal,
-          barber: { name: barber_data.barber_name, barber_id: barber_data.id },
+          barber: barber_data ? { name: barber_data.barber_name, barber_id: barber_data.id } : null
+
         };
       })
     );
@@ -92,14 +93,13 @@ export const AppointmentService = {
       ...appointment_data,
       cost_total: costTotal,
       services: serviceInfo,
-      barber_id: barber.id,
       cost_total: costTotal,
       services: serviceInfo,
-      barber_id: barber.id,
-      barber: {
+      barber_id: barber? barber.id: null,
+      barber: barber? {
         barber_id: barber.id,
         barber_name: barber.barber_name,
-      },
+      }: null,
     };
   },
 
@@ -141,7 +141,15 @@ export const AppointmentService = {
 
     let barberIds = [];
 
-    if (filters.barber_id) barberIds = [filters.barber_id];
+    if (filters.barber_id) {
+
+      const existingBarber = await BarberRepository.getById(filters.barber_id);
+      if(!existingBarber){
+        throw new Error("Barber not found")
+      }
+
+      barberIds = [Number(filters.barber_id)];
+    }
     else {
       barberIds = await BarberRepository.getAllIds();
       barberIds = barberIds.map((barber) => barber.id);

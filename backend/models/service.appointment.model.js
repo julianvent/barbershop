@@ -11,14 +11,16 @@ export const ServiceAppointment = sequelize.define(
         model: "appointment",
         key: "id",
       },
+      onDelete: "CASCADE",
     },
     service_id: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
       references: {
         model: "service",
         key: "id",
       },
+      onDelete: "SET NULL",
     },
 
     price: {

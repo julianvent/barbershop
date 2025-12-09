@@ -159,28 +159,34 @@ export const AppointmentRepository = {
     if (!existingAppointment) {
       throw new Error("Appointment not found");
     }
-    
+
+    const existingBarber = await BarberRepository.getById(appointment.barber_id);
+
+    if (!existingBarber) {
+      throw new Error("Barber not found");
+    }
+
     if (appointment.services_ids && appointment.services_ids.length > 0) {
       let sum_duration = 0;
       const services = [];
 
-      
+
       for (const service_id of appointment.services_ids) {
         const service = await ServiceRepository.getById(service_id);
         sum_duration += service.duration;
         services.push(service);
       }
-      
+
       if (appointment.total_duration == null) {
         appointment.total_duration = sum_duration;
       }
 
-      
+
       await ServiceAppointment.destroy({
         where: { appointment_id: id },
       });
 
-      
+
       for (const service of services) {
         await ServiceAppointment.create({
           service_id: service.id,
@@ -198,7 +204,7 @@ export const AppointmentRepository = {
 
     await existingAppointment.update(appointment);
 
-    
+
     const updatedServices = await this.getServiceByAppointmentId(id);
     const serviceDetails = await Promise.all(
       updatedServices.map(async (sa) => {
@@ -222,7 +228,7 @@ export const AppointmentRepository = {
   async getAvailabilityAppointments(barberId, from, to) {
     const fromFormatted = formatDateForTimezone(from);
     const toFormatted = formatDateForTimezone(to);
-    
+
     const where = {};
     where.appointment_datetime = {
       [Op.gte]: fromFormatted,

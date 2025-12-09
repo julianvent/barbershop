@@ -36,8 +36,6 @@ export const BarberRepository = {
         const existing_barber = await Barber.findByPk(id, {
             attributes: RETURN_ATTRS,
         });
-        if(!existing_barber)
-            throw new Error("Barber not found");
         return existing_barber;
     },
     async update(id, barberData){
