@@ -18,7 +18,7 @@ export default function AppointmentDetail({
   customerMode,
 }) {
   const router = useRouter();
-  const appointment = useAppointment(appointmentId, auth);
+  const appointment = useAppointment(appointmentId, auth, router, customerMode);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const methods = useForm();
@@ -297,7 +297,7 @@ export default function AppointmentDetail({
   );
 }
 
-function useAppointment(appointmentId, auth) {
+function useAppointment(appointmentId, auth, router, customerMode) {
   const [appointment, setAppointment] = useState(null);
 
   useEffect(() => {
@@ -306,6 +306,7 @@ function useAppointment(appointmentId, auth) {
         const data = await getAppointment(appointmentId, auth);
         setAppointment(data);
       } catch (error) {
+        router.push(customerMode?'/not-found':appointmentsRoute);
         return null;
       }
     };
