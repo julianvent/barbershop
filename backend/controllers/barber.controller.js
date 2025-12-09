@@ -40,7 +40,7 @@ export const BarberController = {
             const barberData = req.body;
             // Prevent clients from setting image_path and finish_path manually, since we don't use a request DTO and this field must only be assigned from the uploaded file
             delete barberData.image_path;
-            delete data.image_finish_path;
+            delete barberData.image_finish_path;
             const file = req.files?.[0];
             if (file) barberData.image_path = file.filename;
             const newBarber = await BarberService.create(barberData);
