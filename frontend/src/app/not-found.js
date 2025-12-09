@@ -9,7 +9,7 @@ export default function NotFound() {
         <img src="/Sagoz_Logo.png" alt="Sagoz Logo" />
       </figure>
       <h1>Página no encontrada</h1>
-      <Link href={appointmentsRoute}>Volver al dashboard</Link>
+      <Link href={appointmentsRoute}>Volver al panel</Link>
       <Link href={makeAppointmentRoute}>Agenda una cita</Link>
     </div>
   );

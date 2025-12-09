@@ -16,8 +16,8 @@ const nextConfig = {
         permanent: true,
       },
       {
-        source: "/dashboard",
-        destination: "/dashboard/appointments",
+        source: "/admin",
+        destination: "/admin/appointments",
         permanent: true,
       },
     ];

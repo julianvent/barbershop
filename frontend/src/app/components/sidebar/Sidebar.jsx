@@ -7,7 +7,7 @@ const Sidebar = forwardRef(({ visible }, ref) => {
     <div data-visible={visible} ref={ref} className={styles.sidebar}>
       <ul>
         <li>
-          <Link href="/dashboard/appointments">
+          <Link href="/admin/appointments">
             <div className={styles.iconContainer}>
               <img src="/icons/calendar-check-regular-full.svg" alt="" />
             </div>
@@ -15,7 +15,7 @@ const Sidebar = forwardRef(({ visible }, ref) => {
           </Link>
         </li>
         <li>
-          <Link href="/dashboard/services">
+          <Link href="/admin/services">
             <div className={styles.iconContainer}>
               <img src="/icons/scissors-solid-full.svg" alt="" />
             </div>
@@ -23,7 +23,7 @@ const Sidebar = forwardRef(({ visible }, ref) => {
           </Link>
         </li>
         <li>
-          <Link href="/dashboard/staff">
+          <Link href="/admin/staff">
             <div className={styles.iconContainer}>
               <img src="/icons/users-solid-full.svg" alt="" />
             </div>

@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from "react";
 import Layout from "../components/base_layout/Layout";
-import layout from '../dashboard/Main.module.css'
+import layout from '../admin/Main.module.css'
 import { getAccount, updateAccount } from "./api/account";
 import Input from "../components/form/input/Input";
 import { emailValidation, fullNameValidation, passwordValidation } from "../utils/accountValidators";

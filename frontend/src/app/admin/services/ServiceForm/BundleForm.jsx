@@ -22,7 +22,8 @@ export default function BundleForm({ onSubmit }) {
   useEffect(()=> {
     const fetch = async () => {
       const data = await getServices();
-      setServices(data);
+      const onlyServices = data.filter((e) => e.type != 'Paquete');
+      setServices(onlyServices);
     };
 
     fetch();

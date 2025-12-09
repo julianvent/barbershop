@@ -34,7 +34,7 @@ export default function showService({params}){
             
                     <div aria-label="Atributos del servicio">
                         {
-                            service&&(<article className={styles.htmlContent} aria-label="Descripción del servicio"
+                            service&&(<article aria-label="Descripción del servicio"
                                 dangerouslySetInnerHTML={{__html: service.description.trim()}}/> )
                             }
         

@@ -1,5 +1,5 @@
-import { deleteService } from "@/app/dashboard/services/api/services";
-import { deleteEmployee } from "@/app/dashboard/staff/api/employees";
+import { deleteService } from "@/app/admin/services/api/services";
+import { deleteEmployee } from "@/app/admin/staff/api/employees";
 import {
   appointmentsRoute,
   editAppointments,
