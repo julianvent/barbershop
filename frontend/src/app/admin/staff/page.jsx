@@ -98,6 +98,8 @@ export default function Page() {
             rowData={employees}
             columnDefs={fields}
             overlayNoRowsTemplate={message}
+            pagination={true}
+            paginationPageSize={10}
           />
         </div>
       </div>

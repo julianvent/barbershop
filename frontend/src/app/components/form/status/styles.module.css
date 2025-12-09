@@ -18,12 +18,12 @@
 
 
 .pendiente {
-  background-color: #b1b1b1; 
-  color: #494949;
+  background-color: #cfcfcf; 
+  color: #1b1b1b;
 }
 
 .pendiente .dot {
-  background-color: #303030; 
+  background-color: #1a1a1a; 
 }
 
 .confirmado {

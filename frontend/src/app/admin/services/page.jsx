@@ -26,7 +26,7 @@ export default function Services() {
     const fetch = async() =>{
       try{
         const data = await getServices();
-        setServices(data)
+        setServices(data);
         
       }catch(err){
         setServices([]);
@@ -103,6 +103,8 @@ export default function Services() {
             rowData={services}
             columnDefs={fields}
             overlayNoRowsTemplate={message}
+            pagination={true}
+            paginationPageSize={10}
           />
         </div>
       </div>

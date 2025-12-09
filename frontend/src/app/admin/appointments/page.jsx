@@ -82,6 +82,8 @@ export default function Appointments() {
           defaultColDef={defaultColDef}
           rowData={appointments}
           columnDefs={fields}
+          pagination={true}
+          paginationPageSize={10}
         />
       </div>
     </Layout>
