@@ -116,8 +116,8 @@ export async function cancelAppointment(id, auth=null) {
     }else{
       headers = await axiosConfig();
     }
-    console.log(headers);
-    const res = axios.post(cancelAppointmentApiRoute(id),null,headers);
+
+    const res = axios.post(cancelAppointmentApiRoute(id),{},headers);
     return res;
   } catch (error) {}
 }
