@@ -37,11 +37,12 @@ export const Appointment = sequelize.define(
     },
     barber_id: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
       references: {
         model: "barber",
         key: "id",
       },
+      onDelete: "SET NULL",
     },
     image_finish_path: {
       type: DataTypes.STRING(255),
