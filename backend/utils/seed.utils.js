@@ -32,6 +32,7 @@ export async function seedDatabase(sequelize, options = { seedDB: false }) {
       { ServiceAppointment },
       { Appointment },
       { Schedule },
+      { Establishment },
     ] = await Promise.all([
       import("../models/service.model.js"),
       import("../models/barber.model.js"),
@@ -39,24 +40,33 @@ export async function seedDatabase(sequelize, options = { seedDB: false }) {
       import("../models/service.appointment.model.js"),
       import("../models/appointment.model.js"),
       import("../models/schedule.model.js"),
+      import("../models/establishment.model.js"),
     ]);
 
+    // Ensure associations are registered before syncing tables
+    await import("../models/associations/establishment.associations.js");
+
     // Import timezone utilities for GMT-06:00 consistency
-    const { formatDateForTimezone } = await import(
-      "../utils/appointment.utils.js"
-    );
+    const { formatDateForTimezone } =
+      await import("../utils/appointment.utils.js");
 
     await sequelize.sync({ alter: false });
     await ensureAppointmentImageFinishColumn(sequelize);
     console.log("Database synced");
 
-    const [serviceCount, barberCount, accountCount, scheduleCount] =
-      await Promise.all([
-        Service.count(),
-        Barber.count(),
-        Account.count(),
-        Schedule.count(),
-      ]);
+    const [
+      serviceCount,
+      barberCount,
+      accountCount,
+      scheduleCount,
+      establishmentCount,
+    ] = await Promise.all([
+      Service.count(),
+      Barber.count(),
+      Account.count(),
+      Schedule.count(),
+      Establishment.count(),
+    ]);
 
     const hasData =
       serviceCount > 0 ||
@@ -70,6 +80,7 @@ export async function seedDatabase(sequelize, options = { seedDB: false }) {
       console.log(` - Barbers: ${barberCount}`);
       console.log(` - Accounts: ${accountCount}`);
       console.log(` - Schedules: ${scheduleCount}`);
+      console.log(` - Establishments: ${establishmentCount}`);
       return;
     }
 
@@ -89,6 +100,7 @@ export async function seedDatabase(sequelize, options = { seedDB: false }) {
       await Service.destroy({ where: {}, truncate: true, cascade: true });
       await Barber.destroy({ where: {}, truncate: true, cascade: true });
       await Account.destroy({ where: {}, truncate: true, cascade: true });
+      await Establishment.destroy({ where: {}, truncate: true, cascade: true });
       await Schedule.destroy({ where: {}, truncate: true, cascade: true });
 
       // Re-enable foreign key checks
@@ -99,14 +111,17 @@ export async function seedDatabase(sequelize, options = { seedDB: false }) {
     // Seed all data
     const services = await seedService(Service);
     const barbers = await seedBarber(Barber);
-    const schedules = await seedSchedule(Schedule);
     const accounts = await seedAccount(Account);
+    const establishments = await seedEstablishment(Establishment, accounts);
+    for (const est of establishments) {
+      await seedSchedulesForEstablishment(Schedule, est.id);
+    }
     const appointments = await seedAppointment(
       Appointment,
       ServiceAppointment,
       barbers,
       services,
-      formatDateForTimezone
+      formatDateForTimezone,
     );
 
     console.log("\nDatabase seeding completed successfully!");
@@ -200,7 +215,7 @@ async function seedBarber(Barber) {
 }
 
 /**
- * Seed schedules
+ * Seed schedules before establishments
  */
 async function seedSchedule(Schedule) {
   const schedules = await Schedule.bulkCreate([
@@ -248,6 +263,90 @@ async function seedSchedule(Schedule) {
     },
   ]);
   console.log(`✓ Created ${schedules.length} schedules`);
+  return schedules;
+}
+
+/**
+ * Seed establishments linked to accounts
+ */
+async function seedEstablishment(Establishment, accounts) {
+  const establishmentsData = [
+    {
+      name: "Downtown Barber Shop",
+      address: "123 Main St",
+      phone_number: `555000${Math.floor(1000 + Math.random() * 9000)}`,
+      account_id: accounts[0]?.id,
+    },
+    {
+      name: "Uptown Cuts",
+      address: "456 Elm Ave",
+      phone_number: `555001${Math.floor(1000 + Math.random() * 9000)}`,
+      account_id: accounts[1]?.id,
+    },
+  ];
+  const establishments = await Establishment.bulkCreate(establishmentsData);
+  console.log(`✓ Created ${establishments.length} establishments`);
+  return establishments;
+}
+
+/**
+ * Seed schedules for a specific establishment
+ */
+async function seedSchedulesForEstablishment(Schedule, establishmentId) {
+  const schedules = await Schedule.bulkCreate([
+    {
+      day_of_week: "Monday",
+      start_time: "09:00:00",
+      end_time: "18:00:00",
+      is_active: true,
+      establishment_id: establishmentId,
+    },
+    {
+      day_of_week: "Tuesday",
+      start_time: "09:00:00",
+      end_time: "18:00:00",
+      is_active: true,
+      establishment_id: establishmentId,
+    },
+    {
+      day_of_week: "Wednesday",
+      start_time: "09:00:00",
+      end_time: "18:00:00",
+      is_active: true,
+      establishment_id: establishmentId,
+    },
+    {
+      day_of_week: "Thursday",
+      start_time: "09:00:00",
+      end_time: "18:00:00",
+      is_active: true,
+      establishment_id: establishmentId,
+    },
+    {
+      day_of_week: "Friday",
+      start_time: "09:00:00",
+      end_time: "18:00:00",
+      is_active: true,
+      establishment_id: establishmentId,
+    },
+    {
+      day_of_week: "Saturday",
+      start_time: "10:00:00",
+      end_time: "16:00:00",
+      is_active: true,
+      establishment_id: establishmentId,
+    },
+    {
+      day_of_week: "Sunday",
+      start_time: "00:00:00",
+      end_time: "00:00:00",
+      is_active: false,
+      establishment_id: establishmentId,
+    },
+  ]);
+  console.log(
+    `✓ Created ${schedules.length} schedules for establishment ${establishmentId}`,
+  );
   return schedules;
 }
 
@@ -311,7 +410,7 @@ async function seedAppointment(
   ServiceAppointment,
   barbers,
   services,
-  formatDateForTimezone
+  formatDateForTimezone,
 ) {
   const DB_TIMEZONE = "-06:00";
 
@@ -376,7 +475,7 @@ async function seedAppointment(
     // This ensures consistent timezone representation in the database
     const formattedDateTime = formatDateForTimezone(
       appointmentData.appointment_datetime,
-      DB_TIMEZONE
+      DB_TIMEZONE,
     );
 
     // Create appointment with timezone-aware datetime
