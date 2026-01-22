@@ -19,3 +19,8 @@ export const editStaffRoute = staffRoute + edit;
 export const seeStaffRoute = staffRoute + see;
 
 export const makeAppointmentRoute = "/appointments";
+
+export const establishmentRoute = "/admin/establishment";
+export const newEstablishment = establishmentRoute + "/new";
+export const seeEstablishment = establishmentRoute + edit;
+export const editEstablishment = establishmentRoute + see;
