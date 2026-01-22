@@ -1,4 +1,15 @@
 import { DataTypes } from "sequelize";
+import {
+  Account,
+  Appointment,
+  Barber,
+  Establishment,
+  Schedule,
+  Service,
+  ServiceAppointment,
+} from "../models/index.js";
+import { hash } from "../services/password.service.js";
+import { formatDateForTimezone } from "../utils/appointment.utils.js";
 
 async function ensureAppointmentImageFinishColumn(sequelize) {
   const queryInterface = sequelize.getQueryInterface();
@@ -23,32 +34,6 @@ async function ensureAppointmentImageFinishColumn(sequelize) {
 export async function seedDatabase(sequelize, options = { seedDB: false }) {
   try {
     console.log("Starting database seeding...");
-
-    // Lazy-import models to avoid circular imports during module initialization
-    const [
-      { Service },
-      { Barber },
-      { Account },
-      { ServiceAppointment },
-      { Appointment },
-      { Schedule },
-      { Establishment },
-    ] = await Promise.all([
-      import("../models/service.model.js"),
-      import("../models/barber.model.js"),
-      import("../models/account.model.js"),
-      import("../models/service.appointment.model.js"),
-      import("../models/appointment.model.js"),
-      import("../models/schedule.model.js"),
-      import("../models/establishment.model.js"),
-    ]);
-
-    // Ensure associations are registered before syncing tables
-    await import("../models/associations/establishment.associations.js");
-
-    // Import timezone utilities for GMT-06:00 consistency
-    const { formatDateForTimezone } =
-      await import("../utils/appointment.utils.js");
 
     await sequelize.sync({ alter: false });
     await ensureAppointmentImageFinishColumn(sequelize);
@@ -91,17 +76,13 @@ export async function seedDatabase(sequelize, options = { seedDB: false }) {
       await sequelize.query("SET FOREIGN_KEY_CHECKS = 0");
 
       // Clear all tables
-      await ServiceAppointment.destroy({
-        where: {},
-        truncate: true,
-        cascade: true,
-      });
-      await Appointment.destroy({ where: {}, truncate: true, cascade: true });
-      await Service.destroy({ where: {}, truncate: true, cascade: true });
-      await Barber.destroy({ where: {}, truncate: true, cascade: true });
-      await Account.destroy({ where: {}, truncate: true, cascade: true });
-      await Establishment.destroy({ where: {}, truncate: true, cascade: true });
-      await Schedule.destroy({ where: {}, truncate: true, cascade: true });
+      await ServiceAppointment.destroy({ where: {}, cascade: true });
+      await Appointment.destroy({ where: {}, cascade: true });
+      await Service.destroy({ where: {}, cascade: true });
+      await Barber.destroy({ where: {}, cascade: true });
+      await Account.destroy({ where: {}, cascade: true });
+      await Establishment.destroy({ where: {}, cascade: true });
+      await Schedule.destroy({ where: {}, cascade: true });
 
       // Re-enable foreign key checks
       await sequelize.query("SET FOREIGN_KEY_CHECKS = 1");
@@ -354,8 +335,6 @@ async function seedSchedulesForEstablishment(Schedule, establishmentId) {
  * Seed accounts
  */
 async function seedAccount(Account) {
-  const { hash } = await import("../services/password.service.js");
-
   const accountsData = [
     {
       full_name: "Carlos Receptionist",

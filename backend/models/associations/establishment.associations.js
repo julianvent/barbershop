@@ -1,6 +1,6 @@
-import Account from "../account.model.js";
-import Establishment from "../establishment.model.js";
-import Schedule from "../schedule.model.js";
+import {Account} from "../account.model.js";
+import {Establishment} from "../establishment.model.js";
+import {Schedule} from "../schedule.model.js";
 
 /*
 Means that a One-To-Many relationship exists between Account and Establishment, 
@@ -32,3 +32,5 @@ Schedule.belongsTo(Establishment, {
   onDelete: "CASCADE",
   as: "establishment",
 });
+
+export { Account, Establishment, Schedule };

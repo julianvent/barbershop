@@ -1,6 +1,16 @@
 import { Sequelize } from "sequelize";
 import "dotenv/config";
 import mysql from "mysql2/promise";
+
+// Import models WITH associations (this loads all associations automatically)
+import {
+  Account,
+  Establishment,
+  Schedule,
+  Service,
+  Appointment,
+} from "../models/index.js";
+
 import { seedDatabase } from "../utils/seed.utils.js";
 
 const DB_NAME = process.env.DB_NAME || "barbershop";
