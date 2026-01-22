@@ -2,7 +2,6 @@
 import styles from "../Main.module.css";
 import { useRouter } from "next/navigation";
 import Layout from "@/app/components/base_layout/Layout";
-import { servicesEntries } from "@/app/utils/data";
 import {
   editService,
   newBundleRoute,

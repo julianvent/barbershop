@@ -1,6 +1,6 @@
 import { useForm, FormProvider } from "react-hook-form";
 import styles from "./styles.module.css";
-import Input from "../../../components/form/input/Input";
+import Input from "../../components/form/input/Input";
 import {
   durationValidation,
   nameValidation,

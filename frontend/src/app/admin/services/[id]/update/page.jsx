@@ -1,11 +1,9 @@
 "use client";
-import CreateNewLayout from "@/app/components/base_layout/CreateNew/CreateNewLayout";
-import { servicesRoute } from "@/app/utils/routes";
-import ServiceForm from "../../ServiceForm/ServiceForm";
+import ServiceForm from "../../../forms/ServiceForm";
 import { updateService, getService } from "../../api/services";
 import React, { useEffect, useState } from "react";
 import Layout from "@/app/components/base_layout/Layout";
-import warning from "../../ServiceForm/styles.module.css"
+import warning from "../../../forms/styles.module.css"
 
 export default function updateServices({params}) {
     const [service, setService] = useState(null);

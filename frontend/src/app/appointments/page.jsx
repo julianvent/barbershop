@@ -1,4 +1,4 @@
-import AppointmentForm from "@/app/admin/appointments/AppointmentForm/AppointmentForm";
+import AppointmentForm from "@/app/admin/forms/AppointmentForm/AppointmentForm";
 
 import styles from "./New-Appointment-Customer.module.css";
 import CustomerHeader from "../components/customer_header/CustomerHeader";

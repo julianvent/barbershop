@@ -1,6 +1,6 @@
 "use client";
 import { servicesRoute } from "@/app/utils/routes";
-import BundleForm from "../../ServiceForm/BundleForm";
+import BundleForm from "../../../forms/BundleForm";
 import { createBundle } from "../../api/services";
 import Layout from "@/app/components/base_layout/Layout";
 

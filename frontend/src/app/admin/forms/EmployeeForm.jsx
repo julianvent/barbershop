@@ -1,6 +1,6 @@
 'use client';
 import { FormProvider, useForm } from "react-hook-form";
-import styles from "./styles.module.css"
+import styles from "./EmployeeFormStyles.module.css"
 import Input from "@/app/components/form/input/Input";
 import { emailValidation, nameValidation, phoneValidation, photoValidation, statusValidation } from "@/app/utils/employeesValidators";
 import { useEffect, useState } from "react";

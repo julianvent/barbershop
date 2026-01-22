@@ -23,7 +23,7 @@ import {
   createAppointment,
   getAvailabity,
   updateAppointment,
-} from "../api/appointments";
+} from "../../appointments/api/appointments";
 import BarberSelector from "@/app/components/form/barberSelector/BarberSelector";
 import TimeSelector from "@/app/components/form/timeSelector/TimeSelector";
 import ServiceSelector from "@/app/components/form/serviceSelector/ServiceSelector";

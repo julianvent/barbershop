@@ -11,7 +11,7 @@ import {
 import TextArea from "@/app/components/form/input/TextArea";
 import ServiceCheckbox from "@/app/components/form/checkbox/ServiceCheckbox";
 import { servicesRoute } from "@/app/utils/routes";
-import { getServices } from "../api/services";
+import { getServices } from "@/app/admin/services/api/services";
 import InputDecimal from "@/app/components/form/input/InputDecimal";
 
 export default function BundleForm({ onSubmit }) {

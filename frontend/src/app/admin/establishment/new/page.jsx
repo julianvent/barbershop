@@ -1,8 +1,6 @@
 'use client';
 import Layout from "@/app/components/base_layout/Layout";
-import styles from "../../Main.module.css"
-import EstablishmentForm from "../EstablishmentForm/EstablishmentForm";
-import { createEstablishmentsApiRoute } from "../api/routes";
+import EstablishmentForm from "../../forms/EstablishmentForm";
 import { createNewEstablishment } from "../api/establishments";
 export default function createEstablishment () {
   
