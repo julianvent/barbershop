@@ -5,7 +5,7 @@ import {
   deleteServiceApiRoute,
   getServicesApiRoute,
   updateServiceApiRoute,
-} from "./routes";
+} from "../routes/adminServices";
 
 export const getServices = async () => {
   try {

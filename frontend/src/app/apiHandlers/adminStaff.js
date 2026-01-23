@@ -1,10 +1,11 @@
 import { axiosConfig } from "@/app/utils/requestBuilder";
 import axios from "axios";
+import { baseUrl } from "../routes/adminStaff";
 
 export const getEmployees = async () => {
     try{
         const headers = await axiosConfig();
-        const response = await axios.get('/api/barbers?limit=50', headers);
+        const response = await axios.get(baseUrl + '?limit=50', headers);
         return response.data;
     }catch(err){
         throw 'No se pudieron recuperar los barberos';
@@ -13,36 +14,36 @@ export const getEmployees = async () => {
 
 export const createEmployee = async (data) => {
     try {
-        const headers = await axiosConfig();
-        delete headers.headers["Content-Type"];
+      const headers = await axiosConfig();
+      delete headers.headers["Content-Type"];
 
 
-        const formData = new FormData();
+      const formData = new FormData();
 
-        formData.append("barber_name", data.barber_name);
-        formData.append("email", data.email);
-        formData.append("phone", data.phone);
-        formData.append("is_active", data.is_active == 'active' ? 'true' : 'false');
+      formData.append("barber_name", data.barber_name);
+      formData.append("email", data.email);
+      formData.append("phone", data.phone);
+      formData.append("is_active", data.is_active == 'active' ? 'true' : 'false');
 
-        if (data.image && data.image.length > 0) {
-            formData.append("image", data.image[0]);
-        }
+      if (data.image && data.image.length > 0) {
+        formData.append("image", data.image[0]);
+      }
 
-        await axios.post('/api/barbers', formData, headers);
+      await axios.post(baseUrl , formData, headers);
 
     } catch (err) {
-        console.log(err);
-        throw 'Error al registrar el empleado';
+      console.log(err);
+      throw 'Error al registrar el empleado';
     }
 };
 
 export const getEmployee = async (id) => {
     try{
-        const headers = await axiosConfig();
-        const response = await axios.get('/api/barbers/'+id, headers);
-        return response.data;
+      const headers = await axiosConfig();
+      const response = await axios.get(baseUrl + id, headers);
+      return response.data;
     }catch(err){
-        throw 'Error al recuperar el empleado';
+      throw 'Error al recuperar el empleado';
     }
 
 };
@@ -64,7 +65,7 @@ export const updateEmployee = async (id,data) => {
             formData.append("image", data.image[0]);
         }
 
-        await axios.put('/api/barbers/'+id, formData, headers);
+        await axios.put(baseUrl + id, formData, headers);
     }catch(err){
         throw 'Error al actualizar el empleado';
     }
@@ -74,7 +75,7 @@ export const updateEmployee = async (id,data) => {
 export const deleteEmployee = async (id) =>{
     try{
         const headers = await axiosConfig();
-        await axios.delete('/api/barbers/'+id, headers);
+        await axios.delete(baseUrl + id, headers);
     }catch(err){
         console.log(err);
         throw 'Error al eliminar el registro del empleado';

@@ -1,6 +1,6 @@
 "use client";
 
-import AppointmentForm from "../../forms/AppointmentForm/AppointmentForm";
+import AppointmentForm from "../../../forms/AppointmentForm/AppointmentForm";
 import Layout from "@/app/components/base_layout/Layout";
 
 export default function NewAppointment() {

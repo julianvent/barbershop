@@ -8,7 +8,7 @@ import {
   emailValidation,
   passwordValidation,
 } from "@/app/utils/inputValidators";
-import { signIn } from "../api/signIn";
+import { signIn } from "../../signin/api/signIn";
 import { useRouter } from "next/navigation";
 import { appointmentsRoute } from "@/app/utils/routes";
 

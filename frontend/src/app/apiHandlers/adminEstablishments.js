@@ -1,7 +1,7 @@
 import { axiosConfig } from "@/app/utils/requestBuilder";
 import axios from 'axios';
 
-import { getEstablishmentsApiRoute } from "./routes.js";
+import { baseUrl } from "@/app/routes/adminEstablishment";
 
 export const getEstablishments = async () => {
 

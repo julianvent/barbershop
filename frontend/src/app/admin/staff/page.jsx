@@ -12,7 +12,7 @@ import { AgGridReact } from "ag-grid-react";
 import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
 import { ActionButton } from "@/app/components/action/ActionButton";
 import { useEffect, useState } from "react";
-import { getEmployees } from "./api/employees";
+import { getEmployees } from "../../apiHandlers/adminStaff";
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 export default function Page() {

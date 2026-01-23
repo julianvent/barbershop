@@ -17,18 +17,18 @@ import {
   timeValidation,
 } from "@/app/utils/appointmentValidators";
 import { useEffect, useMemo, useState } from "react";
-import { status } from "../../../utils/data";
+import { status } from "../../utils/data";
 import { useRouter } from "next/navigation";
 import {
   createAppointment,
   getAvailabity,
   updateAppointment,
-} from "../../appointments/api/appointments";
+} from "../../apiHandlers/adminAppointments";
 import BarberSelector from "@/app/components/form/barberSelector/BarberSelector";
 import TimeSelector from "@/app/components/form/timeSelector/TimeSelector";
 import ServiceSelector from "@/app/components/form/serviceSelector/ServiceSelector";
-import { getEmployees } from "../../staff/api/employees";
-import { getServices } from "../../services/api/services";
+import { getEmployees } from "../../apiHandlers/adminStaff";
+import { getServices } from "../../apiHandlers/adminServices";
 import { appointmentsRoute } from "@/app/utils/routes";
 
 export default function AppointmentForm({ appointment, mode }) {

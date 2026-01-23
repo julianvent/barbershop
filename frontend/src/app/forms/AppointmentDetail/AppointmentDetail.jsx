@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { cancelAppointment, completeAppointment, getAppointment } from "../../appointments/api/appointments";
+import { cancelAppointment, completeAppointment, getAppointment } from "../../apiHandlers/adminAppointments";
 import styles from "./Appointment-Detail.module.css";
 import { Status } from "@/app/components/form/status/Status";
 import Buttons from "@/app/components/form/model_buttons/Buttons";

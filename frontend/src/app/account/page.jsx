@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import Layout from "../components/base_layout/Layout";
 import layout from '../admin/Main.module.css'
-import { getAccount, updateAccount } from "./api/account";
+import { getAccount, updateAccount } from "../apiHandlers/account";
 import Input from "../components/form/input/Input";
 import { emailValidation, fullNameValidation, passwordValidation } from "../utils/accountValidators";
 import { useForm, FormProvider } from "react-hook-form";

@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { getAppointment } from "../../api/appointments";
-import AppointmentForm from "../../../forms/AppointmentForm/AppointmentForm";
+import { getAppointment } from "../../../../apiHandlers/adminAppointments";
+import AppointmentForm from "../../../../forms/AppointmentForm/AppointmentForm";
 import Layout from "@/app/components/base_layout/Layout";
 
 export default function UpdateAppointment({ params }) {

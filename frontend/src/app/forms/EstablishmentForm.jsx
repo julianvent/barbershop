@@ -47,6 +47,7 @@ export default function EstablishmentForm ({onSubmit, establishment}) {
           submit()
         }}>
           <div className={styles.fieldsContainer}>
+            
             <div className={styles.row}>
               <Input {...nameValidation}/>
               <Input {...phoneValidation}/>

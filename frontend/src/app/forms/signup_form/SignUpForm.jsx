@@ -4,7 +4,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import styles from "./Sign-Up-Form.module.css";
 import Input from "@/app/components/form/input/Input";
 import * as validators from "@/app/utils/inputValidators";
-import { signUp } from "../api/signUp";
+import { signUp } from "../../signup/api/signUp";
 import ConfirmPasswordInput from "@/app/components/form/input/ConfirmPasswordInput";
 import { useRouter } from "next/navigation";
 

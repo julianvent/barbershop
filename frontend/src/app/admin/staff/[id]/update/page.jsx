@@ -1,8 +1,7 @@
 'use client';
-import CreateNewLayout from "@/app/components/base_layout/CreateNew/CreateNewLayout";
 import { staffRoute } from "@/app/utils/routes";
-import EmployeeForm from "../../../forms/EmployeeForm";
-import { getEmployee, updateEmployee } from "../../api/employees";
+import EmployeeForm from "../../../../forms/EmployeeForm";
+import { getEmployee, updateEmployee } from "@/app/apiHandlers/adminStaff";
 import React, { useState, useEffect }  from "react";
 import Layout from "@/app/components/base_layout/Layout";
 import styles from '../../../forms/EmployeeFormStyles.module.css'

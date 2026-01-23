@@ -1,6 +1,6 @@
 "use client";
-import ServiceForm from "../../forms/ServiceForm";
-import { createService } from "../api/services";
+import ServiceForm from "../../../forms/ServiceForm";
+import { createService } from "../../../apiHandlers/adminServices";
 import Layout from "@/app/components/base_layout/Layout";
 
 export default function NewService() {

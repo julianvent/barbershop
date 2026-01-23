@@ -11,7 +11,7 @@ import {
 import { serviceFields, defaultColDef, actionsDef } from "@/app/utils/columns";
 import { AgGridReact } from "ag-grid-react";
 import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
-import { getServices } from "./api/services";
+import { getServices } from "../../apiHandlers/adminServices";
 import { useEffect, useState } from "react";
 import { ActionButton } from "@/app/components/action/ActionButton";
 ModuleRegistry.registerModules([AllCommunityModule]);

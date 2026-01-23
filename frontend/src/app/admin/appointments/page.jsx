@@ -12,7 +12,7 @@ import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
 ModuleRegistry.registerModules([AllCommunityModule]);
 import { defaultColDef, appointmentColumns, actionsDef } from "@/app/utils/columns";
 import { ActionButton } from "@/app/components/action/ActionButton";
-import { getAppointments } from "./api/appointments";
+import { getAppointments } from "../../apiHandlers/adminAppointments";
 import { useEffect, useState } from "react";
 
 export default function Appointments() {

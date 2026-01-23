@@ -6,7 +6,7 @@ import layout from "../../Main.module.css";
 import show from "./styles.module.css";
 import { Status } from "@/app/components/form/status/Status";
 import Buttons from "@/app/components/form/model_buttons/Buttons";
-import { getEmployee } from "../api/employees";
+import { getEmployee } from "@/app/apiHandlers/adminStaff";
 export default function EmployeeDetail({params}){
     const {id} = React.use(params);
     const [employee, setEmployee] = useState(null);

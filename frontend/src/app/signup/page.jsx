@@ -1,4 +1,4 @@
-import SignUpForm from "./signup_form/SignUpForm";
+import SignUpForm from "../forms/signup_form/SignUpForm";
 import styles from "./Sign-Up.module.css";
 
 export default function SignUp() {

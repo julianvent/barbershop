@@ -1,7 +1,7 @@
 'use client';
 import Layout from "@/app/components/base_layout/Layout";
-import EstablishmentForm from "../../forms/EstablishmentForm";
-import { createNewEstablishment } from "../api/establishments";
+import EstablishmentForm from "../../../forms/EstablishmentForm";
+import { createNewEstablishment } from "../../../apiHandlers/adminEstablishments";
 export default function createEstablishment () {
   
   const submit = async (data) => {
