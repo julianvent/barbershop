@@ -90,3 +90,42 @@ export const employeesEntries = [
     field: "email",
   },
 ];
+
+export const appointments_fields = [
+  {
+    headerName: "Nombre",
+    field: "customer_name",
+  },
+  {
+    headerName: "Barbero asignado",
+    field: "barber_name",
+  },
+  {
+    headerName: "Estado",
+    field: "status",
+  },
+  {
+    headerName: "Horario programado",
+    field: "date",
+  },
+];
+
+
+export const serviceListFields = [
+  {
+    headerName: "Nombre",
+    field: "name",
+  },
+  {
+    headerName: "Precio",
+    field: "precio",
+  },
+  {
+    headerName: "Duracion Aproximada",
+    field: "duracion",
+  },
+  {
+    headerName: "Tipo",
+    field: "tipo",
+  },
+];
