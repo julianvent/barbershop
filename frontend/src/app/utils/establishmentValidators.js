@@ -66,9 +66,6 @@ export const internalNoValidation = {
   type: 'text',
   name: 'int_no',
   label: 'Numero Interno',
-  validation: {
-    required: 'Requerido*'
-  }
 }
 
 export const postalCodeValidation = {
@@ -85,3 +82,18 @@ export const postalCodeValidation = {
   }
   
 }
+
+export const photoValidation = (hasPhoto) => ({
+  id: "image",
+  type: "file",
+  label: "Añada la Foto del Establecimiento",
+  validation: {
+    validate: (files) => {
+              const file = files[0];
+              if (hasPhoto) return true;
+              if (!file) return "Archivo obligatorio";
+              const allowedTypes = ["image/jpeg", "image/png"];
+              return allowedTypes.includes(file.type) || "Solo se permiten JPG o PNG";
+    }
+  },
+});

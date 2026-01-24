@@ -102,16 +102,19 @@ export default function EmployeeForm({onSubmit,employee}){
                             </div>
                         </article>
                     </div>
-                    <div className={styles.buttons}>
-                        <button
-                            className={styles.cancelButton}
-                            onClick={(e) => {
-                                e.preventDefault();
-                                router.push(staffRoute);
-                            }}>
-                            Cancelar
-                        </button>
-                        <button type="submit" disabled={isCreatingEmployee}>Confirmar</button>
+                    <div className={styles.fieldsConta}>
+
+                        <div className={styles.buttons}>
+                            <button
+                                className={styles.cancelButton}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    router.push(staffRoute);
+                                }}>
+                                Cancelar
+                            </button>
+                            <button type="submit" disabled={isCreatingEmployee}>Confirmar</button>
+                        </div>
                     </div>
                 </article>
                 
