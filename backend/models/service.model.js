@@ -31,5 +31,5 @@ export const Service = sequelize.define(
     tableName: "service",
     timestamps: false,
     underscored: true,
-  }
+  },
 );

@@ -1,4 +1,4 @@
-import { sequelize } from "../config/database.config.js";
+import { sequelize } from "../../config/database.config.js";
 import { DataTypes } from "sequelize";
 
 export const ServiceAppointment = sequelize.define(
@@ -32,5 +32,5 @@ export const ServiceAppointment = sequelize.define(
       },
     },
   },
-  { tableName: "service_appointment", timestamps: false, underscored: true }
+  { tableName: "service_appointment", timestamps: false, underscored: true },
 );

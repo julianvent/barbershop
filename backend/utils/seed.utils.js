@@ -1,4 +1,15 @@
 import { DataTypes } from "sequelize";
+import {
+  Account,
+  Appointment,
+  Barber,
+  Establishment,
+  Schedule,
+  Service,
+  ServiceAppointment,
+} from "../models/index.js";
+import { hash } from "../services/password.service.js";
+import { formatDateForTimezone } from "../utils/appointment.utils.js";
 
 async function ensureAppointmentImageFinishColumn(sequelize) {
   const queryInterface = sequelize.getQueryInterface();
@@ -21,42 +32,28 @@ async function ensureAppointmentImageFinishColumn(sequelize) {
 }
 
 export async function seedDatabase(sequelize, options = { seedDB: false }) {
+  // TODO: ADD TRANSACTIONS TO AVOID DIRTY READS IF SOMETHING FAILS
   try {
     console.log("Starting database seeding...");
 
-    // Lazy-import models to avoid circular imports during module initialization
-    const [
-      { Service },
-      { Barber },
-      { Account },
-      { ServiceAppointment },
-      { Appointment },
-      { Schedule },
-    ] = await Promise.all([
-      import("../models/service.model.js"),
-      import("../models/barber.model.js"),
-      import("../models/account.model.js"),
-      import("../models/service.appointment.model.js"),
-      import("../models/appointment.model.js"),
-      import("../models/schedule.model.js"),
-    ]);
-
-    // Import timezone utilities for GMT-06:00 consistency
-    const { formatDateForTimezone } = await import(
-      "../utils/appointment.utils.js"
-    );
-
-    await sequelize.sync({ alter: false });
+    // await sequelize.sync({ force: true });
+    await sequelize.sync({ alter: true }); // ADD an option to choose between force/alter
     await ensureAppointmentImageFinishColumn(sequelize);
     console.log("Database synced");
 
-    const [serviceCount, barberCount, accountCount, scheduleCount] =
-      await Promise.all([
-        Service.count(),
-        Barber.count(),
-        Account.count(),
-        Schedule.count(),
-      ]);
+    const [
+      serviceCount,
+      barberCount,
+      accountCount,
+      scheduleCount,
+      establishmentCount,
+    ] = await Promise.all([
+      Service.count(),
+      Barber.count(),
+      Account.count(),
+      Schedule.count(),
+      Establishment.count(),
+    ]);
 
     const hasData =
       serviceCount > 0 ||
@@ -70,6 +67,7 @@ export async function seedDatabase(sequelize, options = { seedDB: false }) {
       console.log(` - Barbers: ${barberCount}`);
       console.log(` - Accounts: ${accountCount}`);
       console.log(` - Schedules: ${scheduleCount}`);
+      console.log(` - Establishments: ${establishmentCount}`);
       return;
     }
 
@@ -80,16 +78,13 @@ export async function seedDatabase(sequelize, options = { seedDB: false }) {
       await sequelize.query("SET FOREIGN_KEY_CHECKS = 0");
 
       // Clear all tables
-      await ServiceAppointment.destroy({
-        where: {},
-        truncate: true,
-        cascade: true,
-      });
-      await Appointment.destroy({ where: {}, truncate: true, cascade: true });
-      await Service.destroy({ where: {}, truncate: true, cascade: true });
-      await Barber.destroy({ where: {}, truncate: true, cascade: true });
-      await Account.destroy({ where: {}, truncate: true, cascade: true });
-      await Schedule.destroy({ where: {}, truncate: true, cascade: true });
+      await Account.destroy({ where: {}, cascade: true });
+      await Establishment.destroy({ where: {}, cascade: true });
+      await Schedule.destroy({ where: {}, cascade: true });
+      await Barber.destroy({ where: {}, cascade: true });
+      await Service.destroy({ where: {}, cascade: true });
+      await Appointment.destroy({ where: {}, cascade: true });
+      await ServiceAppointment.destroy({ where: {}, cascade: true });
 
       // Re-enable foreign key checks
       await sequelize.query("SET FOREIGN_KEY_CHECKS = 1");
@@ -99,14 +94,17 @@ export async function seedDatabase(sequelize, options = { seedDB: false }) {
     // Seed all data
     const services = await seedService(Service);
     const barbers = await seedBarber(Barber);
-    const schedules = await seedSchedule(Schedule);
     const accounts = await seedAccount(Account);
+    const establishments = await seedEstablishment(Establishment, accounts);
+    for (const est of establishments) {
+      await seedSchedulesForEstablishment(Schedule, est.id);
+    }
     const appointments = await seedAppointment(
       Appointment,
       ServiceAppointment,
       barbers,
       services,
-      formatDateForTimezone
+      formatDateForTimezone,
     );
 
     console.log("\nDatabase seeding completed successfully!");
@@ -200,54 +198,92 @@ async function seedBarber(Barber) {
 }
 
 /**
- * Seed schedules
+ * Seed establishments linked to accounts
  */
-async function seedSchedule(Schedule) {
+async function seedEstablishment(Establishment, accounts) {
+  const establishmentsData = [
+    {
+      name: "Downtown Barber Shop",
+      street: "123 Main St",
+      city: "Mexico City",
+      state: "CDMX",
+      postal_code: "06500",
+      phone_number: `555000${Math.floor(1000 + Math.random() * 9000)}`,
+      account_id: accounts[0]?.id,
+    },
+    {
+      name: "Uptown Cuts",
+      street: "456 Elm Ave",
+      city: "Mexico City",
+      state: "CDMX",
+      postal_code: "06600",
+      phone_number: `555001${Math.floor(1000 + Math.random() * 9000)}`,
+      account_id: accounts[1]?.id,
+    },
+  ];
+  const establishments = await Establishment.bulkCreate(establishmentsData);
+  console.log(`✓ Create  d ${establishments.length} establishments`);
+  return establishments;
+}
+
+/**
+ * Seed schedules for a specific establishment
+ */
+async function seedSchedulesForEstablishment(Schedule, establishmentId) {
   const schedules = await Schedule.bulkCreate([
     {
       day_of_week: "Monday",
       start_time: "09:00:00",
       end_time: "18:00:00",
       is_active: true,
+      establishment_id: establishmentId,
     },
     {
       day_of_week: "Tuesday",
       start_time: "09:00:00",
       end_time: "18:00:00",
       is_active: true,
+      establishment_id: establishmentId,
     },
     {
       day_of_week: "Wednesday",
       start_time: "09:00:00",
       end_time: "18:00:00",
       is_active: true,
+      establishment_id: establishmentId,
     },
     {
       day_of_week: "Thursday",
       start_time: "09:00:00",
       end_time: "18:00:00",
       is_active: true,
+      establishment_id: establishmentId,
     },
     {
       day_of_week: "Friday",
       start_time: "09:00:00",
       end_time: "18:00:00",
       is_active: true,
+      establishment_id: establishmentId,
     },
     {
       day_of_week: "Saturday",
       start_time: "10:00:00",
       end_time: "16:00:00",
       is_active: true,
+      establishment_id: establishmentId,
     },
     {
       day_of_week: "Sunday",
       start_time: "00:00:00",
       end_time: "00:00:00",
       is_active: false,
+      establishment_id: establishmentId,
     },
   ]);
-  console.log(`✓ Created ${schedules.length} schedules`);
+  console.log(
+    `✓ Created ${schedules.length} schedules for establishment ${establishmentId}`,
+  );
   return schedules;
 }
 
@@ -255,8 +291,6 @@ async function seedSchedule(Schedule) {
  * Seed accounts
  */
 async function seedAccount(Account) {
-  const { hash } = await import("../services/password.service.js");
-
   const accountsData = [
     {
       full_name: "Carlos Receptionist",
@@ -311,7 +345,7 @@ async function seedAppointment(
   ServiceAppointment,
   barbers,
   services,
-  formatDateForTimezone
+  formatDateForTimezone,
 ) {
   const DB_TIMEZONE = "-06:00";
 
@@ -376,7 +410,7 @@ async function seedAppointment(
     // This ensures consistent timezone representation in the database
     const formattedDateTime = formatDateForTimezone(
       appointmentData.appointment_datetime,
-      DB_TIMEZONE
+      DB_TIMEZONE,
     );
 
     // Create appointment with timezone-aware datetime
