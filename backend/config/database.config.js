@@ -2,17 +2,6 @@ import { Sequelize } from "sequelize";
 import "dotenv/config";
 import mysql from "mysql2/promise";
 
-// Import models WITH associations (this loads all associations automatically)
-import {
-  Account,
-  Establishment,
-  Schedule,
-  Service,
-  Appointment,
-} from "../models/index.js";
-
-import { seedDatabase } from "../utils/seed.utils.js";
-
 const DB_NAME = process.env.DB_NAME || "barbershop";
 const TIMEZONE = "-06:00"; // GMT-6
 const DB_USER = process.env.DB_USER || "root";
@@ -32,6 +21,13 @@ export const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
   dialectOptions: {
     timezone: TIMEZONE, // Sets MySQL session: SET time_zone = '-06:00'
   },
+  pool: {
+    max: 20,
+    min: 5,
+    acquire: 30000,
+    idle: 10000,
+    evict: 5000,
+  },
 });
 
 export async function initDB() {
@@ -39,9 +35,12 @@ export async function initDB() {
     console.log(`Timeout of ${TIMEOUT}ms`);
     await new Promise((resolve) => setTimeout(resolve, TIMEOUT));
     await createDatabaseIfNotExists();
-    await seedDatabase(sequelize);
     await sequelize.authenticate();
     console.log("Database connection OK");
+
+    // Lazy import models to avoid circular dependencies
+    const { seedDatabase } = await import("../utils/seed.utils.js");
+    await seedDatabase(sequelize);
   } catch (err) {
     console.error("Error connecting to database:", err.message);
     process.exit(1);

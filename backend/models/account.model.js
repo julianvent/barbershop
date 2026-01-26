@@ -46,5 +46,5 @@ export const Account = sequelize.define(
       defaultValue: "receptionist",
     },
   },
-  { tableName: "account", timestamps: false, underscored: true }
+  { tableName: "account", timestamps: false, underscored: true },
 );

@@ -1,11 +1,14 @@
 import { Appointment } from "../models/appointment.model.js";
 import { ServiceRepository } from "./service.repository.js";
-import { ServiceAppointment } from "../models/service.appointment.model.js";
+import { ServiceAppointment } from "../models/associations/service.appointment.model.js";
 import { BarberRepository } from "../repositories/barber.repository.js";
 import { Op } from "sequelize";
 import { DAYS } from "../validators/schedule.validator.js";
 import { ScheduleRepository } from "./schedule.repository.js";
-import { setTimeToDate, formatDateForTimezone } from "../utils/appointment.utils.js";
+import {
+  setTimeToDate,
+  formatDateForTimezone,
+} from "../utils/appointment.utils.js";
 
 const availability_states = ["pending", "confirmed"];
 
@@ -53,7 +56,7 @@ export const AppointmentRepository = {
     await BarberRepository.getById(appointment.barber_id);
 
     const appointmentDateStr = formatDateForTimezone(
-      appointment.appointment_datetime
+      appointment.appointment_datetime,
     );
     const appointmentDate = new Date(appointmentDateStr);
 
@@ -67,7 +70,7 @@ export const AppointmentRepository = {
 
     const scheduleStartDate = setTimeToDate(
       appointmentDate,
-      schedule.start_time
+      schedule.start_time,
     );
     const scheduleEndDate = setTimeToDate(appointmentDate, schedule.end_time);
 
@@ -76,7 +79,7 @@ export const AppointmentRepository = {
       appointmentDate > scheduleEndDate
     ) {
       throw new Error(
-        "The appointment time is outside of the allowed schedule"
+        "The appointment time is outside of the allowed schedule",
       );
     }
 
@@ -105,7 +108,7 @@ export const AppointmentRepository = {
     const existingAppointments = await this.getAvailabilityAppointments(
       appointment.barber_id,
       scheduleStartDate,
-      scheduleEndDate
+      scheduleEndDate,
     );
 
     const overlaps = existingAppointments.some((app) => {
@@ -160,7 +163,9 @@ export const AppointmentRepository = {
       throw new Error("Appointment not found");
     }
 
-    const existingBarber = await BarberRepository.getById(existingAppointment.barber_id);
+    const existingBarber = await BarberRepository.getById(
+      existingAppointment.barber_id,
+    );
 
     if (existingAppointment.barber_id != null && !existingBarber) {
       throw new Error("Barber not found");
@@ -169,7 +174,6 @@ export const AppointmentRepository = {
     if (appointment.services_ids && appointment.services_ids.length > 0) {
       let sum_duration = 0;
       const services = [];
-
 
       for (const service_id of appointment.services_ids) {
         const service = await ServiceRepository.getById(service_id);
@@ -181,11 +185,9 @@ export const AppointmentRepository = {
         appointment.total_duration = sum_duration;
       }
 
-
       await ServiceAppointment.destroy({
         where: { appointment_id: id },
       });
-
 
       for (const service of services) {
         await ServiceAppointment.create({
@@ -198,19 +200,18 @@ export const AppointmentRepository = {
 
     if (appointment.appointment_datetime) {
       appointment.appointment_datetime = formatDateForTimezone(
-        appointment.appointment_datetime
+        appointment.appointment_datetime,
       );
     }
 
     await existingAppointment.update(appointment);
-
 
     const updatedServices = await this.getServiceByAppointmentId(id);
     const serviceDetails = await Promise.all(
       updatedServices.map(async (sa) => {
         const service = await ServiceRepository.getById(sa.service_id);
         return { id: service.id, name: service.name };
-      })
+      }),
     );
 
     return {

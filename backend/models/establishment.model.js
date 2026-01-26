@@ -1,4 +1,4 @@
-import { sequelize } from "../config/database.config";
+import { sequelize } from "../config/database.config.js";
 import { DataTypes } from "sequelize";
 
 export const Establishment = sequelize.define(
@@ -20,12 +20,41 @@ export const Establishment = sequelize.define(
         },
       },
     },
-    address: {
+    street: {
       type: DataTypes.STRING(255),
       allowNull: false,
       validate: {
-        notEmpty: { msg: "Address cannot be empty" },
+        notEmpty: { msg: "Street cannot be empty" },
       },
+    },
+    city: {
+      type: DataTypes.STRING(100),
+      allowNull: false,
+      validate: {
+        notEmpty: { msg: "City cannot be empty" },
+      },
+    },
+    state: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
+      validate: {
+        notEmpty: { msg: "State cannot be empty" },
+      },
+    },
+    postal_code: {
+      type: DataTypes.STRING(20),
+      allowNull: false,
+      validate: {
+        notEmpty: { msg: "Postal code cannot be empty" },
+      },
+    },
+    int_number: {
+      type: DataTypes.STRING(20),
+      allowNull: true,
+    },
+    ext_number: {
+      type: DataTypes.STRING(20),
+      allowNull: true,
     },
     phone_number: {
       type: DataTypes.STRING(15),
@@ -47,12 +76,15 @@ export const Establishment = sequelize.define(
       },
     },
   },
-  { tableName: "establishment", timestamps: false, underscored: true ,
+  {
+    tableName: "establishment",
+    timestamps: false,
+    underscored: true,
     indexes: [
       {
         unique: true,
-        fields: ['name', 'account_id'],
-        name: 'unique_establishment_per_account',
+        fields: ["name", "account_id"],
+        name: "unique_establishment_per_account",
       },
     ],
   },

@@ -32,10 +32,12 @@ async function ensureAppointmentImageFinishColumn(sequelize) {
 }
 
 export async function seedDatabase(sequelize, options = { seedDB: false }) {
+  // TODO: ADD TRANSACTIONS TO AVOID DIRTY READS IF SOMETHING FAILS
   try {
     console.log("Starting database seeding...");
 
-    await sequelize.sync({ alter: false });
+    // await sequelize.sync({ force: true });
+    await sequelize.sync({ alter: true }); // ADD an option to choose between force/alter
     await ensureAppointmentImageFinishColumn(sequelize);
     console.log("Database synced");
 
@@ -76,13 +78,13 @@ export async function seedDatabase(sequelize, options = { seedDB: false }) {
       await sequelize.query("SET FOREIGN_KEY_CHECKS = 0");
 
       // Clear all tables
-      await ServiceAppointment.destroy({ where: {}, cascade: true });
-      await Appointment.destroy({ where: {}, cascade: true });
-      await Service.destroy({ where: {}, cascade: true });
-      await Barber.destroy({ where: {}, cascade: true });
       await Account.destroy({ where: {}, cascade: true });
       await Establishment.destroy({ where: {}, cascade: true });
       await Schedule.destroy({ where: {}, cascade: true });
+      await Barber.destroy({ where: {}, cascade: true });
+      await Service.destroy({ where: {}, cascade: true });
+      await Appointment.destroy({ where: {}, cascade: true });
+      await ServiceAppointment.destroy({ where: {}, cascade: true });
 
       // Re-enable foreign key checks
       await sequelize.query("SET FOREIGN_KEY_CHECKS = 1");
@@ -196,77 +198,31 @@ async function seedBarber(Barber) {
 }
 
 /**
- * Seed schedules before establishments
- */
-async function seedSchedule(Schedule) {
-  const schedules = await Schedule.bulkCreate([
-    {
-      day_of_week: "Monday",
-      start_time: "09:00:00",
-      end_time: "18:00:00",
-      is_active: true,
-    },
-    {
-      day_of_week: "Tuesday",
-      start_time: "09:00:00",
-      end_time: "18:00:00",
-      is_active: true,
-    },
-    {
-      day_of_week: "Wednesday",
-      start_time: "09:00:00",
-      end_time: "18:00:00",
-      is_active: true,
-    },
-    {
-      day_of_week: "Thursday",
-      start_time: "09:00:00",
-      end_time: "18:00:00",
-      is_active: true,
-    },
-    {
-      day_of_week: "Friday",
-      start_time: "09:00:00",
-      end_time: "18:00:00",
-      is_active: true,
-    },
-    {
-      day_of_week: "Saturday",
-      start_time: "10:00:00",
-      end_time: "16:00:00",
-      is_active: true,
-    },
-    {
-      day_of_week: "Sunday",
-      start_time: "00:00:00",
-      end_time: "00:00:00",
-      is_active: false,
-    },
-  ]);
-  console.log(`✓ Created ${schedules.length} schedules`);
-  return schedules;
-}
-
-/**
  * Seed establishments linked to accounts
  */
 async function seedEstablishment(Establishment, accounts) {
   const establishmentsData = [
     {
       name: "Downtown Barber Shop",
-      address: "123 Main St",
+      street: "123 Main St",
+      city: "Mexico City",
+      state: "CDMX",
+      postal_code: "06500",
       phone_number: `555000${Math.floor(1000 + Math.random() * 9000)}`,
       account_id: accounts[0]?.id,
     },
     {
       name: "Uptown Cuts",
-      address: "456 Elm Ave",
+      street: "456 Elm Ave",
+      city: "Mexico City",
+      state: "CDMX",
+      postal_code: "06600",
       phone_number: `555001${Math.floor(1000 + Math.random() * 9000)}`,
       account_id: accounts[1]?.id,
     },
   ];
   const establishments = await Establishment.bulkCreate(establishmentsData);
-  console.log(`✓ Created ${establishments.length} establishments`);
+  console.log(`✓ Create  d ${establishments.length} establishments`);
   return establishments;
 }
 

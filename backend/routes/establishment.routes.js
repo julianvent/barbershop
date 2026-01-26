@@ -1,5 +1,5 @@
-import {Router} from "express";
-import {EstablishmentController} from "../controllers/establishment.controller.js";
+import { Router } from "express";
+import { EstablishmentController } from "../controllers/establishment.controller.js";
 
 const router = Router();
 

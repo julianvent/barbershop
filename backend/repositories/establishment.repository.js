@@ -1,6 +1,17 @@
-import { Establishment } from "../models/establishment.model";
+import { Establishment } from "../models/establishment.model.js";
 import { Op } from "sequelize";
-const RETURN_ATTRS = ["id", "name", "address", "phone_number"];
+import { EstablishmentUtils } from "../utils/establisment.utils.js";
+const RETURN_ATTRS = [
+  "id",
+  "name",
+  "street",
+  "city",
+  "state",
+  "postal_code",
+  "int_number",
+  "ext_number",
+  "phone_number",
+];
 
 export const EstablishmentRepository = {
   async getAll({ page = 1, pageSize = 20, q } = {}) {
@@ -8,7 +19,13 @@ export const EstablishmentRepository = {
     if (q) {
       where[Op.or] = [
         { name: { [Op.like]: `%${q}%` } },
-        { address: { [Op.like]: `%${q}%` } },
+        { street: { [Op.like]: `%${q}%` } },
+        { city: { [Op.like]: `%${q}%` } },
+        { state: { [Op.like]: `%${q}%` } },
+        { postal_code: { [Op.like]: `%${q}%` } },
+        { int_number: { [Op.like]: `%${q}%` } },
+        { ext_number: { [Op.like]: `%${q}%` } },
+        { phone_number: { [Op.like]: `%${q}%` } },
       ];
     }
     const offset = (Math.max(page, 1) - 1) * Math.max(pageSize, 1);
@@ -39,65 +56,35 @@ export const EstablishmentRepository = {
     return establishment;
   },
   async create(establishment) {
-    const name = String(establishment.name).trim();
-    const address = String(establishment.address).trim();
-    const phone_number = String(establishment.phone_number).trim();
-
-    if (await Establishment.findOne({ where: { name } })) {
-      throw new Error("Establishment name is already in use");
+    await EstablishmentUtils.cannotBeEmpty(Object.values(establishment));
+    const sanitizedAttrs = [];
+    for (const key of Object.keys(establishment)) {
+      sanitizedAttrs.push(String(establishment[key]).trim());
     }
-
-    if (await Establishment.findOne({ where: { address } })) {
-      throw new Error("Establishment address is already in use");
-    }
-
-    const created = await Establishment.create({
-      name,
-      address,
-      phone_number,
-    });
-
-    return created;
+    await EstablishmentUtils.validateUniqueAttributes(
+      Establishment,
+      sanitizedAttrs,
+    );
+    const newEstablishment = await Establishment.create(sanitizedAttrs);
+    return newEstablishment;
   },
   async update(id, establishment) {
-    const existing = await Establishment.findByPk(id);
-    if (!existing) {
-      throw new Error("Establishment not found");
-    }
+    const existing = await Establishment.getById(id);
+    await EstablishmentUtils.cannotBeEmpty(Object.values(establishment));
+    const sanitizedAttrs = [];
     for (const key of Object.keys(establishment)) {
-      if (key in existing && key !== "id") {
-        if (existing[key] !== establishment[key]) {
-            
-          const trimmedValue = String(establishment[key]).trim();
-          if (
-            key === "name" &&
-            (await Establishment.findOne({
-              where: { name: trimmedValue },
-            }))
-          ) {
-            throw new Error("Establishment name is already in use");
-          }
-          if (
-            key === "address" &&
-            (await Establishment.findOne({
-              where: { address: trimmedValue },
-            }))
-          ) {
-            throw new Error("Establishment address is already in use");
-          }
-
-          existing[key] = trimmedValue;
-        }
-      }
+      sanitizedAttrs.push(String(establishment[key]).trim());
     }
+    await EstablishmentUtils.validateUniqueAttributes(
+      Establishment,
+      sanitizedAttrs,
+    );
+    Object.assign(existing, sanitizedAttrs);
     await existing.save();
     return existing;
   },
   async delete(id) {
-    const existing = await Establishment.findByPk(id);
-    if (!existing) {
-      throw new Error("Establishment not found");
-    }
+    const existing = await Establishment.getById(id);
     await existing.destroy();
     return;
   },

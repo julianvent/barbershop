@@ -1,5 +1,5 @@
-import { EstablishmentRepository } from "../repositories/establishment.repository";
-import { EstablishmentValidator } from "../validators/establishment.validator";
+import { EstablishmentRepository } from "../repositories/establishment.repository.js";
+import { EstablishmentValidator } from "../validators/establishment.validator.js";
 
 
 export const EstablishmentService = {
