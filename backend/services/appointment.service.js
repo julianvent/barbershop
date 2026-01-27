@@ -46,7 +46,6 @@ export const AppointmentService = {
           ...json,
           cost_total: costTotal,
           barber: barber_data ? { name: barber_data.barber_name, barber_id: barber_data.id } : null
-
         };
       })
     );

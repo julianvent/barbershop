@@ -6,6 +6,7 @@ import quoteRouter from "./quotes.routes.js";
 import scheduleRoutes from "./schedule.routes.js";
 import serviceRoute from "./service.routes.js";
 import barberRouter from "./barber.routes.js";
+import establishmentRoutes from "./establishment.routes.js";
 
 const router = Router();
 
@@ -32,5 +33,6 @@ router.use("/quotes", quoteRouter);
 router.use("/schedules", scheduleRoutes);
 router.use("/services", serviceRoute);
 router.use("/barbers", barberRouter);
+router.use("/establishments", establishmentRoutes);
 
 export default router;

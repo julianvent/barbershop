@@ -10,7 +10,10 @@ async function runSeed() {
     console.log("Database connection established\n");
 
     // Run seed with force option to clear existing data
-    await seedDatabase(sequelize, { seedDB: true });
+    await seedDatabase(sequelize, {
+      seedDB: true,
+      force: process.argv.includes("--force"),
+    });
 
     console.log("\n Seed completed successfully!");
     process.exit(0);

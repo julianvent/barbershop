@@ -1,4 +1,15 @@
 import { DataTypes } from "sequelize";
+import {
+  Account,
+  Appointment,
+  Barber,
+  Establishment,
+  Schedule,
+  Service,
+  ServiceAppointment,
+} from "../models/index.js";
+import { hash } from "../services/password.service.js";
+import { formatDateForTimezone } from "../utils/appointment.utils.js";
 
 async function ensureAppointmentImageFinishColumn(sequelize) {
   const queryInterface = sequelize.getQueryInterface();
@@ -20,43 +31,37 @@ async function ensureAppointmentImageFinishColumn(sequelize) {
   }
 }
 
-export async function seedDatabase(sequelize, options = { seedDB: false }) {
+export async function seedDatabase(
+  sequelize,
+  options = { seedDB: false, force: false },
+) {
+  const t = await sequelize.transaction();
   try {
     console.log("Starting database seeding...");
 
-    // Lazy-import models to avoid circular imports during module initialization
-    const [
-      { Service },
-      { Barber },
-      { Account },
-      { ServiceAppointment },
-      { Appointment },
-      { Schedule },
-    ] = await Promise.all([
-      import("../models/service.model.js"),
-      import("../models/barber.model.js"),
-      import("../models/account.model.js"),
-      import("../models/service.appointment.model.js"),
-      import("../models/appointment.model.js"),
-      import("../models/schedule.model.js"),
-    ]);
-
-    // Import timezone utilities for GMT-06:00 consistency
-    const { formatDateForTimezone } = await import(
-      "../utils/appointment.utils.js"
-    );
-
-    await sequelize.sync({ alter: false });
+    if (options.force) {
+      console.log("Force flag enabled. Resyncing database schema...");
+      await sequelize.sync({ force: true, transaction: t });
+    } else {
+      console.log("Syncing database schema...");
+      await sequelize.sync({ alter: true, transaction: t });
+    }
     await ensureAppointmentImageFinishColumn(sequelize);
     console.log("Database synced");
 
-    const [serviceCount, barberCount, accountCount, scheduleCount] =
-      await Promise.all([
-        Service.count(),
-        Barber.count(),
-        Account.count(),
-        Schedule.count(),
-      ]);
+    const [
+      serviceCount,
+      barberCount,
+      accountCount,
+      scheduleCount,
+      establishmentCount,
+    ] = await Promise.all([
+      Service.count(),
+      Barber.count(),
+      Account.count(),
+      Schedule.count(),
+      Establishment.count(),
+    ]);
 
     const hasData =
       serviceCount > 0 ||
@@ -70,6 +75,7 @@ export async function seedDatabase(sequelize, options = { seedDB: false }) {
       console.log(` - Barbers: ${barberCount}`);
       console.log(` - Accounts: ${accountCount}`);
       console.log(` - Schedules: ${scheduleCount}`);
+      console.log(` - Establishments: ${establishmentCount}`);
       return;
     }
 
@@ -80,16 +86,13 @@ export async function seedDatabase(sequelize, options = { seedDB: false }) {
       await sequelize.query("SET FOREIGN_KEY_CHECKS = 0");
 
       // Clear all tables
-      await ServiceAppointment.destroy({
-        where: {},
-        truncate: true,
-        cascade: true,
-      });
-      await Appointment.destroy({ where: {}, truncate: true, cascade: true });
-      await Service.destroy({ where: {}, truncate: true, cascade: true });
-      await Barber.destroy({ where: {}, truncate: true, cascade: true });
-      await Account.destroy({ where: {}, truncate: true, cascade: true });
-      await Schedule.destroy({ where: {}, truncate: true, cascade: true });
+      await Account.destroy({ where: {}, cascade: true });
+      await Establishment.destroy({ where: {}, cascade: true });
+      await Schedule.destroy({ where: {}, cascade: true });
+      await Barber.destroy({ where: {}, cascade: true });
+      await Service.destroy({ where: {}, cascade: true });
+      await Appointment.destroy({ where: {}, cascade: true });
+      await ServiceAppointment.destroy({ where: {}, cascade: true });
 
       // Re-enable foreign key checks
       await sequelize.query("SET FOREIGN_KEY_CHECKS = 1");
@@ -97,21 +100,26 @@ export async function seedDatabase(sequelize, options = { seedDB: false }) {
     }
 
     // Seed all data
-    const services = await seedService(Service);
-    const barbers = await seedBarber(Barber);
-    const schedules = await seedSchedule(Schedule);
-    const accounts = await seedAccount(Account);
+    const services = await seedService(Service, t);
+    const barbers = await seedBarber(Barber, t);
+    const accounts = await seedAccount(Account, t);
+    const establishments = await seedEstablishment(Establishment, accounts, t);
+    for (const est of establishments) {
+      await seedSchedulesForEstablishment(Schedule, est.id, t);
+    }
     const appointments = await seedAppointment(
       Appointment,
       ServiceAppointment,
       barbers,
       services,
-      formatDateForTimezone
+      formatDateForTimezone,
+      t
     );
-
     console.log("\nDatabase seeding completed successfully!");
+    await t.commit();
   } catch (error) {
     console.error("Error seeding database:", error);
+    await t.rollback();
     throw error;
   }
 }
@@ -119,41 +127,44 @@ export async function seedDatabase(sequelize, options = { seedDB: false }) {
 /**
  * Seed services
  */
-async function seedService(Service) {
-  const services = await Service.bulkCreate([
-    {
-      name: "Corte de Cabello",
-      description: "Corte de cabello clásico o moderno, incluye lavado",
-      price: 15.0,
-      duration: 30,
-      type: "haircut",
-      status: "active",
-    },
-    {
-      name: "Arreglo de Barba",
-      description: "Recorte y perfilado de barba con navaja",
-      price: 10.0,
-      duration: 20,
-      type: "beard",
-      status: "active",
-    },
-    {
-      name: "Combo Corte + Barba",
-      description: "Corte de cabello completo más arreglo de barba",
-      price: 22.0,
-      duration: 45,
-      type: "combo",
-      status: "active",
-    },
-    {
-      name: "Coloración de Cabello",
-      description: "Aplicación de color para cabello, incluye asesoría",
-      price: 40.0,
-      duration: 60,
-      type: "coloring",
-      status: "active",
-    },
-  ]);
+async function seedService(Service, t) {
+  const services = await Service.bulkCreate(
+    [
+      {
+        name: "Corte de Cabello",
+        description: "Corte de cabello clásico o moderno, incluye lavado",
+        price: 15.0,
+        duration: 30,
+        type: "haircut",
+        status: "active",
+      },
+      {
+        name: "Arreglo de Barba",
+        description: "Recorte y perfilado de barba con navaja",
+        price: 10.0,
+        duration: 20,
+        type: "beard",
+        status: "active",
+      },
+      {
+        name: "Combo Corte + Barba",
+        description: "Corte de cabello completo más arreglo de barba",
+        price: 22.0,
+        duration: 45,
+        type: "combo",
+        status: "active",
+      },
+      {
+        name: "Coloración de Cabello",
+        description: "Aplicación de color para cabello, incluye asesoría",
+        price: 40.0,
+        duration: 60,
+        type: "coloring",
+        status: "active",
+      },
+    ],
+    { transaction: t },
+  );
   console.log(`✓ Created ${services.length} services`);
   return services;
 }
@@ -161,7 +172,7 @@ async function seedService(Service) {
 /**
  * Seed barbers
  */
-async function seedBarber(Barber) {
+async function seedBarber(Barber, t) {
   const teamName = [
     "SEBASTIÁN DE JESÚS HERNÁNDEZ MONTERO",
     "ADRIÁN HERRERA JERÓNIMO",
@@ -176,23 +187,29 @@ async function seedBarber(Barber) {
   ];
   const barbers = [];
   for (let name of teamName) {
-    const barber = await Barber.create({
-      barber_name: name,
-      image_path: "/assets/images/monkeyBarber.png",
-      is_active: true,
-      phone: `555${Math.floor(1000000 + Math.random() * 9000000)}`,
-      email: `${teamNameEmail[teamName.indexOf(name)]}@barbershop.com`,
-    });
+    const barber = await Barber.create(
+      {
+        barber_name: name,
+        image_path: "/assets/images/monkeyBarber.png",
+        is_active: true,
+        phone: `555${Math.floor(1000000 + Math.random() * 9000000)}`,
+        email: `${teamNameEmail[teamName.indexOf(name)]}@barbershop.com`,
+      },
+      { transaction: t },
+    );
     barbers.push(barber);
   }
 
-  const keffBarber = await Barber.create({
-    barber_name: "KEVIN SEBASTIÁN FRIAS GARCÍA",
-    image_path: "/assets/images/monkeyBarberKeff.jpg",
-    is_active: true,
-    phone: `555${Math.floor(1000000 + Math.random() * 9000000)}`,
-    email: `kevin.sebastian.frias.garcia@barbershop.com`,
-  });
+  const keffBarber = await Barber.create(
+    {
+      barber_name: "KEVIN SEBASTIÁN FRIAS GARCÍA",
+      image_path: "/assets/images/monkeyBarberKeff.jpg",
+      is_active: true,
+      phone: `555${Math.floor(1000000 + Math.random() * 9000000)}`,
+      email: `kevin.sebastian.frias.garcia@barbershop.com`,
+    },
+    { transaction: t },
+  );
   barbers.push(keffBarber);
 
   console.log(`✓ Created ${barbers.length} barbers`);
@@ -200,63 +217,104 @@ async function seedBarber(Barber) {
 }
 
 /**
- * Seed schedules
+ * Seed establishments linked to accounts
  */
-async function seedSchedule(Schedule) {
-  const schedules = await Schedule.bulkCreate([
+async function seedEstablishment(Establishment, accounts, t) {
+  const establishmentsData = [
     {
-      day_of_week: "Monday",
-      start_time: "09:00:00",
-      end_time: "18:00:00",
-      is_active: true,
+      name: "Downtown Barber Shop",
+      street: "123 Main St",
+      city: "Mexico City",
+      state: "CDMX",
+      postal_code: "06500",
+      phone_number: `555000${Math.floor(1000 + Math.random() * 9000)}`,
+      account_id: accounts[0]?.id,
     },
     {
-      day_of_week: "Tuesday",
-      start_time: "09:00:00",
-      end_time: "18:00:00",
-      is_active: true,
+      name: "Uptown Cuts",
+      street: "456 Elm Ave",
+      city: "Mexico City",
+      state: "CDMX",
+      postal_code: "06600",
+      phone_number: `555001${Math.floor(1000 + Math.random() * 9000)}`,
+      account_id: accounts[1]?.id,
     },
-    {
-      day_of_week: "Wednesday",
-      start_time: "09:00:00",
-      end_time: "18:00:00",
-      is_active: true,
-    },
-    {
-      day_of_week: "Thursday",
-      start_time: "09:00:00",
-      end_time: "18:00:00",
-      is_active: true,
-    },
-    {
-      day_of_week: "Friday",
-      start_time: "09:00:00",
-      end_time: "18:00:00",
-      is_active: true,
-    },
-    {
-      day_of_week: "Saturday",
-      start_time: "10:00:00",
-      end_time: "16:00:00",
-      is_active: true,
-    },
-    {
-      day_of_week: "Sunday",
-      start_time: "00:00:00",
-      end_time: "00:00:00",
-      is_active: false,
-    },
-  ]);
-  console.log(`✓ Created ${schedules.length} schedules`);
+  ];
+  const establishments = await Establishment.bulkCreate(establishmentsData, {
+    transaction: t,
+  });
+  console.log(`✓ Create  d ${establishments.length} establishments`);
+  return establishments;
+}
+
+/**
+ * Seed schedules for a specific establishment
+ */
+async function seedSchedulesForEstablishment(Schedule, establishmentId, t) {
+  const schedules = await Schedule.bulkCreate(
+    [
+      {
+        day_of_week: "Monday",
+        start_time: "09:00:00",
+        end_time: "18:00:00",
+        is_active: true,
+        establishment_id: establishmentId,
+      },
+      {
+        day_of_week: "Tuesday",
+        start_time: "09:00:00",
+        end_time: "18:00:00",
+        is_active: true,
+        establishment_id: establishmentId,
+      },
+      {
+        day_of_week: "Wednesday",
+        start_time: "09:00:00",
+        end_time: "18:00:00",
+        is_active: true,
+        establishment_id: establishmentId,
+      },
+      {
+        day_of_week: "Thursday",
+        start_time: "09:00:00",
+        end_time: "18:00:00",
+        is_active: true,
+        establishment_id: establishmentId,
+      },
+      {
+        day_of_week: "Friday",
+        start_time: "09:00:00",
+        end_time: "18:00:00",
+        is_active: true,
+        establishment_id: establishmentId,
+      },
+      {
+        day_of_week: "Saturday",
+        start_time: "10:00:00",
+        end_time: "16:00:00",
+        is_active: true,
+        establishment_id: establishmentId,
+      },
+      {
+        day_of_week: "Sunday",
+        start_time: "00:00:00",
+        end_time: "00:00:00",
+        is_active: false,
+        establishment_id: establishmentId,
+      },
+    ],
+    { transaction: t },
+  );
+  console.log(
+    `✓ Created ${schedules.length} schedules for establishment ${establishmentId}`,
+  );
   return schedules;
 }
 
 /**
  * Seed accounts
  */
-async function seedAccount(Account) {
-  const { hash } = await import("../services/password.service.js");
-
+async function seedAccount(Account, t) {
   const accountsData = [
     {
       full_name: "Carlos Receptionist",
@@ -289,10 +347,13 @@ async function seedAccount(Account) {
     const { password, ...accountData } = data;
     const password_hash = await hash(password);
 
-    const account = await Account.create({
-      ...accountData,
-      password_hash,
-    });
+    const account = await Account.create(
+      {
+        ...accountData,
+        password_hash,
+      },
+      { transaction: t },
+    );
     accounts.push(account);
   }
 
@@ -311,7 +372,8 @@ async function seedAppointment(
   ServiceAppointment,
   barbers,
   services,
-  formatDateForTimezone
+  formatDateForTimezone,
+  t
 ) {
   const DB_TIMEZONE = "-06:00";
 
@@ -376,14 +438,14 @@ async function seedAppointment(
     // This ensures consistent timezone representation in the database
     const formattedDateTime = formatDateForTimezone(
       appointmentData.appointment_datetime,
-      DB_TIMEZONE
+      DB_TIMEZONE,
     );
 
     // Create appointment with timezone-aware datetime
     const appointment = await Appointment.create({
       ...appointmentData,
       appointment_datetime: formattedDateTime,
-    });
+    }, { transaction: t });
 
     // Create service_appointment records
     for (const service of appointmentServices) {
@@ -391,7 +453,7 @@ async function seedAppointment(
         appointment_id: appointment.id,
         service_id: service.id,
         price: service.price,
-      });
+      }, { transaction: t });
     }
 
     appointments.push(appointment);

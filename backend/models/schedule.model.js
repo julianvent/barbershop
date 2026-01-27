@@ -29,14 +29,28 @@ export const Schedule = sequelize.define(
         "Thursday",
         "Friday",
         "Saturday",
-        "Sunday"
+        "Sunday",
       ),
       allowNull: false,
-      unique: true,
+    },
+    establishment_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "establishment",
+        key: "id",
+      },
     },
   },
   {
     tableName: "schedule",
     timestamps: false,
-  }
+    indexes: [
+      {
+        unique: true,
+        fields: ["establishment_id", "day_of_week"],
+        name: "unique_schedule_per_establishment_day",
+      },
+    ],
+  },
 );
