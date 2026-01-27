@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import styles from "./EmployeeFormStyles.module.css";
 import Input from "@/app/components/form/input/Input";
-import { cityValidation, colonyValidation, externalNoValidation, internalNoValidation, nameValidation, phoneValidation, photoValidation, postalCodeValidation, streetValidation } from "@/app/utils/establishmentValidators";
+import { cityValidation, stateValidation, externalNoValidation, internalNoValidation, nameValidation, phoneValidation, photoValidation, postalCodeValidation, streetValidation } from "@/app/utils/establishmentValidators";
 
 export default function EstablishmentForm ({onSubmit, establishment}) {
   const router = useRouter();
@@ -86,8 +86,8 @@ export default function EstablishmentForm ({onSubmit, establishment}) {
 
 
                 <div className={styles.row}>
+                  <Input {...stateValidation}/>
                   <Input {...cityValidation}/>
-                  <Input {...colonyValidation}/>
                   <Input {...streetValidation}/>
                 </div>
 

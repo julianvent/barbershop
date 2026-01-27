@@ -8,7 +8,7 @@ export const nameValidation = {
 }
 
 export const phoneValidation = {
-  id: 'phone',
+  id: 'phone_number',
   type: 'text',
   name: "phone",
   label: "Telefono del establecimiento",
@@ -31,11 +31,11 @@ export const cityValidation = {
   }
 }
 
-export const colonyValidation = {
-  id: 'colony',
+export const stateValidation = {
+  id: 'state',
   type: 'text',
-  name: 'colony',
-  label: 'Colonia',
+  name: 'state',
+  label: 'Estado',
   validation: {
     required: 'Requerido*'
   }
@@ -54,7 +54,7 @@ export const streetValidation = {
 export const externalNoValidation = {
   id: 'ext_no',
   type: 'text',
-  name: 'ext_no',
+  name: 'ext_number',
   label: 'Numero Externo',
   validation: {
     required: 'Requerido*'
@@ -64,7 +64,7 @@ export const externalNoValidation = {
 export const internalNoValidation = {
   id: 'int_no',
   type: 'text',
-  name: 'int_no',
+  name: 'int_number',
   label: 'Numero Interno',
 }
 

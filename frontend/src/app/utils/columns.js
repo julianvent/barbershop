@@ -129,3 +129,22 @@ export const serviceListFields = [
     field: "tipo",
   },
 ];
+
+export const establishmentsFields = [
+  {
+    headerName: "Nombre del establecimiento",
+    field: "name"
+  },
+  {
+    headerName: "Calle",
+    field: "street",
+  },
+  {
+    headerName: "Codigo Postal",
+    field: "postal_code"
+  },
+  {
+    headerName: "Numero Telefonico",
+    field: "phone_number"
+  }
+]

@@ -4,22 +4,28 @@ import Layout from "@/app/components/base_layout/Layout";
 import styles from "../Main.module.css"
 import { AgGridReact } from "ag-grid-react";
 import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
-import { defaultColDef } from "@/app/utils/columns";
+import { defaultColDef, establishmentsFields } from "@/app/utils/columns";
 ModuleRegistry.registerModules([AllCommunityModule]);
 import { useRouter } from "next/navigation";
 import { newEstablishment } from "@/app/utils/routes";
-const fields = [
-  {
-    field: 'name',
-    fieldname: 'xd'
-  }
-];
-
-
-const establishments = [];
-const message = 'No se ha registrado ningun local';
+import { useEffect, useState } from "react";
+import { getEstablishments } from "@/app/apiHandlers/adminEstablishments";
 
 export default function Page(){
+  const [establishments, setEstablishments] = useState([])
+  const [ message, setMessage] = useState('No se han registrado los establecimentos')
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const response = await getEstablishments();
+        setEstablishments(response.data);
+      } catch (e) {
+        setMessage('No se pudieron cargar los establecimientos')
+      }
+    };
+
+    load();
+  }, [])
   const router = useRouter();
   return (
     <Layout>
@@ -37,7 +43,7 @@ export default function Page(){
           <AgGridReact
             defaultColDef={defaultColDef}
             rowData={establishments}
-            columnDefs={fields}
+            columnDefs={establishmentsFields}
             overlayNoRowsTemplate={message}
             pagination={true}
             paginationPageSize={20}

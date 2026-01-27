@@ -1,6 +1,6 @@
 "use client";
 
-import styles from "./Sign-Form.module.css";
+import styles from "./SignForm.module.css";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import Input from "@/app/components/form/input/Input";

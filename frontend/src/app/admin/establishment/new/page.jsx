@@ -6,6 +6,7 @@ export default function createEstablishment () {
   
   const submit = async (data) => {
     try{
+      console.log(data)
       await createNewEstablishment({data});
     }catch(e){
       return e;
