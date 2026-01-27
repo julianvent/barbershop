@@ -1,6 +1,7 @@
 import { Establishment } from "../models/establishment.model.js";
 import { Op } from "sequelize";
 import { EstablishmentUtils } from "../utils/establisment.utils.js";
+import { Account } from "../models/account.model.js";
 const RETURN_ATTRS = [
   "id",
   "name",
@@ -14,37 +15,36 @@ const RETURN_ATTRS = [
 ];
 
 export const EstablishmentRepository = {
-  async getAll({ page = 1, pageSize = 20, q } = {}) {
+  async getAll({
+    establishmentId = null,
+    sort = "ASC",
+    offset = 0,
+    limit = 10,
+    q = null,
+  } = {}) {
     const where = {};
-    if (q) {
+    if (establishmentId != null) where.id = establishmentId;
+    if (q != null) {
+      const query = `%${q.trim()}%`;
       where[Op.or] = [
-        { name: { [Op.like]: `%${q}%` } },
-        { street: { [Op.like]: `%${q}%` } },
-        { city: { [Op.like]: `%${q}%` } },
-        { state: { [Op.like]: `%${q}%` } },
-        { postal_code: { [Op.like]: `%${q}%` } },
-        { int_number: { [Op.like]: `%${q}%` } },
-        { ext_number: { [Op.like]: `%${q}%` } },
-        { phone_number: { [Op.like]: `%${q}%` } },
+        { name: { [Op.like]: query } },
+        { street: { [Op.like]: query } },
+        { city: { [Op.like]: query } },
+        { postal_code: { [Op.like]: query } },
       ];
     }
-    const offset = (Math.max(page, 1) - 1) * Math.max(pageSize, 1);
-    const limit = Math.min(Math.max(pageSize, 1), 100);
-    const { rows, count } = await Establishment.findAndCountAll({
-      where,
-      attributes: RETURN_ATTRS,
-      offset,
-      limit,
-      order: [["id", "ASC"]],
-    });
 
-    return {
-      data: rows,
-      page: Number(page),
-      pageSize: limit,
-      total: count,
-      totalPage: Math.ceil(count / limit),
+    const order = [["name", sort]];
+
+    const options = {
+      where,
+      order,
     };
+
+    if (offset != null) options.offset = offset;
+    if (limit != null) options.limit = limit;
+
+    return Establishment.findAndCountAll(options);
   },
   async getById(id) {
     const establishment = await Establishment.findByPk(id, {
@@ -57,9 +57,9 @@ export const EstablishmentRepository = {
   },
   async create(establishment) {
     await EstablishmentUtils.cannotBeEmpty(Object.values(establishment));
-    const sanitizedAttrs = [];
+    const sanitizedAttrs = {};
     for (const key of Object.keys(establishment)) {
-      sanitizedAttrs.push(String(establishment[key]).trim());
+      sanitizedAttrs[key] = String(establishment[key]).trim();
     }
     await EstablishmentUtils.validateUniqueAttributes(
       Establishment,
@@ -69,11 +69,14 @@ export const EstablishmentRepository = {
     return newEstablishment;
   },
   async update(id, establishment) {
-    const existing = await Establishment.getById(id);
+    const existing = await Establishment.findByPk(id);
+    if (!existing) {
+      throw new Error("Establishment not found");
+    }
     await EstablishmentUtils.cannotBeEmpty(Object.values(establishment));
-    const sanitizedAttrs = [];
+    const sanitizedAttrs = {};
     for (const key of Object.keys(establishment)) {
-      sanitizedAttrs.push(String(establishment[key]).trim());
+      sanitizedAttrs[key] = String(establishment[key]).trim();
     }
     await EstablishmentUtils.validateUniqueAttributes(
       Establishment,
@@ -84,7 +87,10 @@ export const EstablishmentRepository = {
     return existing;
   },
   async delete(id) {
-    const existing = await Establishment.getById(id);
+    const existing = await Establishment.findByPk(id);
+    if (!existing) {
+      throw new Error("Establishment not found");
+    }
     await existing.destroy();
     return;
   },

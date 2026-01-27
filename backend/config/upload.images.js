@@ -6,13 +6,19 @@ export const UPLOAD_DIR = path.join(process.cwd(), "uploads", "barbers");
 export const APPOINTMENT_UPLOAD_DIR = path.join(
   process.cwd(),
   "uploads",
-  "appointments"
+  "appointments",
+);
+export const ESTABLISHMENT_UPLOAD_DIR = path.join(
+  process.cwd(),
+  "uploads",
+  "establishments",
 );
 
 if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 if (!fs.existsSync(APPOINTMENT_UPLOAD_DIR))
   fs.mkdirSync(APPOINTMENT_UPLOAD_DIR, { recursive: true });
-
+if (!fs.existsSync(ESTABLISHMENT_UPLOAD_DIR))
+  fs.mkdirSync(ESTABLISHMENT_UPLOAD_DIR, { recursive: true });
 export const PATH = "image";
 export const ALLOWED_MIME_TYPES = ["image/png", "image/jpeg", "image/jpg"];
 
@@ -43,7 +49,7 @@ const appointmentStorage = multer.diskStorage({
 function appointmentFileFilter(req, file, cb) {
   const nameOk = file.fieldname === PATH;
   const mimeOk = ["image/png", "image/jpeg", "image/jpg"].includes(
-    file.mimetype
+    file.mimetype,
   );
 
   if (!mimeOk || !nameOk) return cb(null, false);
