@@ -1,6 +1,6 @@
 'use client';
 import { FormProvider, useForm } from "react-hook-form";
-import styles from "./styles.module.css"
+import styles from "./EmployeeFormStyles.module.css"
 import Input from "@/app/components/form/input/Input";
 import { emailValidation, nameValidation, phoneValidation, photoValidation, statusValidation } from "@/app/utils/employeesValidators";
 import { useEffect, useState } from "react";
@@ -102,16 +102,19 @@ export default function EmployeeForm({onSubmit,employee}){
                             </div>
                         </article>
                     </div>
-                    <div className={styles.buttons}>
-                        <button
-                            className={styles.cancelButton}
-                            onClick={(e) => {
-                                e.preventDefault();
-                                router.push(staffRoute);
-                            }}>
-                            Cancelar
-                        </button>
-                        <button type="submit" disabled={isCreatingEmployee}>Confirmar</button>
+                    <div className={styles.fieldsConta}>
+
+                        <div className={styles.buttons}>
+                            <button
+                                className={styles.cancelButton}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    router.push(staffRoute);
+                                }}>
+                                Cancelar
+                            </button>
+                            <button type="submit" disabled={isCreatingEmployee}>Confirmar</button>
+                        </div>
                     </div>
                 </article>
                 

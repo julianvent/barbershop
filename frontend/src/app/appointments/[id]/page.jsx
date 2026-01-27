@@ -1,5 +1,5 @@
 "use client";
-import AppointmentDetail from "@/app/admin/appointments/AppointmentDetail/AppointmentDetail";
+import AppointmentDetail from "@/app/forms/AppointmentDetail/AppointmentDetail";
 import { appointmentAuthQueryParam } from "@/app/utils/appointmentValidators";
 import { useParams, useSearchParams } from "next/navigation";
 import styles from "./Appointment-Detail-Customer.module.css";

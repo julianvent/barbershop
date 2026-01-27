@@ -1,13 +1,9 @@
 "use client";
-import { redirect } from "next/navigation";
-import ServiceForm from "../ServiceForm/ServiceForm";
-import { createService } from "../api/services";
+import ServiceForm from "../../../forms/ServiceForm";
+import { createService } from "../../../apiHandlers/adminServices";
 import Layout from "@/app/components/base_layout/Layout";
-import { servicesRoute } from "@/app/utils/routes";
-import { useRouter } from "next/navigation";
 
 export default function NewService() {
-  const router = useRouter();
 
   const submit = async (data) => {
     try{

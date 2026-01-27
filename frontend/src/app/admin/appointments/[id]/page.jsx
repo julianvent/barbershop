@@ -1,7 +1,7 @@
 "use client";
 import Layout from "@/app/components/base_layout/Layout";
 import { useParams } from "next/navigation";
-import AppointmentDetail from "../AppointmentDetail/AppointmentDetail";
+import AppointmentDetail from "../../../forms/AppointmentDetail/AppointmentDetail";
 
 export default function AppointmentDetailAdmin() {
   const { id } = useParams();

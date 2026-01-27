@@ -1,5 +1,5 @@
 import { axiosConfig, getId } from "@/app/utils/requestBuilder";
-import { baseRoute } from "./routes";
+import { baseRoute } from "../routes/account";
 import axios from "axios";
 
 export async function getAccount(){

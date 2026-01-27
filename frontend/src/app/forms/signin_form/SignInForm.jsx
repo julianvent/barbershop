@@ -1,6 +1,6 @@
 "use client";
 
-import styles from "./Sign-Form.module.css";
+import styles from "./SignForm.module.css";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import Input from "@/app/components/form/input/Input";
@@ -8,7 +8,7 @@ import {
   emailValidation,
   passwordValidation,
 } from "@/app/utils/inputValidators";
-import { signIn } from "../api/signIn";
+import { signIn } from "../../signin/api/signIn";
 import { useRouter } from "next/navigation";
 import { appointmentsRoute } from "@/app/utils/routes";
 

@@ -8,7 +8,7 @@ import {
   getAppointmentsApiRoute,
   getAvailabilityApiRoute,
   updateAppointmentApiRoute,
-} from "./routes";
+} from "../routes/adminAppointments";
 
 export async function getAppointments() {
   try {

@@ -5,6 +5,7 @@ import styles from "./not-found.module.css";
 export default function NotFound() {
   return (
     <div className={styles.notFoundLayout}>
+      <title>SGBarbershop</title>
       <figure>
         <img src="/Sagoz_Logo.png" alt="Sagoz Logo" />
       </figure>

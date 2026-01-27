@@ -1,6 +1,6 @@
 "use client";
-import EmployeeForm from "../EmployeeForm/EmployeeForm";
-import { createEmployee } from "../api/employees";
+import EmployeeForm from "../../../forms/EmployeeForm";
+import { createEmployee } from "../../../apiHandlers/adminStaff";
 import Layout from "@/app/components/base_layout/Layout";
 
 export default function NewEmployee() {

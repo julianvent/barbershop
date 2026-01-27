@@ -1,4 +1,4 @@
-import SignInForm from "./signin_form/SignInForm";
+import SignInForm from "../forms/signin_form/SignInForm";
 import styles from "./Sign-In.module.css";
 
 export default function SignIn() {

@@ -30,6 +30,14 @@ const Sidebar = forwardRef(({ visible }, ref) => {
             <span>Personal</span>
           </Link>
         </li>
+        <li>
+          <Link href="/admin/establishment">
+            <div className={styles.iconContainer}>
+              <img src="/icons/reshot-icon-location-map-marker-W7VG495AYC.svg" alt="" />
+            </div>
+            <span>Ubicaciones</span>
+          </Link>
+        </li>
       </ul>
     </div>
   );
