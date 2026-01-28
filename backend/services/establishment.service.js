@@ -17,7 +17,7 @@ export const EstablishmentService = {
       sort,
       page,
       limit,
-    } = await EstablishmentValidator.validateFiltersListEstablishments(filters);
+    } = await EstablishmentValidator.validateListEstablishments(filters);
 
     const offset = (page - 1) * limit;
 
