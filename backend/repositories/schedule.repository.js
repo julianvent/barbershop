@@ -17,7 +17,7 @@ export const ScheduleRepository = {
       });
       if (existingSchedule) {
         throw new Error(
-          `Schedule already exists for day ${scheduleData.day_of_week}`
+          `Schedule already exists for day ${scheduleData.day_of_week}`,
         );
       }
       const newSchedule = await Schedule.create({
@@ -47,9 +47,7 @@ export const ScheduleRepository = {
 
   async update(day_of_week, scheduleData) {
     const existingSchedule = await this.getByDay(day_of_week);
-    if (!existingSchedule) {
-      throw new Error("Schedule not found");
-    }
+    // No need for null check - getByDay throws if not found
     await Schedule.update(scheduleData, {
       where: { day_of_week: existingSchedule.day_of_week },
     });

@@ -4,12 +4,13 @@ export const EstablishmentController = {
   async getAll(req, res) {
     try {
       const filters = {
-        establishment_id: req.query.establishment_id,
         name: req.query.name,
         street: req.query.street,
         city: req.query.city,
-        postal_code: req.query.postal_code,
-
+        state: req.query.state,
+        sort: req.query.sort,
+        page: req.query.page,
+        limit: req.query.limit,
       }
       const establishments = await EstablishmentService.list(filters);
       res.status(200).json(establishments);
