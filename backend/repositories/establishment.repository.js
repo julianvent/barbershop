@@ -1,7 +1,7 @@
 import { Establishment } from "../models/establishment.model.js";
 import { Op } from "sequelize";
 import { EstablishmentUtils } from "../utils/establisment.utils.js";
-import { Account } from "../models/account.model.js";
+
 const RETURN_ATTRS = [
   "id",
   "name",
@@ -15,41 +15,42 @@ const RETURN_ATTRS = [
 ];
 
 export const EstablishmentRepository = {
-  async getAll({
-    establishmentId = null,
-    sort = "ASC",
-    offset = 0,
-    limit = 10,
-    q = null,
-  } = {}) {
-    const where = {};
-    if (establishmentId != null) where.id = establishmentId;
-    if (q != null) {
-      const query = `%${q.trim()}%`;
-      where[Op.or] = [
-        { name: { [Op.like]: query } },
-        { street: { [Op.like]: query } },
-        { city: { [Op.like]: query } },
-        { postal_code: { [Op.like]: query } },
-      ];
-    }
+  async list(filters = {}) {
+    const { name, street, city, state, sort = "ASC", page, limit } = filters;
 
-    const order = [["name", sort]];
+    const where = {};
+
+    if (name) {
+      where.name = { [Op.iLike]: `%${name}%` };
+    }
+    if (street) {
+      where.street = { [Op.iLike]: `%${street}%` };
+    }
+    if (city) {
+      where.city = { [Op.iLike]: `%${city}%` };
+    }
+    if (state) {
+      where.state = { [Op.iLike]: `%${state}%` };
+    }
 
     const options = {
       where,
-      order,
+      attributes: RETURN_ATTRS,
+      order: [["name", sort.toUpperCase()]],
     };
 
-    if (offset != null) options.offset = offset;
-    if (limit != null) options.limit = limit;
+    if (page !== undefined && limit !== undefined) {
+      const pageNum = parseInt(page);
+      const limitNum = parseInt(limit);
+      options.offset = (pageNum - 1) * limitNum;
+      options.limit = limitNum;
+    }
 
-    return Establishment.findAndCountAll(options);
+    const establishments = await Establishment.findAll(options);
+    return establishments;
   },
   async getById(id) {
-    const establishment = await Establishment.findByPk(id, {
-      attributes: RETURN_ATTRS,
-    });
+    const establishment = await Establishment.findByPk(id);
     if (!establishment) {
       throw new Error("Establishment not found");
     }

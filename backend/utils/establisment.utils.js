@@ -1,3 +1,5 @@
+import { Op } from "sequelize";
+
 // The following attributes must be unique also they're required
 const REQUIRED_ATTRS = [
   "name",

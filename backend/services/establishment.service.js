@@ -8,55 +8,9 @@ import {
 
 export const EstablishmentService = {
   async list(filters) {
-    const {
-      establishment_id,
-      name,
-      street,
-      city,
-      postal_code,
-      sort,
-      page,
-      limit,
-    } = await EstablishmentValidator.validateListEstablishments(filters);
-
-    const offset = (page - 1) * limit;
-
-    const { rows: establishments, count } =
-      await EstablishmentRepository.getAll({
-        establishmentId: establishment_id,
-        name,
-        street,
-        city,
-        postalCode: postal_code,
-        sort,
-        offset,
-        limit,
-      });
-
-    const response_establishments = await Promise.all(
-      establishments.map(async (establishment) => {
-        delete establishment.image_path;
-        const establishment_json = establishment.toJSON();
-        if (establishment_json.image_path) {
-          establishment_json.image_exists = await existsImage(
-            ESTABLISHMENT_UPLOAD_DIR,
-            establishment_json.image_path,
-          );
-        } else {
-          establishment_json.image_exists = false;
-        }
-        return establishment_json;
-      }),
-    );
-    return {
-      data: response_establishments,
-      meta: {
-        page: page,
-        limit: limit,
-        total: count,
-        pages: page,
-      },
-    };
+    await EstablishmentValidator.validateListEstablishments(filters);
+    const establishments = await EstablishmentRepository.list(filters);
+    return establishments;
   },
   async find(id) {
     const establishment = await EstablishmentRepository.getById(id);
