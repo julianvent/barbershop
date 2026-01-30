@@ -65,6 +65,7 @@ export const EstablishmentRepository = {
     await EstablishmentUtils.validateUniqueAttributes(
       Establishment,
       sanitizedAttrs,
+      null
     );
     const newEstablishment = await Establishment.create(sanitizedAttrs);
     return newEstablishment;
@@ -82,6 +83,7 @@ export const EstablishmentRepository = {
     await EstablishmentUtils.validateUniqueAttributes(
       Establishment,
       sanitizedAttrs,
+      id
     );
     Object.assign(existing, sanitizedAttrs);
     await existing.save();
@@ -93,6 +95,6 @@ export const EstablishmentRepository = {
       throw new Error("Establishment not found");
     }
     await existing.destroy();
-    return;
+    return;b
   },
 };

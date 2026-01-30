@@ -19,17 +19,44 @@ export const EstablishmentUtils = {
     }
   },
 
-  async validateUniqueAttributes(Model, attrs) {
-    const orConditions = Object.entries(attrs).map(([key, value]) => ({
-      [key]: value,
-    }));
+  async validateUniqueAttributes(Model, attrs, excludeId = null) {
+    // Check 1: Unique index constraint (name + postal_code + street)
+    const uniqueIndexWhere = {
+      name: attrs.name,
+      postal_code: attrs.postal_code,
+      street: attrs.street,
+    };
 
-    const existing = await Model.findOne({
-      where: { [Op.or]: orConditions },
-    });
-    if (existing) {
-      throw new Error(`The object with provided attributes already exists:\n
-        : ${JSON.stringify(attrs)}`);
+    if (excludeId) {
+      uniqueIndexWhere.id = { [Op.ne]: excludeId };
+    }
+
+    const existingIndex = await Model.findOne({ where: uniqueIndexWhere });
+    if (existingIndex) {
+      throw new Error(
+        `An establishment with the same name, postal code, and street already exists`,
+      );
+    }
+
+    // Check 2: Same physical address (different name allowed by index, but not by business logic)
+    const addressWhere = {
+      street: attrs.street,
+      city: attrs.city,
+      state: attrs.state,
+      postal_code: attrs.postal_code,
+      int_number: attrs.int_number || null,
+      ext_number: attrs.ext_number || null,
+    };
+
+    if (excludeId) {
+      addressWhere.id = { [Op.ne]: excludeId };
+    }
+
+    const existingAddress = await Model.findOne({ where: addressWhere });
+    if (existingAddress) {
+      throw new Error(
+        `An establishment already exists at this address (${attrs.street}, ${attrs.city}, ${attrs.state})`,
+      );
     }
   },
 };

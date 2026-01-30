@@ -73,7 +73,7 @@ export const Establishment = sequelize.define(
     },
     account_id: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
       references: {
         model: "account",
         key: "id",
@@ -87,8 +87,8 @@ export const Establishment = sequelize.define(
     indexes: [
       {
         unique: true,
-        fields: ["name", "account_id"],
-        name: "unique_establishment_per_account",
+        fields: ["name", "postal_code", "street"],
+        name: "unique_establishment",
       },
     ],
   },
