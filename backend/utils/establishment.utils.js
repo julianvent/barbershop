@@ -59,8 +59,9 @@ export const EstablishmentUtils = {
       );
     }
   },
-  async generateImageUrl(relativePath) {
-    if (relativePath == null) return null;
-    return `${BASE_URL_BACKEND}${relativePath}`.replace(/\\/g, "/");
-  },
 };
+
+export function generateImageUrl(imagePath) {
+  if (!imagePath) return null;
+  return `${BASE_URL_BACKEND}${imagePath}`.replace(/\\/g, "/");
+}

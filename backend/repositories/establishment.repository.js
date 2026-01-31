@@ -1,6 +1,6 @@
 import { Establishment } from "../models/establishment.model.js";
 import { Op } from "sequelize";
-import { EstablishmentUtils } from "../utils/establisment.utils.js";
+import { EstablishmentUtils } from "../utils/establishment.utils.js";
 
 const RETURN_ATTRS = [
   "id",
@@ -9,14 +9,21 @@ const RETURN_ATTRS = [
   "city",
   "state",
   "postal_code",
-  "int_number",
-  "ext_number",
   "phone_number",
+  "image_path",
 ];
 
 export const EstablishmentRepository = {
   async list(filters = {}) {
-    const { name, street, city, state, sort = "ASC", page, limit } = filters;
+    const {
+      name,
+      street,
+      city,
+      state,
+      sort = "ASC",
+      page = 1,
+      limit = 10,
+    } = filters;
 
     const where = {};
 
@@ -39,11 +46,9 @@ export const EstablishmentRepository = {
       order: [["name", sort.toUpperCase()]],
     };
 
-    if (page !== undefined && limit !== undefined) {
-      const pageNum = parseInt(page);
-      const limitNum = parseInt(limit);
-      options.offset = (pageNum - 1) * limitNum;
-      options.limit = limitNum;
+    if (limit) {
+      options.limit = parseInt(limit, 10);
+      options.offset = (parseInt(page, 10) - 1) * parseInt(limit, 10);
     }
 
     const establishments = await Establishment.findAll(options);
@@ -65,7 +70,7 @@ export const EstablishmentRepository = {
     await EstablishmentUtils.validateUniqueAttributes(
       Establishment,
       sanitizedAttrs,
-      null
+      null,
     );
     const newEstablishment = await Establishment.create(sanitizedAttrs);
     return newEstablishment;
@@ -83,7 +88,7 @@ export const EstablishmentRepository = {
     await EstablishmentUtils.validateUniqueAttributes(
       Establishment,
       sanitizedAttrs,
-      id
+      id,
     );
     Object.assign(existing, sanitizedAttrs);
     await existing.save();
@@ -95,6 +100,6 @@ export const EstablishmentRepository = {
       throw new Error("Establishment not found");
     }
     await existing.destroy();
-    return;b
+    return;
   },
 };

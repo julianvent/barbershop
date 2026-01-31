@@ -1,5 +1,5 @@
 import { EstablishmentService } from "../services/establishment.service.js";
-import { EstablishmentUtils } from "../utils/establisment.utils.js";
+import { generateImageUrl } from "../utils/establishment.utils.js";
 
 export const EstablishmentController = {
   async getAll(req, res) {
@@ -14,13 +14,11 @@ export const EstablishmentController = {
         limit: req.query.limit,
       };
       const establishments = await EstablishmentService.list(filters);
-      for (const establishment of establishments) {
-        establishment.image_path = await EstablishmentUtils.generateImageUrl(
-          establishment.image_path,
-        );
-        if (establishment.image_path == null) delete establishment.image_path;
-      }
-      res.status(200).json(establishments);
+      const data = establishments.map((establishment) => ({
+        ...(establishment.get?.() ?? establishment),
+        image_path: generateImageUrl(establishment.image_path),
+      }));
+      res.status(200).json(data);
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
@@ -30,10 +28,7 @@ export const EstablishmentController = {
     try {
       const { id } = req.params;
       const establishment = await EstablishmentService.find(id);
-      establishment.image_path = await EstablishmentUtils.generateImageUrl(
-        establishment.image_path,
-      );
-      if (establishment.image_path == null) delete establishment.image_path;
+      establishment.image_path = generateImageUrl(establishment.image_path);
       res.status(200).json(establishment);
     } catch (error) {
       res.status(404).json({ message: error.message });
@@ -45,11 +40,9 @@ export const EstablishmentController = {
       const establishmentData = req.body;
       const newEstablishment =
         await EstablishmentService.create(establishmentData);
-      newEstablishment.image_path = await EstablishmentUtils.generateImageUrl(
+      newEstablishment.image_path = generateImageUrl(
         newEstablishment.image_path,
       );
-      if (newEstablishment.image_path == null)
-        delete newEstablishment.image_path;
       res.status(201).json(newEstablishment);
     } catch (error) {
       res.status(500).json({ message: error.message });
@@ -64,12 +57,9 @@ export const EstablishmentController = {
         id,
         establishmentData,
       );
-      updatedEstablishment.image_path =
-        await EstablishmentUtils.generateImageUrl(
-          updatedEstablishment.image_path,
-        );
-      if (updatedEstablishment.image_path == null)
-        delete updatedEstablishment.image_path;
+      updatedEstablishment.image_path = generateImageUrl(
+        updatedEstablishment.image_path,
+      );
       res.status(200).json(updatedEstablishment);
     } catch (error) {
       res.status(500).json({ message: error.message });

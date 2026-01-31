@@ -1,5 +1,6 @@
 import { EstablishmentRepository } from "../repositories/establishment.repository.js";
 import { EstablishmentValidator } from "../validators/establishment.validator.js";
+import path from "path";
 import {
   ESTABLISHMENT_UPLOAD_DIR,
   existsImage,
@@ -8,7 +9,7 @@ import {
 
 export const EstablishmentService = {
   async list(filters) {
-    await EstablishmentValidator.validateListEstablishments(filters);
+    EstablishmentValidator.validateListEstablishments(filters);
     const establishments = await EstablishmentRepository.list(filters);
     return establishments;
   },
@@ -19,27 +20,40 @@ export const EstablishmentService = {
     }
     const establishment_json = establishment.toJSON();
     if (establishment_json.image_path) {
-      establishment_json.image_exists = await existsImage(
-        ESTABLISHMENT_UPLOAD_DIR,
+      establishment_json.image_exists =  existsImage(
         establishment_json.image_path,
+        ESTABLISHMENT_UPLOAD_DIR,
       );
     } else {
       establishment_json.image_exists = false;
     }
-    delete establishment_json.image_path;
     return establishment_json;
   },
   async create(establishmentData) {
-    await EstablishmentValidator.validateCreate(establishmentData);
-    const newEstablishment =
-      await EstablishmentRepository.create(establishmentData);
-    return newEstablishment;
+    if (establishmentData.image_path) {
+      establishmentData.image_path = `/${path.relative(
+        process.cwd(),
+        path.join(ESTABLISHMENT_UPLOAD_DIR, establishmentData.image_path),
+      )}`;
+    }
+    EstablishmentValidator.validateCreate(establishmentData);
+    return EstablishmentRepository.create(establishmentData);
   },
   async update(id, establishmentData) {
-    await EstablishmentValidator.validateUpdate(establishmentData);
+    EstablishmentValidator.validateUpdate(establishmentData);
     const existingEstablishment = await EstablishmentRepository.getById(id);
     if (!existingEstablishment) {
       throw new Error("Establishment not found");
+    }
+    if (
+      establishmentData.image_path &&
+      existsImage(existingEstablishment.image_path, ESTABLISHMENT_UPLOAD_DIR)
+    ) {
+      removeImage(existingEstablishment.image_path, ESTABLISHMENT_UPLOAD_DIR);
+    }
+    if (establishmentData.image_path !== undefined) {
+      establishmentData.image_path = `/${path.relative(process.cwd(),
+        path.join(ESTABLISHMENT_UPLOAD_DIR, establishmentData.image_path))}`;
     }
     await existingEstablishment.update(establishmentData);
     return existingEstablishment;
@@ -51,9 +65,9 @@ export const EstablishmentService = {
     }
     await EstablishmentRepository.delete(id);
     if (existingEstablishment.image_path) {
-      await removeImage(
-        ESTABLISHMENT_UPLOAD_DIR,
+      removeImage(
         existingEstablishment.image_path,
+        ESTABLISHMENT_UPLOAD_DIR,
       );
     }
     return existingEstablishment;
