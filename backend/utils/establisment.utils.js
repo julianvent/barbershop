@@ -1,4 +1,5 @@
 import { Op } from "sequelize";
+import { BASE_URL_BACKEND } from "../services/jwt.service.js";
 
 // The following attributes must be unique also they're required
 const REQUIRED_ATTRS = [
@@ -18,7 +19,6 @@ export const EstablishmentUtils = {
       }
     }
   },
-
   async validateUniqueAttributes(Model, attrs, excludeId = null) {
     // Check 1: Unique index constraint (name + postal_code + street)
     const uniqueIndexWhere = {
@@ -58,5 +58,9 @@ export const EstablishmentUtils = {
         `An establishment already exists at this address (${attrs.street}, ${attrs.city}, ${attrs.state})`,
       );
     }
+  },
+  async generateImageUrl(relativePath) {
+    if (relativePath == null) return null;
+    return `${BASE_URL_BACKEND}${relativePath}`.replace(/\\/g, "/");
   },
 };
