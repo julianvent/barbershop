@@ -2,6 +2,13 @@ import multer from "multer";
 import fs from "fs";
 import path from "path";
 
+// Constants
+export const PATH = "image";
+export const ALLOWED_MIME_TYPES = ["image/png", "image/jpeg", "image/jpg"];
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_FILES = 1;
+
+// Upload directories
 export const UPLOAD_DIR = path.join(process.cwd(), "uploads", "barbers");
 export const APPOINTMENT_UPLOAD_DIR = path.join(
   process.cwd(),
@@ -14,53 +21,45 @@ export const ESTABLISHMENT_UPLOAD_DIR = path.join(
   "establishments",
 );
 
-if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
-if (!fs.existsSync(APPOINTMENT_UPLOAD_DIR))
-  fs.mkdirSync(APPOINTMENT_UPLOAD_DIR, { recursive: true });
-if (!fs.existsSync(ESTABLISHMENT_UPLOAD_DIR))
-  fs.mkdirSync(ESTABLISHMENT_UPLOAD_DIR, { recursive: true });
-export const PATH = "image";
-export const ALLOWED_MIME_TYPES = ["image/png", "image/jpeg", "image/jpg"];
+// Ensure upload directories exist
+[UPLOAD_DIR, APPOINTMENT_UPLOAD_DIR, ESTABLISHMENT_UPLOAD_DIR].forEach(
+  (dir) => {
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  },
+);
 
-const barberStorage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, UPLOAD_DIR),
-  filename: (req, file, cb) => cb(null, `${Date.now()}_${file.originalname}`),
-});
-
-function barberFileFilter(req, file, cb) {
-  const nameOk = file.fieldname == PATH;
-  const mimeOk = ALLOWED_MIME_TYPES.includes(file.mimetype);
-
-  if (!mimeOk || !nameOk) return cb(null, false);
-  cb(null, true);
+// Factory functions
+function createStorage(uploadDir) {
+  return multer.diskStorage({
+    destination: (req, file, cb) => cb(null, uploadDir),
+    filename: (req, file, cb) => cb(null, `${Date.now()}_${file.originalname}`),
+  });
 }
 
-export const uploadBarberImage = multer({
-  storage: barberStorage,
-  fileFilter: barberFileFilter,
-  limits: { fileSize: 5 * 1024 * 1024, files: 1 },
-});
+function createFileFilter() {
+  return (req, file, cb) => {
+    const nameOk = file.fieldname === PATH;
+    const mimeOk = ALLOWED_MIME_TYPES.includes(file.mimetype);
 
-const appointmentStorage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, APPOINTMENT_UPLOAD_DIR),
-  filename: (req, file, cb) => cb(null, `${Date.now()}_${file.originalname}`),
-});
-
-function appointmentFileFilter(req, file, cb) {
-  const nameOk = file.fieldname === PATH;
-  const mimeOk = ["image/png", "image/jpeg", "image/jpg"].includes(
-    file.mimetype,
-  );
-
-  if (!mimeOk || !nameOk) return cb(null, false);
-  cb(null, true);
+    if (!mimeOk || !nameOk) return cb(null, false);
+    cb(null, true);
+  };
 }
 
-export const uploadAppointmentImage = multer({
-  storage: appointmentStorage,
-  fileFilter: appointmentFileFilter,
-  limits: { fileSize: 5 * 1024 * 1024, files: 1 },
-});
+function createUploader(uploadDir) {
+  return multer({
+    storage: createStorage(uploadDir),
+    fileFilter: createFileFilter(),
+    limits: { fileSize: MAX_FILE_SIZE, files: MAX_FILES },
+  });
+}
+
+// Multer instances
+export const uploadBarberImage = createUploader(UPLOAD_DIR);
+export const uploadAppointmentImage = createUploader(APPOINTMENT_UPLOAD_DIR);
+export const uploadEstablishmentImage = createUploader(
+  ESTABLISHMENT_UPLOAD_DIR,
+);
 
 export function removeImage(filename, DIR = UPLOAD_DIR) {
   const abs = path.join(DIR, filename);

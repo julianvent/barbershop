@@ -113,7 +113,7 @@ export async function seedDatabase(
       barbers,
       services,
       formatDateForTimezone,
-      t
+      t,
     );
     console.log("\nDatabase seeding completed successfully!");
     await t.commit();
@@ -228,6 +228,7 @@ async function seedEstablishment(Establishment, accounts, t) {
       state: "CDMX",
       postal_code: "06500",
       phone_number: `555000${Math.floor(1000 + Math.random() * 9000)}`,
+      image_path: "/assets/images/barbershop.png",
       account_id: accounts[0]?.id,
     },
     {
@@ -373,7 +374,7 @@ async function seedAppointment(
   barbers,
   services,
   formatDateForTimezone,
-  t
+  t,
 ) {
   const DB_TIMEZONE = "-06:00";
 
@@ -442,18 +443,24 @@ async function seedAppointment(
     );
 
     // Create appointment with timezone-aware datetime
-    const appointment = await Appointment.create({
-      ...appointmentData,
-      appointment_datetime: formattedDateTime,
-    }, { transaction: t });
+    const appointment = await Appointment.create(
+      {
+        ...appointmentData,
+        appointment_datetime: formattedDateTime,
+      },
+      { transaction: t },
+    );
 
     // Create service_appointment records
     for (const service of appointmentServices) {
-      await ServiceAppointment.create({
-        appointment_id: appointment.id,
-        service_id: service.id,
-        price: service.price,
-      }, { transaction: t });
+      await ServiceAppointment.create(
+        {
+          appointment_id: appointment.id,
+          service_id: service.id,
+          price: service.price,
+        },
+        { transaction: t },
+      );
     }
 
     appointments.push(appointment);
