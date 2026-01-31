@@ -1,7 +1,7 @@
 'use client';
 import Layout from "@/app/components/base_layout/Layout"
 import React, { useEffect, useState } from "react"
-import styles from "../../forms/EmployeeFormStyles.module.css";
+import styles from "../../../forms/EmployeeFormStyles.module.css";
 import layout from "../../Main.module.css";
 import show from "./styles.module.css";
 import { Status } from "@/app/components/form/status/Status";

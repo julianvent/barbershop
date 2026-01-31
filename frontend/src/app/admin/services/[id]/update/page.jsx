@@ -3,7 +3,7 @@ import ServiceForm from "../../../../forms/ServiceForm";
 import { updateService, getService } from "../../../../apiHandlers/adminServices";
 import React, { useEffect, useState } from "react";
 import Layout from "@/app/components/base_layout/Layout";
-import warning from "../../../forms/styles.module.css"
+import warning from "../../../../forms/styles.module.css"
 
 export default function updateServices({params}) {
     const [service, setService] = useState(null);

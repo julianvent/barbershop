@@ -4,7 +4,7 @@ import EmployeeForm from "../../../../forms/EmployeeForm";
 import { getEmployee, updateEmployee } from "@/app/apiHandlers/adminStaff";
 import React, { useState, useEffect }  from "react";
 import Layout from "@/app/components/base_layout/Layout";
-import styles from '../../../forms/EmployeeFormStyles.module.css'
+import styles from '../../../../forms/EmployeeFormStyles.module.css'
 
 export default function updateStaff({params}){
     const [employee, setEmployee] = useState(null);
@@ -18,7 +18,6 @@ export default function updateStaff({params}){
 
             }catch(err){
                 setMessage(err);
-                console.log(err);
             }
            }
            load();

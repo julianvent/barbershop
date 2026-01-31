@@ -52,7 +52,7 @@ export const streetValidation = {
 }
 
 export const externalNoValidation = {
-  id: 'ext_no',
+  id: 'ext_number',
   type: 'text',
   name: 'ext_number',
   label: 'Numero Externo',
@@ -62,7 +62,7 @@ export const externalNoValidation = {
 }
 
 export const internalNoValidation = {
-  id: 'int_no',
+  id: 'int_number',
   type: 'text',
   name: 'int_number',
   label: 'Numero Interno',

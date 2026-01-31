@@ -20,7 +20,6 @@ export default function EstablishmentForm ({onSubmit, establishment}) {
   const submit = methods.handleSubmit ( async (data) => {
     setIsCreatingEstablishment(true);
     const err = await onSubmit(data);
-
     if (err) {
       methods.setError("root.serverError", {
         type:"server",
@@ -29,7 +28,7 @@ export default function EstablishmentForm ({onSubmit, establishment}) {
       setIsCreatingEstablishment(false)
     } else {
       setIsCreatingEstablishment(false)
-      // router.push(establishmentRoute)
+      router.push(establishmentRoute)
     }
   })
 
