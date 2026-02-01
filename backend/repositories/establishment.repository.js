@@ -12,7 +12,7 @@ const RETURN_ATTRS = [
   "phone_number",
   "image_path",
   "int_number",
-  "ext_number"
+  "ext_number",
 ];
 
 export const EstablishmentRepository = {
@@ -63,13 +63,11 @@ export const EstablishmentRepository = {
     if (!establishment) {
       throw new Error("Establishment not found");
     }
-    try {
+    if (establishment.account_id) {
       const account = await AccountRepository.getById(establishment.account_id);
       establishment.dataValues.account_name = account.full_name;
-    } catch (error) {
-      throw new Error(`The associated account for establishment ${establishment.id} could not be found.
-        Error: ${error.message}`);
     }
+
     return establishment;
   },
   async create(establishment) {
