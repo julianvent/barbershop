@@ -1,6 +1,5 @@
 import { EstablishmentRepository } from "../repositories/establishment.repository.js";
 import { EstablishmentValidator } from "../validators/establishment.validator.js";
-import path from "path";
 import {
   ESTABLISHMENT_UPLOAD_DIR,
   existsImage,

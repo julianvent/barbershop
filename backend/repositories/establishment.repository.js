@@ -1,5 +1,6 @@
 import { Establishment } from "../models/establishment.model.js";
 import { Op } from "sequelize";
+import { AccountRepository } from "./account.repository.js";
 
 const RETURN_ATTRS = [
   "id",
@@ -57,10 +58,17 @@ export const EstablishmentRepository = {
   },
   async getById(id) {
     const establishment = await Establishment.findByPk(id, {
-      attributes: RETURN_ATTRS,
+      attributes: [...RETURN_ATTRS, "account_id"],
     });
     if (!establishment) {
       throw new Error("Establishment not found");
+    }
+    try {
+      const account = await AccountRepository.getById(establishment.account_id);
+      establishment.dataValues.account_name = account.full_name;
+    } catch (error) {
+      throw new Error(`The associated account for establishment ${establishment.id} could not be found.
+        Error: ${error.message}`);
     }
     return establishment;
   },
