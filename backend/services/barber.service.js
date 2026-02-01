@@ -30,7 +30,6 @@ export const BarberService = {
         return existing_barber;
     },
     async create(barberData) {
-
         if (barberData.image_path == undefined) barberData.image_path = monkeyBarber;
         else barberData.image_path = `/${path.relative(process.cwd(), path.join(UPLOAD_DIR, barberData.image_path))}`;
         BarberValidator.validateCreate(barberData);

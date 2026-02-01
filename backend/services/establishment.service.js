@@ -19,14 +19,6 @@ export const EstablishmentService = {
       throw new Error("Establishment not found");
     }
     const establishment_json = establishment.toJSON();
-    if (establishment_json.image_path) {
-      establishment_json.image_exists =  existsImage(
-        establishment_json.image_path,
-        ESTABLISHMENT_UPLOAD_DIR,
-      );
-    } else {
-      establishment_json.image_exists = false;
-    }
     return establishment_json;
   },
   async create(establishmentData) {

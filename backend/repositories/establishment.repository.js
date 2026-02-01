@@ -1,6 +1,5 @@
 import { Establishment } from "../models/establishment.model.js";
 import { Op } from "sequelize";
-import { EstablishmentUtils } from "../utils/establishment.utils.js";
 
 const RETURN_ATTRS = [
   "id",
@@ -46,7 +45,7 @@ export const EstablishmentRepository = {
       order: [["name", sort.toUpperCase()]],
     };
 
-    if (limit) {
+    if (page && limit) {
       options.limit = parseInt(limit, 10);
       options.offset = (parseInt(page, 10) - 1) * parseInt(limit, 10);
     }
@@ -55,51 +54,52 @@ export const EstablishmentRepository = {
     return establishments;
   },
   async getById(id) {
-    const establishment = await Establishment.findByPk(id);
+    const establishment = await Establishment.findByPk(id, {
+      attributes: RETURN_ATTRS,
+    });
     if (!establishment) {
       throw new Error("Establishment not found");
     }
     return establishment;
   },
   async create(establishment) {
-    await EstablishmentUtils.cannotBeEmpty(Object.values(establishment));
-    const sanitizedAttrs = {};
-    for (const key of Object.keys(establishment)) {
-      sanitizedAttrs[key] = String(establishment[key]).trim();
+    try {
+      const sanitizedAttrs = {};
+      for (const key of Object.keys(establishment)) {
+        sanitizedAttrs[key] = String(establishment[key]).trim();
+      }
+      const newEstablishment = await Establishment.create(sanitizedAttrs);
+      return Establishment.findByPk(newEstablishment.id, {
+        attributes: RETURN_ATTRS,
+      });
+    } catch (error) {
+      throw new Error("Error creating establishment: " + error.message);
     }
-    await EstablishmentUtils.validateUniqueAttributes(
-      Establishment,
-      sanitizedAttrs,
-      null,
-    );
-    const newEstablishment = await Establishment.create(sanitizedAttrs);
-    return newEstablishment;
   },
   async update(id, establishment) {
-    const existing = await Establishment.findByPk(id);
-    if (!existing) {
-      throw new Error("Establishment not found");
+    try {
+      const existing = await Establishment.findByPk(id);
+      if (!existing) {
+        throw new Error("Establishment not found");
+      }
+      await existing.update(establishment);
+      return Establishment.findByPk(existing.id, {
+        attributes: RETURN_ATTRS,
+      });
+    } catch (error) {
+      throw new Error("Error updating establishment: " + error.message);
     }
-    await EstablishmentUtils.cannotBeEmpty(Object.values(establishment));
-    const sanitizedAttrs = {};
-    for (const key of Object.keys(establishment)) {
-      sanitizedAttrs[key] = String(establishment[key]).trim();
-    }
-    await EstablishmentUtils.validateUniqueAttributes(
-      Establishment,
-      sanitizedAttrs,
-      id,
-    );
-    Object.assign(existing, sanitizedAttrs);
-    await existing.save();
-    return existing;
   },
   async delete(id) {
-    const existing = await Establishment.findByPk(id);
-    if (!existing) {
-      throw new Error("Establishment not found");
+    try {
+      const existing = await Establishment.findByPk(id);
+      if (!existing) {
+        throw new Error("Establishment not found");
+      }
+      await existing.destroy();
+      return { message: "Establishment deleted successfully" };
+    } catch (error) {
+      throw new Error("Error deleting establishment: " + error.message);
     }
-    await existing.destroy();
-    return;
   },
 };
