@@ -1,4 +1,4 @@
-import path from 'path';
+import path from "path";
 
 import { AppointmentRepository } from "../repositories/appointment.repository.js";
 import { BarberRepository } from "../repositories/barber.repository.js";
@@ -7,7 +7,12 @@ import { ServiceRepository } from "../repositories/service.repository.js";
 import { AppointmentValidator } from "../validators/appointment.validator.js";
 import { NotificationService } from "./notifications/helper/notification.service.js";
 import { DAYS } from "../validators/schedule.validator.js";
-import { APPOINTMENT_UPLOAD_DIR, existsImage, removeImage } from "../config/upload.images.js";
+import {
+  APPOINTMENT_UPLOAD_DIR,
+  existsImage,
+  removeImage,
+  normalizeImagePath,
+} from "../config/upload.images.js";
 
 const MARGIN = 15;
 export const AppointmentService = {
@@ -30,10 +35,10 @@ export const AppointmentService = {
       appointments.map(async (appointment) => {
         delete appointment.image_finish_path;
         const barber_data = await BarberRepository.getById(
-          appointment.barber_id
+          appointment.barber_id,
         );
         const services = await AppointmentRepository.getServiceByAppointmentId(
-          appointment.id
+          appointment.id,
         );
 
         let costTotal = 0;
@@ -45,9 +50,11 @@ export const AppointmentService = {
         return {
           ...json,
           cost_total: costTotal,
-          barber: barber_data ? { name: barber_data.barber_name, barber_id: barber_data.id } : null
+          barber: barber_data
+            ? { name: barber_data.barber_name, barber_id: barber_data.id }
+            : null,
         };
-      })
+      }),
     );
     return {
       data: response_appointments,
@@ -61,7 +68,6 @@ export const AppointmentService = {
   },
 
   async find(id) {
-
     const appointment = await AppointmentRepository.getById(id);
     if (!appointment) {
       throw new Error("Appointment not found");
@@ -82,11 +88,10 @@ export const AppointmentService = {
           price: service.price,
           duration: serviceData.duration,
         };
-      })
+      }),
     );
 
     const { barber_id, ...appointment_data } = appointment.toJSON();
-
 
     return {
       ...appointment_data,
@@ -94,11 +99,13 @@ export const AppointmentService = {
       services: serviceInfo,
       cost_total: costTotal,
       services: serviceInfo,
-      barber_id: barber? barber.id: null,
-      barber: barber? {
-        barber_id: barber.id,
-        barber_name: barber.barber_name,
-      }: null,
+      barber_id: barber ? barber.id : null,
+      barber: barber
+        ? {
+            barber_id: barber.id,
+            barber_name: barber.barber_name,
+          }
+        : null,
     };
   },
 
@@ -120,7 +127,7 @@ export const AppointmentService = {
     }
     const updatedAppointment = await AppointmentRepository.update(
       id,
-      appointmentData
+      appointmentData,
     );
     await NotificationService.appointmentUpdated(updatedAppointment);
     return updatedAppointment;
@@ -141,15 +148,13 @@ export const AppointmentService = {
     let barberIds = [];
 
     if (filters.barber_id) {
-
       const existingBarber = await BarberRepository.getById(filters.barber_id);
-      if(!existingBarber){
-        throw new Error("Barber not found")
+      if (!existingBarber) {
+        throw new Error("Barber not found");
       }
 
       barberIds = [Number(filters.barber_id)];
-    }
-    else {
+    } else {
       barberIds = await BarberRepository.getAllIds();
       barberIds = barberIds.map((barber) => barber.id);
     }
@@ -160,7 +165,7 @@ export const AppointmentService = {
         await AppointmentRepository.getAvailabilityAppointments(
           barberId,
           from,
-          to
+          to,
         );
       const schedule = await ScheduleRepository.getByDay(DAYS[from.getDay()]);
 
@@ -209,7 +214,6 @@ export const AppointmentService = {
       date: from,
       barbers: results,
     };
-
   },
   async complete(id, image_filename) {
     const appointment = await AppointmentRepository.getById(id);
@@ -218,18 +222,20 @@ export const AppointmentService = {
       throw new Error("Appointment not found");
     }
 
-    const new_image_finish_path = `/${path.relative(process.cwd(), path.join(APPOINTMENT_UPLOAD_DIR, image_filename))}`;
-
-    if (appointment.image_finish_path) {
-      const oldFilename = path.basename(appointment.image_finish_path);
-
-      if (existsImage(oldFilename, APPOINTMENT_UPLOAD_DIR)) {
-        removeImage(oldFilename, APPOINTMENT_UPLOAD_DIR);
-      }
+    if (
+      appointment.image_finish_path &&
+      existsImage(appointment.image_finish_path, APPOINTMENT_UPLOAD_DIR)
+    ) {
+      removeImage(appointment.image_finish_path, APPOINTMENT_UPLOAD_DIR);
     }
+
+    const normalizedPath = image_filename
+      ? normalizeImagePath(image_filename, APPOINTMENT_UPLOAD_DIR)
+      : null;
+
     const updatedAppointment = await AppointmentRepository.update(id, {
       status: "completed",
-      image_finish_path: new_image_finish_path,
+      image_finish_path: normalizedPath,
     });
 
     return updatedAppointment;
@@ -242,11 +248,9 @@ export const AppointmentService = {
     }
 
     const updatedAppointment = await AppointmentRepository.update(id, {
-      status: "cancelled"
+      status: "cancelled",
     });
 
     return updatedAppointment;
-  }
-
-
+  },
 };

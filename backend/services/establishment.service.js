@@ -5,8 +5,9 @@ import {
   ESTABLISHMENT_UPLOAD_DIR,
   existsImage,
   removeImage,
+  normalizeImagePath,
 } from "../config/upload.images.js";
-const monkeyBarber = "/assets/images/monkeyBarber.png";
+const defaultImage = "assets/images/barbershop.png";
 
 export const EstablishmentService = {
   async list(filters) {
@@ -23,19 +24,19 @@ export const EstablishmentService = {
     return establishment_json;
   },
   async create(establishmentData) {
-    if (establishmentData.image_path) {
-      establishmentData.image_path = `/${path.relative(
-        process.cwd(),
-        path.join(ESTABLISHMENT_UPLOAD_DIR, establishmentData.image_path),
-      )}`;
+    if (!establishmentData.image_path) {
+      establishmentData.image_path = defaultImage;
     } else {
-      establishmentData.image_path = monkeyBarber
+      establishmentData.image_path = normalizeImagePath(
+        establishmentData.image_path,
+        ESTABLISHMENT_UPLOAD_DIR,
+      );
     }
     EstablishmentValidator.validateCreate(establishmentData);
     return EstablishmentRepository.create(establishmentData);
   },
   async update(id, establishmentData) {
-    EstablishmentValidator.validateUpdate(establishmentData);
+    await EstablishmentValidator.validateUpdate(establishmentData, id);
     const existingEstablishment = await EstablishmentRepository.getById(id);
     if (!existingEstablishment) {
       throw new Error("Establishment not found");
@@ -46,9 +47,11 @@ export const EstablishmentService = {
     ) {
       removeImage(existingEstablishment.image_path, ESTABLISHMENT_UPLOAD_DIR);
     }
-    if (establishmentData.image_path !== undefined) {
-      establishmentData.image_path = `/${path.relative(process.cwd(),
-        path.join(ESTABLISHMENT_UPLOAD_DIR, establishmentData.image_path))}`;
+    if (establishmentData.image_path) {
+      establishmentData.image_path = normalizeImagePath(
+        establishmentData.image_path,
+        ESTABLISHMENT_UPLOAD_DIR,
+      );
     }
     await existingEstablishment.update(establishmentData);
     return existingEstablishment;
@@ -60,10 +63,7 @@ export const EstablishmentService = {
     }
     await EstablishmentRepository.delete(id);
     if (existingEstablishment.image_path) {
-      removeImage(
-        existingEstablishment.image_path,
-        ESTABLISHMENT_UPLOAD_DIR,
-      );
+      removeImage(existingEstablishment.image_path, ESTABLISHMENT_UPLOAD_DIR);
     }
     return existingEstablishment;
   },

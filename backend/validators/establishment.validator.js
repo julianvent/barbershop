@@ -52,7 +52,7 @@ export const EstablishmentValidator = {
     }
     await isEstablishmentCreated(Establishment, establishmentData);
   },
-  async validateUpdate(establishmentData) {
+  async validateUpdate(establishmentData, id) {
     if (!establishmentData || typeof establishmentData !== "object") {
       throw new Error("Body is empty or invalid");
     }
@@ -64,7 +64,7 @@ export const EstablishmentValidator = {
     await isEstablishmentCreated(
       Establishment,
       establishmentData,
-      establishmentData.id,
+      id,
     );
   },
 };

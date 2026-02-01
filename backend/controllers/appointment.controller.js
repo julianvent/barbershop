@@ -1,7 +1,7 @@
 import { AppointmentService } from "../services/appointment.service.js";
 import { generateImageUrl } from "../utils/barber.utils.js";
-export const AppointmentController = {
 
+export const AppointmentController = {
     async getAll(req, res) {
         try {
             const filters = {
