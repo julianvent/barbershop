@@ -37,7 +37,16 @@ export const EstablishmentController = {
 
   async create(req, res) {
     try {
+      if (!req.is('multipart/form-data'))
+        return res.status(400).json({
+            error: "Content-Type must be multipart/form-data"
+      });
       const establishmentData = req.body;
+
+      delete establishmentData.image_path;
+      delete establishmentData.id;
+      const file = req.files?.[0];
+      if (file) establishmentData.image_path = file.filename;
       const newEstablishment =
         await EstablishmentService.create(establishmentData);
       newEstablishment.image_path = generateImageUrl(
@@ -53,6 +62,11 @@ export const EstablishmentController = {
     try {
       const { id } = req.params;
       const establishmentData = req.body;
+      const file = req.files?.[0];
+      delete establishmentData.id;
+      delete establishmentData.image;
+      if(!establishmentData.account_id) delete establishmentData.account_id;
+      if (file) establishmentData.image_path = file.filename;
       const updatedEstablishment = await EstablishmentService.update(
         id,
         establishmentData,

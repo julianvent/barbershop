@@ -19,7 +19,14 @@ export default function EstablishmentForm ({onSubmit, establishment}) {
   const file = watch("image");
   const submit = methods.handleSubmit ( async (data) => {
     setIsCreatingEstablishment(true);
-    const err = await onSubmit(data);
+    console.log(data)
+
+    let err;
+    if(establishment){
+      err = await onSubmit(establishment.id, data)
+    } else {
+      err = await onSubmit(data);
+    }
     if (err) {
       methods.setError("root.serverError", {
         type:"server",
@@ -60,7 +67,7 @@ export default function EstablishmentForm ({onSubmit, establishment}) {
   return (
     <div>
       <FormProvider {...methods}>
-        <form onSubmit={(e) => {
+        <form encType="multipart/form-data" onSubmit={(e) => {
           e.preventDefault();
           submit()
         }}>
