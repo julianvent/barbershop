@@ -10,7 +10,7 @@ const VALID_UPDATE_FIELDS = [
   ...VALID_REQUIRED_FIELDS,
   "int_number",
   "ext_number",
-  "image_path",
+  "image_path"
 ];
 
 export const EstablishmentValidator = {

@@ -13,8 +13,8 @@ const REQUIRED_ATTRS = [
 
 export const EstablishmentUtils = {
   async cannotBeEmpty(params) {
-    for (const param of params) {
-      if (param == null || String(param).trim() === "") {
+    for (const [key, value] of params) {
+      if ((value == null || String(value).trim() === "")&& REQUIRED_ATTRS.includes(key)) {
         throw new Error("Required establishment attributes cannot be empty");
       }
     }

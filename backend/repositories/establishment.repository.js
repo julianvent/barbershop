@@ -62,7 +62,7 @@ export const EstablishmentRepository = {
     return establishment;
   },
   async create(establishment) {
-    await EstablishmentUtils.cannotBeEmpty(Object.values(establishment));
+    await EstablishmentUtils.cannotBeEmpty(Object.entries(establishment));
     const sanitizedAttrs = {};
     for (const key of Object.keys(establishment)) {
       sanitizedAttrs[key] = String(establishment[key]).trim();
@@ -80,7 +80,7 @@ export const EstablishmentRepository = {
     if (!existing) {
       throw new Error("Establishment not found");
     }
-    await EstablishmentUtils.cannotBeEmpty(Object.values(establishment));
+    await EstablishmentUtils.cannotBeEmpty(Object.entries(establishment));
     const sanitizedAttrs = {};
     for (const key of Object.keys(establishment)) {
       sanitizedAttrs[key] = String(establishment[key]).trim();
