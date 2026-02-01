@@ -6,6 +6,7 @@ import {
   existsImage,
   removeImage,
 } from "../config/upload.images.js";
+const monkeyBarber = "/assets/images/monkeyBarber.png";
 
 export const EstablishmentService = {
   async list(filters) {
@@ -27,6 +28,8 @@ export const EstablishmentService = {
         process.cwd(),
         path.join(ESTABLISHMENT_UPLOAD_DIR, establishmentData.image_path),
       )}`;
+    } else {
+      establishmentData.image_path = monkeyBarber
     }
     EstablishmentValidator.validateCreate(establishmentData);
     return EstablishmentRepository.create(establishmentData);
