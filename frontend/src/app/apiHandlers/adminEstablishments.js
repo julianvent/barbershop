@@ -79,6 +79,13 @@ export const updateEstablishment = async ({ id, data}) => {
   }
 };
 
-export const deleteEstablishment = async ({ id }) => {
-
+export const deleteEstablishment = async ( id ) => {
+    try{
+    const headers = await axiosConfig();
+    const request = await axios.delete(baseUrl+id, headers);
+    return request.data;
+  }catch (e) {
+    console.log(e)
+    throw 'Error eliminando el establecimiento'
+  }
 };

@@ -10,6 +10,8 @@ const RETURN_ATTRS = [
   "postal_code",
   "phone_number",
   "image_path",
+  "int_number",
+  "ext_number"
 ];
 
 export const EstablishmentRepository = {

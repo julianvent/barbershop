@@ -1,0 +1,14 @@
+.container {
+  display: flexbox;
+}
+
+.fieldData {
+  display: grid;
+  background-color: aqua;
+
+}
+
+.fieldData :first-child {
+  font-weight: bold
+}
+
