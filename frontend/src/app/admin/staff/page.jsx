@@ -3,7 +3,7 @@ import StaffIndex from "./client";
 import { isAdmin } from "@/app/utils/requestBuilder";
 
 export default async function Page() {
-  const isAdm = isAdmin();
+  const isAdm = await isAdmin();
   return (
     <Layout isAdmin={isAdm}>
       <StaffIndex/>
