@@ -1,26 +1,16 @@
-"use client";
-import { servicesRoute } from "@/app/utils/routes";
-import BundleForm from "../../../../forms/BundleForm";
-import { createBundle } from "../../../../apiHandlers/adminServices";
+import { isAdmin } from "@/app/utils/requestBuilder";
 import Layout from "@/app/components/base_layout/Layout";
+import NewService from "./client";
 
-export default function NewService() {
-
-  const submit = async (data, services) => {
-    try{
-      await createBundle(data,services);
-    }catch(err){
-      return err;
-    }
-  };
+export default async function Page() {
+  const isAdm = await isAdmin();
   return (
     <Layout
       headerTitle={"Nuevo paquete"}
       mainTitle={"Registrar nuevo paquete"}
-      returnRoute={servicesRoute}
+      isAdmin={isAdm}
     >
-      <title>SG BarberShop - Crear Paquetes</title>
-      <BundleForm onSubmit={submit}></BundleForm>
+      <NewService/>
     </Layout>
   );
 }

@@ -1,25 +1,18 @@
-'use client';
 import Layout from "@/app/components/base_layout/Layout";
-import EstablishmentForm from "../../../forms/EstablishmentForm";
-import { createNewEstablishment } from "../../../apiHandlers/adminEstablishments";
-export default function createEstablishment () {
-  
-  const submit = async (data) => {
-    try{
-      await createNewEstablishment({data});
-    }catch(e){
-      return e;
-    }
-  };
+import { isAdmin } from "@/app/utils/requestBuilder";
+import CreateEstablishment from "./client"
+
+export default async function Page () {
+  const isAdm = await isAdmin()
+
 
   return (
    <Layout
     headerTitle='Nuevo Establecimiento'
     mainTitle='Registrar nuevo establecimiento'
+    isAdmin={isAdm}
     >
-      <title>SGBarbershop - Crear establecimiento</title>
-      <EstablishmentForm onSubmit={submit}> </EstablishmentForm>
-
+      <CreateEstablishment/>
    </Layout> 
   )
 }

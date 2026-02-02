@@ -1,13 +1,22 @@
 .layout {
     display: grid;
     gap: 1em;
-    grid-template-rows: auto 1fr;
+    grid-template-rows: auto 1fr ;
     min-height: 100%;
     padding: 1em 2em;
     background-color: white;
     border-radius: 1em;
 }
 
+.layoutShow {
+    display: grid;
+    gap: 1em;
+    grid-template-rows: 1fr ;
+    min-height: 100%;
+    padding: 1em 2em;
+    background-color: white;
+    border-radius: 1em;
+}
 .toolbar {
     display: flex;
     justify-content: space-between;

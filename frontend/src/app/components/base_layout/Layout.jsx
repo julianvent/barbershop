@@ -4,9 +4,10 @@ import Sidebar from "@/app/components/sidebar/Sidebar";
 import styles from "./Layout.module.css";
 import { useRef, useState } from "react";
 
-export default function Layout({ children, headerTitle, mainTitle }) {
+export default function Layout({ children, headerTitle, mainTitle, isAdmin}) {
   const sidebarRef = useRef(null);
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
+
 
   function onSidebarToggle() {
     setIsSidebarVisible(!isSidebarVisible);
@@ -19,7 +20,7 @@ export default function Layout({ children, headerTitle, mainTitle }) {
         title={headerTitle}
         onSidebarToggle={onSidebarToggle}
       ></Header>
-      <Sidebar ref={sidebarRef} visible={`${isSidebarVisible}`}></Sidebar>
+      <Sidebar ref={sidebarRef} visible={`${isSidebarVisible}`} isAdmin={isAdmin}></Sidebar>
       <main className={styles.mainLayoutContainer}>
         <div>
           {mainTitle && <h1 className={styles.mainTitle}>{mainTitle}</h1>}

@@ -19,8 +19,13 @@ export default function middleware(request) {
     return response;
   }
 
-  const now = Math.floor(Date.now() / 1000);
+  if(request.nextUrl.pathname.startsWith('/admin/establishment') && payload.role != "admin"){
+    return NextResponse.redirect(new URL("/forbidden", request.url));
+  }
 
+
+
+  const now = Math.floor(Date.now() / 1000);
   if (payload.exp < now) {
     const response = NextResponse.redirect(new URL('/expired', request.url));
     response.cookies.set('expired_redirect', 'true', { httpOnly: true, maxAge: 10 });
