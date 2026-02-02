@@ -38,5 +38,5 @@ export default function middleware(request) {
 
 // Proteger solo estas rutas:
 export const config = {
-  matcher: ["/admin/:path*", "/account"],
+  matcher: ["/admin/:path*", "/account", "/forbidden"],
 };

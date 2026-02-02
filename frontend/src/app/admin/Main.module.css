@@ -17,6 +17,24 @@
     background-color: white;
     border-radius: 1em;
 }
+
+.layoutShow > div {
+    align-self: center;
+    justify-self: center;
+    box-sizing: content-box;
+    padding: 20%;
+}
+
+.layoutShow > div > ul {
+    list-style: none;
+    width: auto;
+    align-items: center;
+}
+
+.layoutShow > div > ul > li > a {
+    color:black;
+}
+
 .toolbar {
     display: flex;
     justify-content: space-between;

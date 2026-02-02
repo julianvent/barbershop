@@ -3,7 +3,6 @@ import styles from "./Sidebar.module.css";
 import { forwardRef } from "react";
 
 const Sidebar = forwardRef(({ visible, isAdmin }, ref) => {
-  console.log(isAdmin)
   return (
     <div data-visible={visible} ref={ref} className={styles.sidebar}>
       <ul>
@@ -32,7 +31,7 @@ const Sidebar = forwardRef(({ visible, isAdmin }, ref) => {
           </Link>
         </li>
         { isAdmin&&(<li>
-          <Link href="/admin/establishment">
+          <Link href="/admin/establishments">
             <div className={styles.iconContainer}>
               <img src="/icons/reshot-icon-location-map-marker-W7VG495AYC.svg" alt="" />
             </div>
