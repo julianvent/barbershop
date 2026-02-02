@@ -1,57 +1,10 @@
-'use client';
-import { staffRoute } from "@/app/utils/routes";
-import EmployeeForm from "../../../../forms/EmployeeForm";
-import { getEmployee, updateEmployee } from "@/app/apiHandlers/adminStaff";
-import React, { useState, useEffect }  from "react";
-import Layout from "@/app/components/base_layout/Layout";
-import styles from '../../../../forms/EmployeeFormStyles.module.css'
+import { isAdmin } from "@/app/utils/requestBuilder"
+import UpdateStaff from "./client";
 
-export default function updateStaff({params}){
-    const [employee, setEmployee] = useState(null);
-    const [message, setMessage] = useState(null);
-    const {id} = React.use(params);
-    useEffect(() => {
-           async function load() {
-            try{
-                const data = await getEmployee(id);
-                setEmployee(data);
-
-            }catch(err){
-                setMessage(err);
-            }
-           }
-           load();
-    }, [id]);
-
-
-    const submit = async (data) => {
-        try{
-            await updateEmployee(id, data);
-        }catch(err){
-            return err.message;
-        }
-    };
+export default async function Page({params}){
+    const isAdm = await isAdmin();
 
     return (
-        <Layout
-        headerTitle="Actualizar Empleado"
-        mainTitle={"Actualizar registro del empleado - " + (employee ? employee.barber_name : '...')}
-        returnRoute={staffRoute}
-        >
-            <title>SG BarberShop - Actualizar empleado</title>
-
-                            {
-                    message&&(
-                        <div className={styles.errorMessage}>
-                            {message}
-                        </div>
-                    )
-                }
-            <EmployeeForm 
-            onSubmit={submit}
-            employee={employee}/>
-
-        </Layout>
-        
+        <UpdateStaff params={params} isAdmin={isAdm}/>
     )
 }
