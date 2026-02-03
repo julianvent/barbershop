@@ -7,7 +7,7 @@ import { property }  from "../middlewares/require.property.middleware.js";
 const router = Router();
 
 router.post('/login', AccountController.login);
-router.get('/', requireAuth, requireRole("receptionist"), AccountController.getAll);
+router.get('/', requireAuth, requireRole(), AccountController.getAll);
 router.get('/:id', requireAuth, property("receptionist"), AccountController.getById);
 router.post('/', requireAuth, requireRole("receptionist"), AccountController.create);
 router.put('/:id', requireAuth, property("receptionist"), AccountController.update);

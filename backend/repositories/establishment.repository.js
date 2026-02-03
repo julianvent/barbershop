@@ -63,7 +63,7 @@ export const EstablishmentRepository = {
     if (!establishment) {
       throw new Error("Establishment not found");
     }
-    if (establishment.account_id) {
+    if (establishment.account_id) { 
       const account = await AccountRepository.getById(establishment.account_id);
       establishment.dataValues.account_name = account.full_name;
     }
