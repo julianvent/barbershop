@@ -1,25 +1,16 @@
-"use client";
-import ServiceForm from "../../../forms/ServiceForm";
-import { createService } from "../../../apiHandlers/adminServices";
 import Layout from "@/app/components/base_layout/Layout";
+import { isAdmin } from "@/app/utils/requestBuilder";
+import NewService from "./client";
 
-export default function NewService() {
-
-  const submit = async (data) => {
-    try{
-      await createService(data);
-    }catch(err){
-      return err;
-    }
-  };
-
+export default async function Page() {
+  const isAdm = await isAdmin();
   return (
     <Layout
       headerTitle={"Nuevo servicio"}
       mainTitle={"Registrar nuevo servicio"}
+      isAdmin={isAdm}
     >
-      <title>SG BarberShop - Crear Servicio</title>
-      <ServiceForm onSubmit={submit}></ServiceForm>
+      <NewService/>
     </Layout>
   );
 }

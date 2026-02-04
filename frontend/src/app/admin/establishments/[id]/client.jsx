@@ -1,13 +1,13 @@
 'use client';
 import { getEstablishment } from "@/app/apiHandlers/adminEstablishments";
-import Layout from "@/app/components/base_layout/Layout";
 import React, { useEffect, useState } from "react";
 import warning from '@/app/forms/styles.module.css';
 import layout from '@/app/admin/Main.module.css';
 import styles from '@/app/forms/EmployeeFormStyles.module.css';
 import Buttons from "@/app/components/form/model_buttons/Buttons";
+import Layout from "@/app/components/base_layout/Layout";
 
-export default function Establishment({params}){
+export default function Establishment({params, isAdmin}){
   const {id} = React.use(params)
   const [err, setErr] = useState(null);
   const [establishment, setEstablishment] = useState(null);
@@ -26,8 +26,9 @@ export default function Establishment({params}){
     load()
   }, [])
   return (
-    <Layout
-      headerTitle='Ver Establecimiento'>
+    <Layout isAdmin={isAdmin}
+      headerTitle='Ver Establecimiento'
+      mainTitle={'Ver establecimiento - ' + (establishment ? establishment.name: '...')}>
         <title>SG Barbershop - Ver Establecimiento</title>
         {err?(
               <div className={warning.errorMessage}>
@@ -35,8 +36,7 @@ export default function Establishment({params}){
               </div>
         ): establishment?(
 
-          <div className={layout.layout}>
-            <h1>Establecimiento - {establishment.name}</h1>
+          <div className={layout.layoutShow}>
             <div className={styles.columns}>
               <div className={styles.imageContainer}>
                 <img

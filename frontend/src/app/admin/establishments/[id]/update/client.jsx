@@ -1,12 +1,12 @@
 'use client';
 
 import { getEstablishment, updateEstablishment } from "@/app/apiHandlers/adminEstablishments";
-import Layout from "@/app/components/base_layout/Layout";
 import EstablishmentForm from "@/app/forms/EstablishmentForm";
 import React, { useEffect, useState } from "react";
 import warning from "../../../../forms/styles.module.css"
+import Layout from "@/app/components/base_layout/Layout";
 
-export default function updateEstablishments({params}){
+export default function UpdateEstablishments({params, isAdmin}){
   const {id} = React.use(params);
   const [establishment, setEstablishment] = useState(null);
   const [err, setErr] = useState(null);
@@ -41,7 +41,8 @@ export default function updateEstablishments({params}){
   return (
    <Layout
     headerTitle='Nuevo Establecimiento'
-    mainTitle='Registrar nuevo establecimiento'
+    mainTitle={'Actualizar establecimiento - ' + (establishment ? establishment.name: '...')}
+    isAdmin={isAdmin}
     >
       <title>SGBarbershop - Editar establecimiento</title>
         {err?(

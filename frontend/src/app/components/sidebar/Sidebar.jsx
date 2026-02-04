@@ -2,7 +2,7 @@ import Link from "next/link";
 import styles from "./Sidebar.module.css";
 import { forwardRef } from "react";
 
-const Sidebar = forwardRef(({ visible }, ref) => {
+const Sidebar = forwardRef(({ visible, isAdmin }, ref) => {
   return (
     <div data-visible={visible} ref={ref} className={styles.sidebar}>
       <ul>
@@ -30,14 +30,14 @@ const Sidebar = forwardRef(({ visible }, ref) => {
             <span>Personal</span>
           </Link>
         </li>
-        <li>
-          <Link href="/admin/establishment">
+        { isAdmin&&(<li>
+          <Link href="/admin/establishments">
             <div className={styles.iconContainer}>
               <img src="/icons/reshot-icon-location-map-marker-W7VG495AYC.svg" alt="" />
             </div>
             <span>Ubicaciones</span>
           </Link>
-        </li>
+        </li>)}
       </ul>
     </div>
   );
