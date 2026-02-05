@@ -18,20 +18,30 @@
     border-radius: 1em;
 }
 
-.layoutShow > div {
+.layoutForbidden {
+    display: grid;
+    gap: 1em;
+    grid-template-rows: 1fr ;
+    min-height: 100%;
+    padding: 1em 2em;
+    background-color: white;
+    border-radius: 1em;
+}
+
+.layoutForbidden > div {
     align-self: center;
     justify-self: center;
     box-sizing: content-box;
     padding: 20%;
 }
 
-.layoutShow > div > ul {
+.layoutForbidden > div > ul {
     list-style: none;
     width: auto;
     align-items: center;
 }
 
-.layoutShow > div > ul > li > a {
+.layoutForbidden > div > ul > li > a {
     color:black;
 }
 

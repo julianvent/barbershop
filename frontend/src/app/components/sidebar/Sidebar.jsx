@@ -30,14 +30,26 @@ const Sidebar = forwardRef(({ visible, isAdmin }, ref) => {
             <span>Personal</span>
           </Link>
         </li>
-        { isAdmin&&(<li>
-          <Link href="/admin/establishments">
-            <div className={styles.iconContainer}>
-              <img src="/icons/reshot-icon-location-map-marker-W7VG495AYC.svg" alt="" />
-            </div>
-            <span>Ubicaciones</span>
-          </Link>
-        </li>)}
+        { isAdmin&&(
+          <>
+          <li>
+            <Link href="/admin/establishments">
+              <div className={styles.iconContainer}>
+                <img src="/icons/reshot-icon-location-map-marker-W7VG495AYC.svg" alt="" />
+              </div>
+              <span>Ubicaciones</span>
+            </Link>
+          </li>
+          <li>
+            <Link href="/admin/accounts">
+              <div className={styles.iconContainer}>
+                <img src="/icons/accountEdit.svg" alt="" />
+              </div>
+              <span>Cuentas</span>
+            </Link>
+          </li>
+          </>
+        )}
       </ul>
     </div>
   );

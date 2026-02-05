@@ -6,6 +6,11 @@ export const status = [
   { id: 4, name: "Cancelada", value: "cancelled" },
 ];
 
+export const roles = [
+  {id: 1, name: "Administrador", value: "admin"},
+  {id: 2, name: "Recepcionista", value: "receptionist"},
+  {id: 3, name: "Barbero", value: "barber"}
+]
 
 export const appointments_actions = [
   {

@@ -8,7 +8,7 @@ export default async function forbidden(){
   return (
     <Layout isAdmin={isAdm}>
         <title>SG BarberShop</title>
-        <article className={styles.layoutShow}>
+        <article className={styles.layoutForbidden}>
           <div>
             <h2>No tienes permiso para ver esta pagina</h2>
             <p>Contacta al administrador para cualquier aclaracion</p>

@@ -1,6 +1,6 @@
 import { Account } from "../models/account.model.js";
 import { Op } from "sequelize";
-const RETURN_ATTRS = ["email", "full_name", "role"];
+const RETURN_ATTRS = ["id", "email", "full_name", "role"];
 
 export const AccountRepository = {
   async getAll({ page = 1, pageSize = 20, q } = {}) {
