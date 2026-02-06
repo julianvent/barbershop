@@ -70,3 +70,17 @@ export async function updateAccount(data){
         return 'Error actualizando los datos'
     }
 }
+
+
+export async function deleteAccount(id){
+    try{
+        const userId = await getId();
+        if(userId == id) throw '1'
+        const headers = await axiosConfig();
+        const uri = baseRoute +'/'+ id;
+        await axios.delete(uri, headers);      
+    }catch(err){
+        if (err == '1') throw 'No puedes eliminar la cuenta de la sesion activa' 
+        throw 'Error eliminando la cuenta'
+    }    
+}

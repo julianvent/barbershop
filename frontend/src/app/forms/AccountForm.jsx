@@ -8,6 +8,7 @@ import Select from '../components/form/input/Select';
 import { roles } from '../utils/data';
 import { useEffect, useState } from 'react';
 import { emailValidation, fullNameValidation, passwordValidation, roleValidation } from '../utils/adminAccountValidator';
+import { deleteAccount } from '../apiHandlers/account';
 
 export default function AccountForm ({onSubmit, account}) {
   const router = useRouter();
@@ -34,6 +35,22 @@ export default function AccountForm ({onSubmit, account}) {
     
     setIsCreatingAccount(false);
   });
+
+  const destroyAccount = async () => {
+    setIsCreatingAccount(true);
+
+    try {
+      await deleteAccount(account.id);
+      router.push(accountsRoute);
+    } catch (err) {
+      methods.setError("root.serverError", {
+        type: "server",
+        message: err,
+      });
+    }
+
+    setIsCreatingAccount(false);
+  };
   
   useEffect(() => {
       if (account) {
@@ -73,7 +90,20 @@ export default function AccountForm ({onSubmit, account}) {
           <div className={styles.fieldsConta}>
 
               <div className={styles.buttons}>
+                  {account&&(
+                    <button
+                      disabled={isCreatingAccount}
+                      className={styles.deleteButton}
+                      onClick={ async (e) => {
+                        e.preventDefault();
+                        destroyAccount();
+                      }}
+                      >
+                        Eliminar
+                    </button>
+                  )}
                   <button
+                      disabled={isCreatingAccount}
                       className={styles.cancelButton}
                       onClick={(e) => {
                           e.preventDefault();
