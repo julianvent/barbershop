@@ -10,7 +10,8 @@ export const AppointmentController = {
                 sort: req.query.sort,
                 page: req.query.page,
                 limit: req.query.limit,
-                barber_id: req.query.barber_id
+                barber_id: req.query.barber_id,
+                establishment_id: req.query.establishment_id
             };
             const appointments = await AppointmentService.list(filters);
             res.status(200).json(appointments);

@@ -1,5 +1,4 @@
 import { sequelize } from "../config/database.config.js";
-//import { sequelize } from "../../config/database.config.js";
 import { DataTypes } from "sequelize";
 
 export const Appointment = sequelize.define(

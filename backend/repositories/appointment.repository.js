@@ -2,6 +2,7 @@ import { Appointment } from "../models/appointment.model.js";
 import { ServiceRepository } from "./service.repository.js";
 import { ServiceAppointment } from "../models/associations/service.appointment.model.js";
 import { BarberRepository } from "../repositories/barber.repository.js";
+import { Barber } from "../models/barber.model.js";
 import { Op } from "sequelize";
 import { DAYS } from "../validators/schedule.validator.js";
 import { ScheduleRepository } from "./schedule.repository.js";
@@ -10,11 +11,25 @@ import {
   formatDateForTimezone,
 } from "../utils/appointment.utils.js";
 
+const RETURN_ATTRS = [
+  "id",
+  "customer_name",
+  "customer_phone",
+  "customer_email",
+  "appointment_datetime",
+  "total_duration",
+  "status",
+  "barber_id",
+  "image_finish_path",
+  "establishment_id",
+];
+
 const availability_states = ["pending", "confirmed"];
 
 export const AppointmentRepository = {
   async getAll({
     barberId = null,
+    establishmentId = null,
     statusAppointment = null,
     from = null,
     to = null,
@@ -40,6 +55,17 @@ export const AppointmentRepository = {
     if (offset != null) options.offset = offset;
     if (limit != null) options.limit = limit;
 
+    if (establishmentId != null) {
+      options.include = [
+        {
+          model: Barber,
+          as: "barber",
+          where: { establishment_id: establishmentId },
+          attributes: [],
+        },
+      ];
+    }
+
     return Appointment.findAndCountAll(options);
   },
 
@@ -53,7 +79,14 @@ export const AppointmentRepository = {
 
   async create(appointment) {
     let sum_duration = 0;
-    await BarberRepository.getById(appointment.barber_id);
+    const barber = await BarberRepository.getById(appointment.barber_id);
+
+    if (
+      appointment.establishment_id &&
+      barber.establishment_id !== appointment.establishment_id
+    ) {
+      throw new Error("Barber does not belong to the specified establishment");
+    }
 
     const appointmentDateStr = formatDateForTimezone(
       appointment.appointment_datetime,
@@ -226,7 +259,12 @@ export const AppointmentRepository = {
     }
     await existingAppointment.destroy();
   },
-  async getAvailabilityAppointments(barberId, from, to) {
+  async getAvailabilityAppointments(
+    barberId,
+    from,
+    to,
+    establishmentId = null,
+  ) {
     const fromFormatted = formatDateForTimezone(from);
     const toFormatted = formatDateForTimezone(to);
 
@@ -238,6 +276,20 @@ export const AppointmentRepository = {
     if (barberId != null) where.barber_id = barberId;
 
     where.status = { [Op.in]: availability_states };
-    return Appointment.findAll({ where });
+
+    const options = { where };
+
+    if (establishmentId != null) {
+      options.include = [
+        {
+          model: Barber,
+          as: "barber",
+          where: { establishment_id: establishmentId },
+          attributes: [],
+        },
+      ];
+    }
+
+    return Appointment.findAll(options);
   },
 };

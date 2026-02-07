@@ -43,6 +43,10 @@ export const AppointmentValidator = {
       );
     }
 
+    if (data.establishment_id != null && !Number.isInteger(Number(data.establishment_id))) {
+      throw new Error("establishment_id must be an integer");
+    }
+
     const dt = new Date(data.appointment_datetime);
     if (Number.isNaN(dt.getTime())) {
       throw new Error('appointment_datetime must be a valid date');
@@ -73,6 +77,9 @@ export const AppointmentValidator = {
     const page = filters.page != null ? Number(filters.page) : null;
     const limit = filters.limit != null ? Number(filters.limit) : null;
     const status = filters.status != null ? filters.status : null;
+    const establishmentId = filters.establishment_id != null
+      ? Number(filters.establishment_id)
+      : null;
 
     if(status != null && !states.includes(status)){
       throw new Error(
@@ -82,6 +89,10 @@ export const AppointmentValidator = {
 
     if(barberId != null && !Number.isInteger(barberId)) {
       throw new Error("barber_id must be an integer");
+    }
+
+    if(establishmentId != null && !Number.isInteger(establishmentId)) {
+      throw new Error("establishment_id must be an integer");
     }
 
     if(sort != null && !orders.includes(sort)){
@@ -117,12 +128,13 @@ export const AppointmentValidator = {
     }
 
     return {
-        barber_id: barberId,
-        from: fromDate,
-        to: toDate,
-        sort: sort ?? 'ASC',
-        page: filters.page ?? 1,
-        limit: limit ? Math.min(limit, 50) : 50
+      barber_id: barberId,
+      establishment_id: establishmentId,
+      from: fromDate,
+      to: toDate,
+      sort: sort ?? 'ASC',
+      page: filters.page ?? 1,
+      limit: limit ? Math.min(limit, 50) : 50
     };
   },
   validateAvailabilityAppointment(filters){

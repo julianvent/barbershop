@@ -10,6 +10,7 @@
 
 // Import all association files
 import "./associations/establishment.associations.js";
+import "./associations/barber.associations.js";
 
 // Re-export all models for convenience
 export { Account } from "./account.model.js";

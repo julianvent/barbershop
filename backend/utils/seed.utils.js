@@ -100,10 +100,10 @@ export async function seedDatabase(
     }
 
     // Seed all data
-    const services = await seedService(Service, t);
-    const barbers = await seedBarber(Barber, t);
     const accounts = await seedAccount(Account, t);
     const establishments = await seedEstablishment(Establishment, accounts, t);
+    const barbers = await seedBarber(Barber, t);
+    const services = await seedService(Service, t);
     for (const est of establishments) {
       await seedSchedulesForEstablishment(Schedule, est.id, t);
     }
@@ -186,7 +186,14 @@ async function seedBarber(Barber, t) {
     "carlos.alberto.carmona.lopez",
   ];
   const barbers = [];
+  let i = 0;
+  let establishment_id;
   for (let name of teamName) {
+    if ( i % 2 === 0) {
+      establishment_id = 1;
+    } else {
+      establishment_id = 2;
+    }
     const barber = await Barber.create(
       {
         barber_name: name,
@@ -194,10 +201,12 @@ async function seedBarber(Barber, t) {
         is_active: true,
         phone: `555${Math.floor(1000000 + Math.random() * 9000000)}`,
         email: `${teamNameEmail[teamName.indexOf(name)]}@barbershop.com`,
+        establishment_id: establishment_id,
       },
       { transaction: t },
     );
     barbers.push(barber);
+    i++;
   }
 
   const keffBarber = await Barber.create(
@@ -207,6 +216,7 @@ async function seedBarber(Barber, t) {
       is_active: true,
       phone: `555${Math.floor(1000000 + Math.random() * 9000000)}`,
       email: `kevin.sebastian.frias.garcia@barbershop.com`,
+      establishment_id: 1,
     },
     { transaction: t },
   );

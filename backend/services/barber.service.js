@@ -84,4 +84,25 @@ export const BarberService = {
     }
     return BarberRepository.delete(id);
   },
+  async listByEstablishment(establishmentId, filters) {
+    const { limit, page, sort } =
+      await BarberValidator.validateFiltersListbarbers(filters);
+    const offset = (page - 1) * limit;
+    const { rows: barbers, count } = await BarberRepository.getByEstablishmentId(
+      establishmentId,
+      offset,
+      limit,
+      sort,
+    );
+
+    return {
+      data: barbers,
+      meta: {
+        page: page,
+        limit: limit,
+        total: count,
+        pages: page,
+      },
+    };
+  },
 };

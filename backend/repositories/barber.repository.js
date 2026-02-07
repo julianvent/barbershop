@@ -22,7 +22,8 @@ export const BarberRepository = {
                 is_active: true,
                 image_path: barberData.image_path,
                 phone: barberData.phone,
-                email: barberData.email
+                email: barberData.email,
+                establishment_id: barberData.establishment_id,
             });
             return Barber.findByPk(newBarber.id,{
                 attributes: RETURN_ATTRS
@@ -65,5 +66,17 @@ export const BarberRepository = {
     },
     async getAllIds(){
         return Barber.findAll({attributes: ["id"], raw: true})
+    },
+    async getByEstablishmentId(establishmentId, offset, limit, sort = 'ASC'){
+        const options = {
+            attributes: RETURN_ATTRS,
+            where: { establishment_id: establishmentId },
+            order: [['id', sort]]
+        }
+
+        if (offset != null) options.offset = offset;
+        if (limit  != null) options.limit  = limit;
+
+        return Barber.findAndCountAll(options);
     }
 }

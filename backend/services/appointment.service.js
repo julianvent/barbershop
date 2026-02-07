@@ -17,12 +17,13 @@ import {
 const MARGIN = 15;
 export const AppointmentService = {
   async list(filters) {
-    const { barber_id, from, to, sort, page, limit } =
+    const { barber_id, establishment_id, from, to, sort, page, limit } =
       await AppointmentValidator.validateFiltersListAppointments(filters);
     const offset = (page - 1) * limit;
 
     const { rows: appointments, count } = await AppointmentRepository.getAll({
       barberId: barber_id,
+      establishmentId: establishment_id,
       statusAppointment: filters.status_appointment,
       from,
       to,

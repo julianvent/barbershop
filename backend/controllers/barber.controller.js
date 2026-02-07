@@ -7,8 +7,16 @@ export const BarberController = {
             const filters = {
                 page: req.query.page,
                 limit: req.query.limit,
+                establishment_id: req.query.establishment_id
             }
-            const result = await BarberService.list(filters)
+            
+            let result;
+            if (filters.establishment_id) {
+                result = await BarberService.listByEstablishment(filters.establishment_id, filters);
+            } else {
+                result = await BarberService.list(filters);
+            }
+            
             const data = result.data.map(barber => ({
                 ...barber.get?.() ?? barber,
                 image_path: generateImageUrl(barber.image_path)

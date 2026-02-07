@@ -23,12 +23,20 @@ export const Barber = sequelize.define(
     },
     email: {
       type: DataTypes.STRING,
-      allowNull: true
+      allowNull: true,
     },
     phone: {
       type: DataTypes.STRING,
-      allowNull: true
-    }
+      allowNull: true,
+    },
+    establishment_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "establishment",
+        key: "id",
+      },
+    },
   },
-  { tableName: "barber" }
+  { tableName: "barber" },
 );
