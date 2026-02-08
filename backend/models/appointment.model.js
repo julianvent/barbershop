@@ -47,6 +47,15 @@ export const Appointment = sequelize.define(
       type: DataTypes.STRING(255),
       allowNull: true,
     },
+    establishment_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: "establishment",
+        key: "id",
+      },
+      onDelete: "SET NULL",
+    }
   },
   { tableName: "appointment", timestamps: false, underscored: true }
 );

@@ -19,7 +19,6 @@ export default function EstablishmentForm ({onSubmit, establishment}) {
   const file = watch("image");
   const submit = methods.handleSubmit ( async (data) => {
     setIsCreatingEstablishment(true);
-    console.log(data)
 
     let err;
     if(establishment){

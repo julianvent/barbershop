@@ -12,6 +12,16 @@ export const getEmployees = async () => {
     }
 };
 
+export const getEmployeesByEstablishment = async (establishment_id) => {
+    try{
+        const headers = await axiosConfig();
+        const response = await axios.get(baseUrl + `?establishment_id=${establishment_id}`, headers);
+        return response.data;
+    }catch(err){
+        throw 'No se pudieron recuperar los barberos de este establecimiento';
+    }
+}
+
 export const createEmployee = async (data) => {
     try {
       const headers = await axiosConfig();
@@ -32,7 +42,6 @@ export const createEmployee = async (data) => {
       await axios.post(baseUrl , formData, headers);
 
     } catch (err) {
-      console.log(err);
       throw 'Error al registrar el empleado';
     }
 };
@@ -77,7 +86,6 @@ export const deleteEmployee = async (id) =>{
         const headers = await axiosConfig();
         await axios.delete(baseUrl + id, headers);
     }catch(err){
-        console.log(err);
         throw 'Error al eliminar el registro del empleado';
     }
 

@@ -6,7 +6,6 @@ axios.defaults.headers.post["Content-Type"] = "application/json";
 
 export function signUp(data) {
   data = { ...data, role: "receptionist" };
-  console.log(data);
 
   try {
     axios.post(signUpApiRoute, data, {
@@ -18,9 +17,6 @@ export function signUp(data) {
     redirect(signInRoute);
   } catch (error) {
     if (error.response) {
-      console.log(error.response.data);
-      console.log(error.response.status);
-      console.log(error.response.headers);
     }
   }
 }

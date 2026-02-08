@@ -136,6 +136,13 @@ export default function AppointmentDetail({
               <h2>Datos de la cita</h2>
               <div className={styles.dataDistribution}>
                 <div className={styles.data}>
+                  <p htmlFor="establishment">
+                    <strong>Establecimiento</strong>
+                  </p>
+                  {<p>{appointment.establishment_name}</p>}
+                </div>
+
+                <div className={styles.data}>
                   <p htmlFor="date">
                     <strong>Fecha programada</strong>
                   </p>

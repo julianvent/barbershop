@@ -1,6 +1,7 @@
 import path from "path";
 
 import { AppointmentRepository } from "../repositories/appointment.repository.js";
+import { EstablishmentRepository } from "../repositories/establishment.repository.js";
 import { BarberRepository } from "../repositories/barber.repository.js";
 import { ScheduleRepository } from "../repositories/schedule.repository.js";
 import { ServiceRepository } from "../repositories/service.repository.js";
@@ -74,7 +75,10 @@ export const AppointmentService = {
       throw new Error("Appointment not found");
     }
     const services = await AppointmentRepository.getServiceByAppointmentId(id);
-
+    let establishment = null;    
+    if(appointment.establishment_id){
+      establishment = await EstablishmentRepository.getById(appointment.establishment_id)
+    }
     const barber = await BarberRepository.getById(appointment.barber_id);
 
     let costTotal = 0;
@@ -101,6 +105,7 @@ export const AppointmentService = {
       cost_total: costTotal,
       services: serviceInfo,
       barber_id: barber ? barber.id : null,
+      establishment_name: establishment? establishment.name : "N/A",
       barber: barber
         ? {
             barber_id: barber.id,

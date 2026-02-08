@@ -1,6 +1,6 @@
 import { Barber } from "../models/barber.model.js";
 
-const RETURN_ATTRS = ["id", "barber_name", "is_active", "image_path", "phone", "email"];
+const RETURN_ATTRS = ["id", "barber_name", "is_active", "image_path", "phone", "email", "establishment_id"];
 
 export const BarberRepository = {
     async list(offset, limit, sort){

@@ -20,7 +20,6 @@ export const getEstablishment = async ({ id }) => {
     const request = await axios.get(baseUrl+id, headers);
     return request.data;
   }catch (e) {
-    console.log(e)
     throw 'Error obteniendo el establecimiento'
   }
 };
@@ -47,7 +46,6 @@ export const createNewEstablishment = async ({ data }) => {
     await axios.post(baseUrl, formData, headers)
     return null;
   } catch (e) {
-    console.log(e);
     throw 'Error creando el establecimiento revise la informacion ingresada';
   }
 };
@@ -74,7 +72,6 @@ export const updateEstablishment = async ({ id, data}) => {
     await axios.put(baseUrl+id, formData, headers)
     return null;
   } catch (e) {
-    console.log(e);
     throw 'Error actualizando el establecimiento revise la informacion ingresada';
   }
 };
@@ -85,7 +82,6 @@ export const deleteEstablishment = async ( id ) => {
     const request = await axios.delete(baseUrl+id, headers);
     return request.data;
   }catch (e) {
-    console.log(e)
     throw 'Error eliminando el establecimiento'
   }
 };

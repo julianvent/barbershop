@@ -19,7 +19,6 @@ export default function updateEstablishments({params}){
         const data = await getEstablishment({id});
         delete data.account_id;
         delete data.image_exists;
-        console.log(data)
         setEstablishment(data);
       } catch (e) {
         setErr(e)

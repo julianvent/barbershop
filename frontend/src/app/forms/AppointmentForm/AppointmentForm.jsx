@@ -15,8 +15,9 @@ import {
   serviceValidation,
   statusValidation,
   timeValidation,
+  establishmentValidation
 } from "@/app/utils/appointmentValidators";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useEffectEvent, useMemo, useState } from "react";
 import { status } from "../../utils/data";
 import { useRouter } from "next/navigation";
 import {
@@ -27,9 +28,10 @@ import {
 import BarberSelector from "@/app/components/form/barberSelector/BarberSelector";
 import TimeSelector from "@/app/components/form/timeSelector/TimeSelector";
 import ServiceSelector from "@/app/components/form/serviceSelector/ServiceSelector";
-import { getEmployees } from "../../apiHandlers/adminStaff";
-import { getServices } from "../../apiHandlers/adminServices";
+import { getEmployeesByEstablishment } from "../../apiHandlers/adminStaff";
+import { getServices, getServicesByEstablishment } from "../../apiHandlers/adminServices";
 import { appointmentsRoute } from "@/app/utils/routes";
+import { getEstablishments } from "@/app/apiHandlers/adminEstablishments";
 
 export default function AppointmentForm({ appointment, mode }) {
   const [availableTimes, setAvailableTimes] = useState([]);
@@ -38,16 +40,17 @@ export default function AppointmentForm({ appointment, mode }) {
   const [formData, setFormData] = useState(null);
   const [error, setError] = useState(null);
 
+  const [barbers, setBarbers] = useState([]);
+  const [services, setServices] = useState([])
   const router = useRouter();
-  const barbers = useBarbers();
-  const services = useServices();
+  const establishments = useEstablishment();
 
   const methods = useForm({ defaultValues: {} });
 
   const handleFormValidation = (data) => {
     // Store form data and open confirmation modal
     setFormData(data);
-    MicroModal.show("confirm-appointment-modal");
+    if (data.establishment_id != "") MicroModal.show("confirm-appointment-modal");
   };
 
   const confirmSubmit = async () => {
@@ -69,6 +72,10 @@ export default function AppointmentForm({ appointment, mode }) {
   };
 
   // -- watch values --
+  const establishmentId = useWatch({
+    name: establishmentValidation.id,
+    control: methods.control,
+  });
   const barberId = useWatch({
     name: barberValidation.id,
     control: methods.control,
@@ -98,8 +105,7 @@ export default function AppointmentForm({ appointment, mode }) {
       setMinDate(getToday());
       methods.resetField("date", { defaultValue: minDate });
     }
-  }, [appointment, minDate, methods]);
-
+  }, [appointment, minDate, methods, establishments]);
   useEffect(() => {
     if (barberId) {
       async function fetchAvailability(barberId) {
@@ -119,6 +125,27 @@ export default function AppointmentForm({ appointment, mode }) {
     }
   }, [barberId, date]);
 
+  useEffect(() => {
+    if (establishmentId) {
+      async function fetchAvailability(establishmentId) {
+        try {
+          setAvailableTimes([]);
+          setServices([]);
+          setBarbers([]);
+          const dataEmployees = await getEmployeesByEstablishment(establishmentId);
+          setBarbers(dataEmployees.data);
+
+          const dataService = await getServicesByEstablishment(establishmentId);
+          setServices(dataService)
+        } catch (error) {
+          setServices([]);
+          setBarbers([]);
+        }
+      }
+      fetchAvailability(establishmentId);
+    }
+  }, [establishmentId]);
+
   return (
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(handleFormValidation)}>
@@ -134,6 +161,11 @@ export default function AppointmentForm({ appointment, mode }) {
               <Input {...phoneValidation}></Input>
               <Input {...customerEmailValidation}></Input>
             </fieldset>
+          </div>
+
+          <div className={styles.fieldsContainer}>
+            <h2>Seleccione el establecimiento deseado:</h2>
+            <Select options={establishments} {...establishmentValidation}></Select>
           </div>
 
           <div className={styles.fieldsContainer}>
@@ -191,7 +223,7 @@ export default function AppointmentForm({ appointment, mode }) {
                 : "Programar cita"}
             </button>
 
-            <SebasModal
+            {establishmentId&&servicesIds&&(<SebasModal
               id="confirm-appointment-modal"
               title={appointment ? "Confirmar cambios" : "Confirmar nueva cita"}
               confirmText={appointment ? "Guardar cambios" : "Crear cita"}
@@ -214,11 +246,19 @@ export default function AppointmentForm({ appointment, mode }) {
                     <strong>Teléfono:</strong> {formData.customer_phone}
                   </p>
                   <br />
+
+                  <p>
+                    <strong>Establecimiento:</strong>{" "}
+                    {
+                      establishments.find((establishment) => establishment.id == establishmentId)
+                        .name
+                    }
+                  </p>
                   <p>
                     <strong>Barbero:</strong>{" "}
                     {
                       barbers.find((barber) => barber.id == barberId)
-                        .barber_name
+                        ?.barber_name ?? "N/A"
                     }
                   </p>
 
@@ -249,7 +289,7 @@ export default function AppointmentForm({ appointment, mode }) {
                   </p>
                 </div>
               )}
-            </SebasModal>
+            </SebasModal>)}
 
             <SebasModal
               id="error-appointment-modal"
@@ -267,45 +307,43 @@ export default function AppointmentForm({ appointment, mode }) {
   );
 }
 
-function useBarbers() {
-  const [barbers, setBarbers] = useState([]);
+function useEstablishment() {
+  const [establishment, setEstablishment] = useState([]);
 
   useEffect(() => {
-    async function fetchBarbers() {
+    async function fetchEstablishments() {
       try {
-        const data = await getEmployees();
-        setBarbers(data.data);
+        const data = await getEstablishments();
+        const es =data.map((e) => {
+          return {
+            id: e.id,
+            value: e.id,
+            name: e.name
+          }
+        })
+        const locals = [
+          {
+            id: "",
+            value: "",
+            name: "Selecciona un establecimiento"
+          },
+          ...es]
+        setEstablishment(locals);
       } catch (error) {
-        return barbers;
+        return establishment;
       }
     }
-    fetchBarbers();
+    fetchEstablishments();
   }, []);
-  return barbers;
-}
-
-function useServices() {
-  const [services, setServices] = useState([]);
-
-  useEffect(() => {
-    async function fetchServices() {
-      try {
-        const data = await getServices();
-        setServices(data);
-      } catch (error) {
-        return services;
-      }
-    }
-    fetchServices();
-  }, []);
-  return services;
+  return establishment;  
 }
 
 function parseAppointment(appointment) {
   const parsed = { ...appointment };
-
   // convert barber id into a string, since radio input works with string values
   parsed.barber_id = String(parsed.barber?.barber_id ?? parsed.barber_id ?? "");
+  parsed.establishment_id = String(parsed.establishment_id ?? "");
+  console.log(parsed)
 
   // convert services ids into strings, since checkbox input works with string values
   const services_ids = (parsed.services || []).map((service) =>
@@ -329,12 +367,15 @@ function getToday() {
 function calculateTotal(servicesIds = [], services) {
   let totalPrice = 0;
   let totalDuration = 0;
-  servicesIds.forEach((id) => {
-    const service = services.find((service) => service.id == id);
-    if (service) {
-      totalPrice += service.price;
-      totalDuration += service.duration;
-    }
-  });
+  if(servicesIds){
+    servicesIds.forEach((id) => {
+      const service = services.find((service) => service.id == id);
+      if (service) {
+        totalPrice += service.price;
+        totalDuration += service.duration;
+      }
+    });
+
+  }
   return { totalPrice, totalDuration };
 }

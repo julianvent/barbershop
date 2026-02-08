@@ -83,7 +83,7 @@ export const AppointmentRepository = {
 
     if (
       appointment.establishment_id &&
-      barber.establishment_id !== appointment.establishment_id
+      barber.establishment_id !== parseInt(appointment.establishment_id)
     ) {
       throw new Error("Barber does not belong to the specified establishment");
     }
@@ -165,6 +165,7 @@ export const AppointmentRepository = {
       total_duration: totalDuration,
       status: appointment.status,
       barber_id: appointment.barber_id,
+      establishment_id: appointment.establishment_id
     });
 
     const services_ids = [];

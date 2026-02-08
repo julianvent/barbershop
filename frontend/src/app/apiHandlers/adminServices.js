@@ -18,6 +18,18 @@ export const getServices = async () => {
   }
 };
 
+
+export const getServicesByEstablishment = async (establishmentId) => {
+  try {
+    const headers = axiosConfig();
+    const request = await axios.get(getServicesApiRoute + `?establishment_id=${establishmentId}`, headers);
+    const data = request.data.data;
+    return data;
+  } catch (error) {
+    throw "No se pudieron recuperar los servicios de este establecimiento";
+  }  
+}
+
 export const createService = async (data) => {
   try {
     const headers = await axiosConfig();

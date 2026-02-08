@@ -51,6 +51,13 @@ export const barberValidation = {
   },
 };
 
+export const establishmentValidation = {
+  id: "establishment_id",
+  validation: {
+    required: "Selecciona un establecimiento*"
+  }
+}
+
 export const serviceValidation = {
   id: "services_ids",
   validation: {
