@@ -41,4 +41,11 @@ export const ServiceService = {
       throw new Error("Service not found or could not be deactivated");
     }
   },
+
+  async getByEstablishment(establishmentId, params = {}) {
+    if (!establishmentId || isNaN(Number(establishmentId))) {
+      throw new Error("Valid establishment ID is required");
+    }
+    return ServiceRepository.getByEstablishment(Number(establishmentId), params);
+  },
 };

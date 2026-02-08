@@ -1,28 +1,30 @@
 import { sequelize } from "../../config/database.config.js";
 import { DataTypes } from "sequelize";
 
-export const ServiceAppointment = sequelize.define(
-  "ServiceAppointment",
+export const EstablishmentService = sequelize.define(
+  "establishment_service",
   {
-    appointment_id: {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    establishment_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "appointment",
+        model: "establishments",
         key: "id",
       },
-      onDelete: "CASCADE",
     },
     service_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "service",
+        model: "services",
         key: "id",
       },
-      onDelete: "CASCADE",
     },
-
     price: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
@@ -32,5 +34,7 @@ export const ServiceAppointment = sequelize.define(
       },
     },
   },
-  { tableName: "service_appointment", timestamps: false, underscored: true },
+  {
+    timestamps: false,
+  },
 );

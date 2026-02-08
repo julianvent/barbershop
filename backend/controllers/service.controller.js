@@ -3,11 +3,20 @@ import { ServiceService } from "../services/service.service.js";
 export const ServiceController = {
   async getAll(req, res) {
     try {
-      const { page, limit, q, sort, dir } = req.query;
-      const result = await ServiceService.list({ page, limit, q, sort, dir });
+      const { page, limit, q, sort, dir, establishment_id } = req.query;
+      const result = await ServiceService.list({ page, limit, q, sort, dir, establishment_id });
       res.json(result);
     } catch (e) {
       res.status(500).json({ error: e.message });
+    }
+  },
+
+  async getByEstablishment(req, res) {
+    try {
+      const services = await ServiceService.getByEstablishment(req.params.establishment_id);
+      res.json(services);
+    } catch (e) {
+      res.status(404).json({ error: e.message });
     }
   },
 

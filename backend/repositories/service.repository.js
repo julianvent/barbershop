@@ -1,4 +1,5 @@
 import { Service } from "../models/service.model.js";
+import { EstablishmentService } from "../models/associations/establishment.service.model.js";
 import { Op } from "sequelize";
 
 const RETURN_ATTRS = [
@@ -12,7 +13,14 @@ const RETURN_ATTRS = [
 ];
 
 export const ServiceRepository = {
-  async list({ page = 1, limit = 10, q = "", sort = "id", dir = "ASC" }) {
+  async list({
+    page = 1,
+    limit = 10,
+    q = "",
+    sort = "id",
+    dir = "ASC",
+    establishment_id = null,
+  }) {
     page = Number(page);
     limit = Number(limit);
     const offset = (page - 1) * limit;
@@ -39,13 +47,27 @@ export const ServiceRepository = {
     }
     dir = dir?.toUpperCase() === "DESC" ? "DESC" : "ASC";
 
-    const { rows, count } = await Service.findAndCountAll({
+    const options = {
       where,
       attributes: RETURN_ATTRS,
       order: [[sort, dir]],
       limit,
       offset,
-    });
+    };
+
+    if (establishment_id != null) {
+      options.include = [
+        {
+          model: EstablishmentService,
+          as: "establishment_services",
+          where: { establishment_id: Number(establishment_id) },
+          attributes: [],
+          required: true,
+        },
+      ];
+    }
+
+    const { rows, count } = await Service.findAndCountAll(options);
     return {
       data: rows,
       meta: { page, limit, total: count, pages: Math.ceil(count / limit) },
@@ -75,7 +97,7 @@ export const ServiceRepository = {
   async deactivate(id) {
     const [updated] = await Service.update(
       { status: "inactive" },
-      { where: { id } }
+      { where: { id } },
     );
     return updated > 0;
   },

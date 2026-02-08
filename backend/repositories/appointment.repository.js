@@ -1,5 +1,6 @@
 import { Appointment } from "../models/appointment.model.js";
 import { ServiceRepository } from "./service.repository.js";
+import { EstablishmentService } from "../models/associations/establishment.service.model.js";
 import { ServiceAppointment } from "../models/associations/service.appointment.model.js";
 import { BarberRepository } from "../repositories/barber.repository.js";
 import { Barber } from "../models/barber.model.js";
@@ -81,6 +82,10 @@ export const AppointmentRepository = {
     let sum_duration = 0;
     const barber = await BarberRepository.getById(appointment.barber_id);
 
+    const targetEstablishmentId = appointment.establishment_id
+      ? parseInt(appointment.establishment_id)
+      : barber?.establishment_id;
+
     if (
       appointment.establishment_id &&
       barber.establishment_id !== parseInt(appointment.establishment_id)
@@ -116,11 +121,29 @@ export const AppointmentRepository = {
       );
     }
 
-    let services = [];
+    const services = [];
+    const establishmentServicePrices = new Map();
 
     if (appointment.services_ids && appointment.services_ids.length > 0) {
       for (const service_id of appointment.services_ids) {
         const service = await ServiceRepository.getById(service_id);
+        
+        if (targetEstablishmentId) {
+          const establishmentService = await EstablishmentService.findOne({
+            where: {
+              establishment_id: targetEstablishmentId,
+              service_id: service_id,
+            },
+          });
+          
+          if (!establishmentService) {
+            throw new Error(`Service "${service.name}" is not offered by this establishment`);
+          }
+          
+          // Store establishment-specific price
+          establishmentServicePrices.set(service_id, establishmentService.price);
+        }
+        
         sum_duration += service.duration;
         services.push(service);
       }
@@ -165,17 +188,20 @@ export const AppointmentRepository = {
       total_duration: totalDuration,
       status: appointment.status,
       barber_id: appointment.barber_id,
-      establishment_id: appointment.establishment_id
+      establishment_id: targetEstablishmentId,
     });
 
     const services_ids = [];
 
     for (const service of services) {
       try {
+        // Use establishment-specific price if available, otherwise use service price
+        const price = establishmentServicePrices.get(service.id) ?? service.price;
+        
         await ServiceAppointment.create({
           service_id: service.id,
           appointment_id: newAppointment.id,
-          price: service.price,
+          price: price,
         });
         services_ids.push(service);
       } catch (err) {
@@ -208,9 +234,31 @@ export const AppointmentRepository = {
     if (appointment.services_ids && appointment.services_ids.length > 0) {
       let sum_duration = 0;
       const services = [];
+      const establishmentServicePrices = new Map();
+      
+      const targetEstablishmentId = appointment.establishment_id
+        ? parseInt(appointment.establishment_id)
+        : existingAppointment.establishment_id ?? existingBarber?.establishment_id;
 
       for (const service_id of appointment.services_ids) {
         const service = await ServiceRepository.getById(service_id);
+        
+        if (targetEstablishmentId) {
+          const establishmentService = await EstablishmentService.findOne({
+            where: {
+              establishment_id: targetEstablishmentId,
+              service_id: service_id,
+            },
+          });
+          
+          if (!establishmentService) {
+            throw new Error(`Service "${service.name}" is not offered by this establishment`);
+          }
+          
+          // Store establishment-specific price
+          establishmentServicePrices.set(service_id, establishmentService.price);
+        }
+        
         sum_duration += service.duration;
         services.push(service);
       }
@@ -224,10 +272,13 @@ export const AppointmentRepository = {
       });
 
       for (const service of services) {
+        // Use establishment-specific price if available, otherwise use service price
+        const price = establishmentServicePrices.get(service.id) ?? service.price;
+        
         await ServiceAppointment.create({
           service_id: service.id,
           appointment_id: id,
-          price: service.price,
+          price: price,
         });
       }
     }

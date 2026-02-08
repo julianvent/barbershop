@@ -11,6 +11,7 @@
 // Import all association files
 import "./associations/establishment.associations.js";
 import "./associations/barber.associations.js";
+import "./associations/service.associations.js";
 
 // Re-export all models for convenience
 export { Account } from "./account.model.js";
@@ -19,4 +20,5 @@ export { Schedule } from "./schedule.model.js";
 export { Service } from "./service.model.js";
 export { Appointment } from "./appointment.model.js";
 export { Barber } from "./barber.model.js";
+export { EstablishmentService } from "./associations/establishment.service.model.js";
 export { ServiceAppointment } from "./associations/service.appointment.model.js";

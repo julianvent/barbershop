@@ -102,8 +102,6 @@ export const AppointmentService = {
       ...appointment_data,
       cost_total: costTotal,
       services: serviceInfo,
-      cost_total: costTotal,
-      services: serviceInfo,
       barber_id: barber ? barber.id : null,
       establishment_name: establishment? establishment.name : "N/A",
       barber: barber

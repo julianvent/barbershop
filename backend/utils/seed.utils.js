@@ -7,6 +7,7 @@ import {
   Schedule,
   Service,
   ServiceAppointment,
+  EstablishmentService,
 } from "../models/index.js";
 import { hash } from "../services/password.service.js";
 import { formatDateForTimezone } from "../utils/appointment.utils.js";
@@ -93,6 +94,7 @@ export async function seedDatabase(
       await Service.destroy({ where: {}, cascade: true });
       await Appointment.destroy({ where: {}, cascade: true });
       await ServiceAppointment.destroy({ where: {}, cascade: true });
+      await EstablishmentService.destroy({ where: {}, cascade: true });
 
       // Re-enable foreign key checks
       await sequelize.query("SET FOREIGN_KEY_CHECKS = 1");
@@ -102,8 +104,14 @@ export async function seedDatabase(
     // Seed all data
     const accounts = await seedAccount(Account, t);
     const establishments = await seedEstablishment(Establishment, accounts, t);
-    const barbers = await seedBarber(Barber, t);
     const services = await seedService(Service, t);
+    await seedEstablishmentServices(
+      EstablishmentService,
+      establishments,
+      services,
+      t,
+    );
+    const barbers = await seedBarber(Barber, t);
     for (const est of establishments) {
       await seedSchedulesForEstablishment(Schedule, est.id, t);
     }
@@ -189,7 +197,7 @@ async function seedBarber(Barber, t) {
   let i = 0;
   let establishment_id;
   for (let name of teamName) {
-    if ( i % 2 === 0) {
+    if (i % 2 === 0) {
       establishment_id = 1;
     } else {
       establishment_id = 2;
@@ -478,4 +486,69 @@ async function seedAppointment(
 
   console.log(`✓ Created ${appointments.length} appointments (GMT-06:00)`);
   return appointments;
+}
+
+/**
+ * Seed establishment services with establishment-specific pricing
+ * Different establishments offer different services at different prices
+ */
+async function seedEstablishmentServices(
+  EstablishmentService,
+  establishments,
+  services,
+  t,
+) {
+  const establishmentServicesData = [];
+
+  // Establishment 1 (Downtown Barber Shop) - Premium location, offers haircuts, combo, and coloring
+  const downtown = establishments.find(
+    (e) => e.name === "Downtown Barber Shop",
+  );
+  if (downtown) {
+    const downtownServices = [
+      { service: services[0], price: 18.0 }, // Corte de Cabello - $18 (premium)
+      { service: services[2], price: 25.0 }, // Combo Corte + Barba - $25 (premium)
+      { service: services[3], price: 45.0 }, // Coloración - $45 (premium)
+    ];
+
+    for (const { service, price } of downtownServices) {
+      establishmentServicesData.push({
+        establishment_id: downtown.id,
+        service_id: service.id,
+        price,
+      });
+    }
+  }
+
+  // Establishment 2 (Uptown Cuts) - Budget-friendly, offers haircuts, beard, and combo
+  const uptown = establishments.find((e) => e.name === "Uptown Cuts");
+  if (uptown) {
+    const uptownServices = [
+      { service: services[0], price: 12.0 }, // Corte de Cabello - $12 (budget)
+      { service: services[1], price: 8.0 }, // Arreglo de Barba - $8 (budget)
+      { service: services[2], price: 19.0 }, // Combo Corte + Barba - $19 (budget)
+    ];
+
+    for (const { service, price } of uptownServices) {
+      establishmentServicesData.push({
+        establishment_id: uptown.id,
+        service_id: service.id,
+        price,
+      });
+    }
+  }
+
+  const establishmentServices = await EstablishmentService.bulkCreate(
+    establishmentServicesData,
+    { transaction: t },
+  );
+
+  console.log(
+    `✓ Created ${establishmentServices.length} establishment-service links`,
+  );
+  console.log(
+    `  - Downtown Barber Shop: Corte ($18), Combo ($25), Coloración ($45)`,
+  );
+  console.log(`  - Uptown Cuts: Corte ($12), Barba ($8), Combo ($19)`);
+  return establishmentServices;
 }
