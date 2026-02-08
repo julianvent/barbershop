@@ -1,15 +1,18 @@
 import { Account } from "../models/account.model.js";
 import { Op } from "sequelize";
-const RETURN_ATTRS = ["email", "full_name", "role"];
+const RETURN_ATTRS = ["id", "email", "full_name", "role", "establishment_id"];
 
 export const AccountRepository = {
-  async getAll({ page = 1, pageSize = 20, q } = {}) {
+  async getAll({ page = 1, pageSize = 20, q, establishment_id } = {}) {
     const where = {};
     if (q) {
       where[Op.or] = [
         { full_name: { [Op.like]: `%${q}%` } },
         { email: { [Op.like]: `%${q}%` } },
       ];
+    }
+    if (establishment_id) {
+      where.establishment_id = establishment_id;
     }
     const offset = (Math.max(page, 1) - 1) * Math.max(pageSize, 1);
     const limit = Math.min(Math.max(pageSize, 1), 100);
@@ -60,6 +63,7 @@ export const AccountRepository = {
       email,
       password_hash: account.password_hash,
       role: account.role,
+      establishment_id: account.establishment_id,
     });
 
     return Account.findByPk(created.id, { attributes: RETURN_ATTRS });
@@ -95,6 +99,8 @@ export const AccountRepository = {
     if (account.password_hash !== undefined)
       payload.password_hash = account.password_hash;
     if (account.role !== undefined) payload.role = account.role;
+    if (account.establishment_id !== undefined)
+      payload.establishment_id = account.establishment_id;
 
     await existingAccount.update(payload);
     return Account.findByPk(id, { attributes: RETURN_ATTRS });

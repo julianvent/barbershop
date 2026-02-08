@@ -4,7 +4,13 @@ export const ServiceController = {
   async getAll(req, res) {
     try {
       const { page, limit, q, sort, dir, establishment_id } = req.query;
-      const result = await ServiceService.list({ page, limit, q, sort, dir, establishment_id });
+      const filters = { page, limit, q, sort, dir, establishment_id };
+
+      if (req.user?.role === "receptionist" && req.user?.establishment_id) {
+        filters.establishment_id = req.user.establishment_id;
+      }
+
+      const result = await ServiceService.list(filters);
       res.json(result);
     } catch (e) {
       res.status(500).json({ error: e.message });
@@ -13,7 +19,9 @@ export const ServiceController = {
 
   async getByEstablishment(req, res) {
     try {
-      const services = await ServiceService.getByEstablishment(req.params.establishment_id);
+      const services = await ServiceService.getByEstablishment(
+        req.params.establishment_id,
+      );
       res.json(services);
     } catch (e) {
       res.status(404).json({ error: e.message });

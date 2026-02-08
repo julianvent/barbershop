@@ -13,7 +13,7 @@ router.get('/availability', AppointmentController.getAvailability);
 router.get('/', requireAuth, property("receptionist"), AppointmentController.getAll);
 router.get('/:id', requireOptionalAuth, propertyAppointment, AppointmentController.getById);
 router.post('/', requireOptionalAuth, AppointmentController.create);
-router.put('/:id', requireOptionalAuth, propertyAppointment, AppointmentController.update);
+router.put('/:id', requireAuth, requireRole("receptionist"), AppointmentController.update);
 router.delete('/:id', requireAuth, requireRole("receptionist"), AppointmentController.delete);
 router.post('/:id/complete', requireAuth, requireRole("receptionist"), uploadAppointmentImage.any(), AppointmentController.complete);
 router.post('/:id/cancel', requireAuth, requireRole("receptionist"), AppointmentController.cancel);

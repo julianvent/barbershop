@@ -13,6 +13,11 @@ export const EstablishmentController = {
         page: req.query.page,
         limit: req.query.limit,
       };
+
+      if (req.user?.role === "receptionist" && req.user?.establishment_id) {
+        filters.id = req.user.establishment_id;
+      }
+
       const establishments = await EstablishmentService.list(filters);
       const data = establishments.map((establishment) => ({
         ...(establishment.get?.() ?? establishment),
@@ -37,10 +42,10 @@ export const EstablishmentController = {
 
   async create(req, res) {
     try {
-      if (!req.is('multipart/form-data'))
+      if (!req.is("multipart/form-data"))
         return res.status(400).json({
-            error: "Content-Type must be multipart/form-data"
-      });
+          error: "Content-Type must be multipart/form-data",
+        });
       const establishmentData = req.body;
 
       delete establishmentData.image_path;
@@ -65,7 +70,7 @@ export const EstablishmentController = {
       const file = req.files?.[0];
       delete establishmentData.id;
       delete establishmentData.image;
-      if(!establishmentData.account_id) delete establishmentData.account_id;
+      if (!establishmentData.account_id) delete establishmentData.account_id;
       if (file) establishmentData.image_path = file.filename;
       const updatedEstablishment = await EstablishmentService.update(
         id,

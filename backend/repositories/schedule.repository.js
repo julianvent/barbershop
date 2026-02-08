@@ -1,10 +1,24 @@
 import { Schedule } from "../models/schedule.model.js";
 
-const RETURN_ATTRS = ["day_of_week", "start_time", "end_time", "is_active"];
+const RETURN_ATTRS = [
+  "id",
+  "day_of_week",
+  "start_time",
+  "end_time",
+  "is_active",
+  "establishment_id",
+];
 
 export const ScheduleRepository = {
-  async getAll() {
+  async getAll(filters = {}) {
+    const where = {};
+
+    if (filters.establishment_id) {
+      where.establishment_id = filters.establishment_id;
+    }
+
     const schedules = await Schedule.findAll({
+      where,
       attributes: RETURN_ATTRS,
     });
     return schedules;
@@ -13,11 +27,14 @@ export const ScheduleRepository = {
   async create(scheduleData) {
     try {
       const existingSchedule = await Schedule.findOne({
-        where: { day_of_week: scheduleData.day_of_week },
+        where: {
+          day_of_week: scheduleData.day_of_week,
+          establishment_id: scheduleData.establishment_id,
+        },
       });
       if (existingSchedule) {
         throw new Error(
-          `Schedule already exists for day ${scheduleData.day_of_week}`,
+          `Schedule already exists for day ${scheduleData.day_of_week} at this establishment`,
         );
       }
       const newSchedule = await Schedule.create({
@@ -25,6 +42,7 @@ export const ScheduleRepository = {
         end_time: scheduleData.end_time,
         is_active: scheduleData.is_active,
         day_of_week: scheduleData.day_of_week,
+        establishment_id: scheduleData.establishment_id,
       });
       return Schedule.findByPk(newSchedule.id, {
         attributes: RETURN_ATTRS,

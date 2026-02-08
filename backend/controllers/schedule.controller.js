@@ -3,7 +3,13 @@ import { ScheduleService } from "../services/schedule.service.js";
 export const ScheduleController = {
   async getAll(req, res) {
     try {
-      const schedules = await ScheduleService.list();
+      const filters = {};
+
+      if (req.user?.role === "receptionist" && req.user?.establishment_id) {
+        filters.establishment_id = req.user.establishment_id;
+      }
+
+      const schedules = await ScheduleService.list(filters);
       res.status(200).json(schedules);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -34,7 +40,7 @@ export const ScheduleController = {
       const scheduleData = req.body;
       const updatedSchedule = await ScheduleService.update(
         day_of_week,
-        scheduleData
+        scheduleData,
       );
       res.status(200).json(updatedSchedule);
     } catch (error) {

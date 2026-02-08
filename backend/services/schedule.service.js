@@ -2,8 +2,8 @@ import { ScheduleValidator } from "../validators/schedule.validator.js";
 import { ScheduleRepository } from "../repositories/schedule.repository.js";
 
 export const ScheduleService = {
-  async list() {
-    return ScheduleRepository.getAll();
+  async list(filters = {}) {
+    return ScheduleRepository.getAll(filters);
   },
   async create(scheduleData) {
     ScheduleValidator.validateCreate(scheduleData);

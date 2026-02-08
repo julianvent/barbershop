@@ -3,7 +3,13 @@ import { AccountService } from "../services/account.service.js";
 export const AccountController = {
   async getAll(req, res) {
     try {
-      const accounts = await AccountService.list(req.query);
+      const filters = { ...req.query };
+
+      if (req.user?.role === "receptionist" && req.user?.establishment_id) {
+        filters.establishment_id = req.user.establishment_id;
+      }
+
+      const accounts = await AccountService.list(filters);
       res.status(200).json(accounts);
     } catch (error) {
       res.status(500).json({ message: error.message });
@@ -33,7 +39,7 @@ export const AccountController = {
     try {
       const { id } = req.params;
       const accountData = req.body;
-      if(req.user.role != "admin") delete accountData.role;
+      if (req.user.role != "admin") delete accountData.role;
       const updatedAccount = await AccountService.update(id, accountData);
       res.status(200).json(updatedAccount);
     } catch (error) {
@@ -54,7 +60,7 @@ export const AccountController = {
     try {
       const { email, password } = req.body;
       const verifiedAccount = await AccountService.login(email, password);
-      res.cookie('token', verifiedAccount.token);
+      res.cookie("token", verifiedAccount.token);
       res.send();
     } catch (error) {
       const code = error.status || 401;

@@ -10,8 +10,8 @@ const router = Router();
 
 router.use(requireAuth);
 
-router.get("/",requireRole(), EstablishmentController.getAll);
-router.get("/:id",requireRole(), EstablishmentController.getById);
+router.get("/", requireRole("receptionist"), EstablishmentController.getAll);
+router.get("/:id", requireRole("receptionist"), EstablishmentController.getById);
 router.post("/", requireRole(), uploadEstablishmentImage.any(), EstablishmentController.create);
 router.put("/:id", requireRole(), uploadEstablishmentImage.any(), EstablishmentController.update);
 router.delete("/:id", isEstablishmentOwner(), EstablishmentController.delete);

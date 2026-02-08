@@ -18,6 +18,7 @@ const RETURN_ATTRS = [
 export const EstablishmentRepository = {
   async list(filters = {}) {
     const {
+      id,
       name,
       street,
       city,
@@ -29,6 +30,9 @@ export const EstablishmentRepository = {
 
     const where = {};
 
+    if (id) {
+      where.id = id;
+    }
     if (name) {
       where.name = { [Op.iLike]: `%${name}%` };
     }
@@ -63,7 +67,7 @@ export const EstablishmentRepository = {
     if (!establishment) {
       throw new Error("Establishment not found");
     }
-    if (establishment.account_id) { 
+    if (establishment.account_id) {
       const account = await AccountRepository.getById(establishment.account_id);
       establishment.dataValues.account_name = account.full_name;
     }

@@ -51,9 +51,14 @@ export const AccountService = {
     }
 
     const plain = account.get ? account.get({ plain: true }) : account;
-    const { id, role } = plain;
+    const { id, role, establishment_id } = plain;
 
-    const token = signAccessToken({ sub: id, role });
+    const payload = { sub: id, role };
+    if ((role === "receptionist" || role === "barber") && establishment_id) {
+      payload.establishment_id = establishment_id;
+    }
+
+    const token = signAccessToken(payload);
 
     return {
       token,
