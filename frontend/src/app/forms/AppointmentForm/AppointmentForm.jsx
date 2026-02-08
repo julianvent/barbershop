@@ -41,7 +41,7 @@ export default function AppointmentForm({ appointment, mode }) {
   const [error, setError] = useState(null);
 
   const [barbers, setBarbers] = useState([]);
-  const [services, setServices] = useState([])
+  const [services, setServices] = useState([]);
   const router = useRouter();
   const establishments = useEstablishment();
 
@@ -105,7 +105,8 @@ export default function AppointmentForm({ appointment, mode }) {
       setMinDate(getToday());
       methods.resetField("date", { defaultValue: minDate });
     }
-  }, [appointment, minDate, methods, establishments]);
+  }, [appointment, minDate, methods, establishments, services]);
+  
   useEffect(() => {
     if (barberId) {
       async function fetchAvailability(barberId) {
