@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import { getEstablishments } from "@/app/apiHandlers/adminEstablishments";
 import { ActionButton } from "@/app/components/action/ActionButton";
 
-export default function Page(){
+export default function IndexEstablishment(){
   const [establishments, setEstablishments] = useState([])
   const [ message, setMessage] = useState('No se han registrado los establecimentos')
 
@@ -51,7 +51,7 @@ export default function Page(){
   }, [])
   const router = useRouter();
   return (
-    <Layout>
+    <>
       <title>SGBarbershop - Ubicaciones</title>
       <div className={styles.layout}>
         
@@ -74,6 +74,6 @@ export default function Page(){
 
         </div>
       </div>
-    </Layout>
+    </>
   )
 }

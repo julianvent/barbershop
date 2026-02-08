@@ -1,0 +1,12 @@
+.container {
+  display: flexbox;
+}
+
+.fieldData {
+  display: grid;
+}
+
+.fieldData :first-child {
+  font-weight: bold
+}
+

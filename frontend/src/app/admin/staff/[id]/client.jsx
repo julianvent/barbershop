@@ -1,0 +1,86 @@
+'use client';
+import Layout from "@/app/components/base_layout/Layout"
+import React, { useEffect, useState } from "react"
+import styles from "../../../forms/EmployeeFormStyles.module.css";
+import layout from "../../Main.module.css";
+import show from "./styles.module.css";
+import { Status } from "@/app/components/form/status/Status";
+import Buttons from "@/app/components/form/model_buttons/Buttons";
+import { getEmployee } from "@/app/apiHandlers/adminStaff";
+export default function EmployeeDetail({params, isAdmin}){
+    const {id} = React.use(params);
+    const [employee, setEmployee] = useState(null);
+    const [message, setMessage] = useState(null);
+    useEffect(() => {
+            async function load() {
+                try{
+                    const data = await getEmployee(id);
+                    setEmployee(data);console.log(data);
+
+                }catch(err){
+                    console.log(err);
+                    setMessage(err);
+                }
+            }
+            load();
+    }, [id]);
+
+    return (
+        <Layout 
+          headerTitle={'Ver Barbero'}
+          mainTitle={'Barbero No. '+(employee?(employee.id + ' - ' + employee.barber_name):'')}
+          isAdmin={isAdmin}>
+            <title>SG BarberShop - Ver Empleado</title>
+
+            <div  className={layout.layoutShow}>
+                <div className={styles.columns}>
+                    <div className={styles.imageContainer}>
+                        <img
+                            src={(employee != null) ? employee.image_path : '/image.svg'}
+                            alt={"Imagen de" + ((employee != null)? ' '+ employee.barber_name: 'l empleado')}
+                            className={styles.imageFitBack}
+                        />
+                    </div>
+                    <article className={styles.subFields}>
+                        <div className={styles.row}>
+                            <div>
+                                <p><strong>Nombre Completo</strong></p>
+                                <p>{(employee != null)?employee.barber_name: '...'}</p>
+                            </div>
+                            
+                        </div>
+
+                        <div className={styles.row}>
+                            <div className={show.div}>
+                                <p><strong>Correo</strong></p>
+                                <p>{(employee != null)?employee.email: '...'}</p>
+                            </div>
+
+                            <div>
+                                <p><strong>Telefono</strong></p>
+                                <p>{(employee != null)?employee.phone: '...'}</p>
+                            </div>
+                            
+                        </div>
+
+                        <div className={styles.row}>
+                            <div className={show.statusContainer}>
+                                <p> <strong>Estado</strong></p>
+
+                                {employee && <Status id="state" state={employee.is_active ? 'active' : 'inactive'} type={"barber"} />}
+
+                            </div>
+                        </div>
+                        
+                    </article>
+
+                </div>
+                
+                {
+                        employee&&(<Buttons model={employee} modelType={'staff'}/>
+                        )
+                }
+            </div>
+        </Layout>
+    )
+}

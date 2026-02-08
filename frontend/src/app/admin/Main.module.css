@@ -1,11 +1,48 @@
 .layout {
     display: grid;
     gap: 1em;
-    grid-template-rows: auto 1fr;
+    grid-template-rows: auto 1fr ;
     min-height: 100%;
     padding: 1em 2em;
     background-color: white;
     border-radius: 1em;
+}
+
+.layoutShow {
+    display: grid;
+    gap: 1em;
+    grid-template-rows: 1fr ;
+    min-height: 100%;
+    padding: 1em 2em;
+    background-color: white;
+    border-radius: 1em;
+}
+
+.layoutForbidden {
+    display: grid;
+    gap: 1em;
+    grid-template-rows: 1fr ;
+    min-height: 100%;
+    padding: 1em 2em;
+    background-color: white;
+    border-radius: 1em;
+}
+
+.layoutForbidden > div {
+    align-self: center;
+    justify-self: center;
+    box-sizing: content-box;
+    padding: 20%;
+}
+
+.layoutForbidden > div > ul {
+    list-style: none;
+    width: auto;
+    align-items: center;
+}
+
+.layoutForbidden > div > ul > li > a {
+    color:black;
 }
 
 .toolbar {
