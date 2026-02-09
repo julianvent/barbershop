@@ -55,6 +55,10 @@
     background-color: #4e4e4e;
 }
 
+.buttons .deleteButton {
+    background-color: #740000;
+}
+
 
 .soloRow {
     margin-left: 1%;
@@ -97,6 +101,8 @@
 
     .buttons {        
         gap: 1em;
+        flex-wrap: wrap;
+        justify-content: center;
     }
     
     .row {

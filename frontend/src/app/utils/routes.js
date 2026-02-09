@@ -20,7 +20,12 @@ export const seeStaffRoute = staffRoute + see;
 
 export const makeAppointmentRoute = "/appointments";
 
-export const establishmentRoute = "/admin/establishment";
+export const establishmentRoute = "/admin/establishments";
 export const newEstablishment = establishmentRoute + "/new";
 export const seeEstablishment = establishmentRoute + see;
 export const editEstablishment = establishmentRoute + edit;
+
+export const accountsRoute = "/admin/accounts";
+export const newAccounts = accountsRoute + "/new";
+export const seeAccounts = accountsRoute + see;
+export const editAccounts = accountsRoute + "/update/${id}";

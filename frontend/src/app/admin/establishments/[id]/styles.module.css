@@ -4,8 +4,6 @@
 
 .fieldData {
   display: grid;
-  background-color: aqua;
-
 }
 
 .fieldData :first-child {

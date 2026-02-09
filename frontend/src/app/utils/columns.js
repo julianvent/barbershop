@@ -147,4 +147,15 @@ export const establishmentsFields = [
     headerName: "Numero Telefonico",
     field: "phone_number"
   }
-]
+];
+
+export const accountsFields = [
+  {
+    headerName: "Nombre de la cuenta",
+    field: "full_name"
+  },
+  {
+    headerName: "Correo",
+    field: "email"
+  },
+];
