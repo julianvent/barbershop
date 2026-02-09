@@ -52,27 +52,62 @@ export const ScheduleRepository = {
     }
   },
 
-  async getByDay(day_of_week) {
+  async getByDay(day_of_week, establishment_id) {
+    const where = { day_of_week };
+    
+    if (establishment_id) {
+      where.establishment_id = establishment_id;
+    }
+    
     const schedule = await Schedule.findOne({
-      where: { day_of_week },
+      where,
       attributes: RETURN_ATTRS,
     });
+    
     if (!schedule) {
-      throw new Error(`Schedule not found for day ${day_of_week}`);
+      const msg = establishment_id 
+        ? `Schedule not found for day ${day_of_week} at this establishment`
+        : `Schedule not found for day ${day_of_week}`;
+      throw new Error(msg);
     }
     return schedule;
   },
 
-  async update(day_of_week, scheduleData) {
-    const existingSchedule = await this.getByDay(day_of_week);
-    // No need for null check - getByDay throws if not found
-    await Schedule.update(scheduleData, {
-      where: { day_of_week: existingSchedule.day_of_week },
-    });
+  async update(day_of_week, scheduleData, establishment_id) {
+    const where = { day_of_week };
+    
+    if (establishment_id) {
+      where.establishment_id = establishment_id;
+    }
+    
+    const existingSchedule = await Schedule.findOne({ where });
+    
+    if (!existingSchedule) {
+      throw new Error(`Schedule not found for day ${day_of_week} at this establishment`);
+    }
+    
+    await Schedule.update(scheduleData, { where });
 
     return Schedule.findOne({
-      where: { day_of_week },
+      where,
       attributes: RETURN_ATTRS,
     });
+  },
+  
+  async delete(day_of_week, establishment_id) {
+    const where = { day_of_week };
+    
+    if (establishment_id) {
+      where.establishment_id = establishment_id;
+    }
+    
+    const existingSchedule = await Schedule.findOne({ where });
+    
+    if (!existingSchedule) {
+      throw new Error(`Schedule not found for day ${day_of_week} at this establishment`);
+    }
+    
+    await Schedule.destroy({ where });
+    return true;
   },
 };

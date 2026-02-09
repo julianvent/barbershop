@@ -9,13 +9,13 @@ export const ScheduleService = {
     ScheduleValidator.validateCreate(scheduleData);
     return ScheduleRepository.create(scheduleData);
   },
-  async findByDay(day_of_week) {
+  async findByDay(day_of_week, establishment_id) {
     ScheduleValidator.validateFindByDay(day_of_week);
-    return ScheduleRepository.getByDay(day_of_week);
+    return ScheduleRepository.getByDay(day_of_week, establishment_id);
   },
-  async update(day_of_week, scheduleData) {
+  async update(day_of_week, scheduleData, establishment_id) {
     ScheduleValidator.validateUpdate(day_of_week, scheduleData);
-    return ScheduleRepository.update(day_of_week, scheduleData);
+    return ScheduleRepository.update(day_of_week, scheduleData, establishment_id);
   },
 
   // In case the user wants to create schedules for multiple days at once
@@ -30,12 +30,16 @@ export const ScheduleService = {
     return createdSchedules;
   },
 
-  async updateMultiple(days_of_week, scheduleDataArray) {
+  async updateMultiple(scheduleDataArray, establishment_id) {
     const updatedSchedules = [];
     for (const scheduleData of scheduleDataArray) {
-      const updated = await this.update(days_of_week, scheduleData);
+      const updated = await this.update(scheduleData.day_of_week, scheduleData, establishment_id);
       updatedSchedules.push(updated);
     }
     return updatedSchedules;
+  },
+  async delete(day_of_week, establishment_id) {
+    ScheduleValidator.validateFindByDay(day_of_week);
+    return ScheduleRepository.delete(day_of_week, establishment_id);
   },
 };
