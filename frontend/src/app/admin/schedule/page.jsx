@@ -4,9 +4,11 @@ import ScheduleManagement from "./client";
 import AdminView from "./admin";
 
 export default async function Page() {
-  const isAdm = isAdmin();
-  // recuperarlo del token o de algo
-  const establishmentId = 1;
+  const isAdm = await isAdmin();
+  let establishmentId;
+  if(!isAdm){
+    
+  }
   return (
     <Layout isAdmin={isAdm}
     mainTitle={'Horario del Establecimiento'}>

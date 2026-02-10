@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import layout from '../admin/Main.module.css'
 import { getAccount, updateAccount } from "../apiHandlers/account";
 import Input from "../components/form/input/Input";
-import { emailValidation, fullNameValidation, passwordValidation } from "../utils/accountValidators";
+import { emailValidation, fullNameValidation, passwordValidation } from "../utils/accountValidator";
 import { useForm, FormProvider } from "react-hook-form";
 import styles from './styles/styles.module.css';
 import toast from "react-hot-toast";
