@@ -5,9 +5,7 @@ export const ScheduleController = {
     try {
       const filters = {};
 
-      if (req.user?.role === "receptionist" && req.user?.establishment_id) {
-        filters.establishment_id = req.user.establishment_id;
-      }
+      filters.establishment_id = req.query.establishment_id;
 
       const schedules = await ScheduleService.list(filters);
       res.status(200).json(schedules);

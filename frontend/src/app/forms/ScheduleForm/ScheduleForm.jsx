@@ -74,7 +74,7 @@ export default function ScheduleForm({ onSubmit, schedules }){
           {fields.map((item, index) => {
             const isActive = methods.watch(`schedules.${index}.is_active`);
             return (
-              <div key={item.id}>
+              <div key={index}>
                 <h3>{formatDate(schedules[index].day_of_week)}</h3>
                 <Input id={`schedules.${index}.start_time`} name={`schedules.${index}.start_time`} disabled={!isActive} {...startTimeValidation}/>
                 <Input id={`schedules.${index}.end_time`} name={`schedules.${index}.end_time`} disabled={!isActive} {...endTimeValidation}/>

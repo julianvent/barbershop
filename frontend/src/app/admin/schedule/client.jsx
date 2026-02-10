@@ -3,6 +3,7 @@
 import { createSchedules, getSchedules, updateSchedules } from "@/app/apiHandlers/adminSchedule";
 import { useEffect, useState } from "react";
 import ScheduleForm from "@/app/forms/ScheduleForm/ScheduleForm";
+import { defaultSchedules } from "@/app/utils/data";
 
 export default function ScheduleManagement({establishmentId}){
   const [schedules, setSchedules] = useState(null);
@@ -14,10 +15,10 @@ export default function ScheduleManagement({establishmentId}){
       try{
         const sch = await getSchedules(id);
         if(sch.length === 0){
-          setSchedules([]);
+          setSchedules(defaultSchedules);
           setIsDefined(false);
         } else {
-          setSchedules(sch.splice(0,7));
+          setSchedules(sch);
         }
 
       } catch (err) {
@@ -25,7 +26,7 @@ export default function ScheduleManagement({establishmentId}){
       }
     };
     load(establishmentId);
-  }, []);
+  }, [establishmentId]);
 
   const modifySchedule = async (data) => {
     try {

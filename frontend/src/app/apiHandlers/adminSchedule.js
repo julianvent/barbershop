@@ -16,10 +16,33 @@ export async function getSchedules(id) {
 } 
 
 export async function createSchedules(id, data) {
-  throw "Error al crear el horario del establecimiento";
+  try {
+    const headers = await axiosConfig();
+    const uri = baseUrl + 'bulk';
+    const newData = {
+      establishment_id : id,
+      data
+    }
+    console.log(newData);
+    await axios.post(uri, newData, headers)
+  } catch (error) {
+    console.log(error)
+    throw "Error al crear el horario del establecimiento";
+  }
 }
 
 export async function updateSchedules(id, data) {
-  console.log(data)
-  throw "Error al modificar los horarios del establecimiento";
+    try {
+    const headers = await axiosConfig();
+    const uri = baseUrl + 'bulk';
+    const newData = {
+      establishment_id : id,
+      schedules : data.schedules
+    }
+    console.log(newData);
+    await axios.put(uri, newData, headers);
+  } catch (error) {
+    console.log(error)
+    throw "Error al modificar los horarios del establecimiento";
+  }
 }
