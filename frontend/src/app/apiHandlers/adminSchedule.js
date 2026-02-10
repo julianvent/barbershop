@@ -21,9 +21,8 @@ export async function createSchedules(id, data) {
     const uri = baseUrl + 'bulk';
     const newData = {
       establishment_id : id,
-      data
+      schedules : data.schedules
     }
-    console.log(newData);
     await axios.post(uri, newData, headers)
   } catch (error) {
     console.log(error)
@@ -39,7 +38,6 @@ export async function updateSchedules(id, data) {
       establishment_id : id,
       schedules : data.schedules
     }
-    console.log(newData);
     await axios.put(uri, newData, headers);
   } catch (error) {
     console.log(error)
