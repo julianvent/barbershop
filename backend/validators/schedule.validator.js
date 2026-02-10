@@ -1,5 +1,6 @@
 const validFields = ["start_time", "end_time", "is_active", "day_of_week"];
 const validUpdateFields = ["start_time", "end_time", "is_active"];
+const optionalFields = ["establishment_id"];
 export const DAYS = [
   "Sunday",
   "Monday",
@@ -15,6 +16,15 @@ export const ScheduleValidator = {
     if (!schedule || typeof schedule !== "object") {
       throw new Error("Body is empty or invalid");
     }
+    
+    // Check all fields in the schedule are valid
+    for (const field in schedule) {
+      if (!validFields.includes(field) && !optionalFields.includes(field)) {
+        throw new Error(`Invalid field: ${field}`);
+      }
+    }
+    
+    // Check required fields are present
     for (const field of validFields) {
       if (!(field in schedule)) {
         throw new Error(`Missing required field: ${field}`);
@@ -32,7 +42,7 @@ export const ScheduleValidator = {
       throw new Error("Body is empty or invalid");
     }
     for (const field in scheduleData) {
-      if (!validUpdateFields.includes(field)) {
+      if (!validUpdateFields.includes(field) && !optionalFields.includes(field)) {
         throw new Error(`Invalid field in update: ${field}`);
       }
     }

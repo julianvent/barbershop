@@ -1,5 +1,5 @@
 const validRoles = ["admin", "barber", "receptionist"];
-const allowedFields = ["full_name", "password", "role", "email"];
+
 const isNonEmptyString = (v) => typeof v === "string" && v.trim() !== "";
 const loginFields = ["email", "password"];
 
@@ -8,15 +8,22 @@ export const AccountValidator = {
     if (!account || typeof account !== "object") {
       throw new Error("Body is empty or invalid");
     }
-    for (const field of allowedFields) {
+
+    const requiredFields = ["full_name", "password", "role", "email"];
+    for (const field of requiredFields) {
       if (!(field in account)) {
         throw new Error(`Missing required field: ${field}`);
       }
       if (field === "role" && !validRoles.includes(account.role)) {
         throw new Error(
-          `Invalid role. Must be one of: ${validRoles.join(", ")}`
+          `Invalid role. Must be one of: ${validRoles.join(", ")}`,
         );
       }
+    }
+
+    // Validate establishment_id is provided for receptionists
+    if ((account.role === "receptionist" || account.role === "barber") && !account.establishment_id) {
+      throw new Error("establishment_id is required for receptionist and barber roles");
     }
   },
 

@@ -102,8 +102,9 @@ export async function seedDatabase(
     }
 
     // Seed all data
-    const accounts = await seedAccount(Account, t);
-    const establishments = await seedEstablishment(Establishment, accounts, t);
+    const adminAccount = await seedAdminAccount(Account, t);
+    const establishments = await seedEstablishment(Establishment, t);
+    const accounts = await seedAccount(Account, establishments, t);
     const services = await seedService(Service, t);
     await seedEstablishmentServices(
       EstablishmentService,
@@ -235,9 +236,9 @@ async function seedBarber(Barber, t) {
 }
 
 /**
- * Seed establishments linked to accounts
+ * Seed establishments (not linked to receptionist accounts yet)
  */
-async function seedEstablishment(Establishment, accounts, t) {
+async function seedEstablishment(Establishment, t) {
   const establishmentsData = [
     {
       name: "Downtown Barber Shop",
@@ -247,7 +248,7 @@ async function seedEstablishment(Establishment, accounts, t) {
       postal_code: "06500",
       phone_number: `555000${Math.floor(1000 + Math.random() * 9000)}`,
       image_path: "/assets/images/barbershop.png",
-      account_id: accounts[0]?.id,
+      // account_id will be set later if needed
     },
     {
       name: "Uptown Cuts",
@@ -256,7 +257,7 @@ async function seedEstablishment(Establishment, accounts, t) {
       state: "CDMX",
       postal_code: "06600",
       phone_number: `555001${Math.floor(1000 + Math.random() * 9000)}`,
-      account_id: accounts[1]?.id,
+      // account_id will be set later if needed
     },
   ];
   const establishments = await Establishment.bulkCreate(establishmentsData, {
@@ -331,33 +332,37 @@ async function seedSchedulesForEstablishment(Schedule, establishmentId, t) {
 }
 
 /**
- * Seed accounts
+ * Seed receptionist and barber accounts (after establishments are created)
  */
-async function seedAccount(Account, t) {
+async function seedAccount(Account, establishments, t) {
   const accountsData = [
     {
       full_name: "Carlos Receptionist",
       email: "carlos.recep@barbershop.com",
       password: "recep123",
       role: "receptionist",
+      establishment_id: establishments[0].id, // Downtown Barber Shop
     },
     {
       full_name: "Ana Receptionist",
       email: "ana.recep@barbershop.com",
       password: "recep123",
       role: "receptionist",
+      establishment_id: establishments[1].id, // Uptown Cuts
     },
     {
       full_name: "Sebastian Barber",
       email: "sebastian@barbershop.com",
       password: "barber123",
       role: "barber",
+      establishment_id: establishments[0].id, // Downtown Barber Shop
     },
     {
       full_name: "Kevin Barber",
       email: "kevin@barbershop.com",
       password: "barber123",
       role: "barber",
+      establishment_id: establishments[1].id, // Uptown Cuts
     },
   ];
 
@@ -376,8 +381,35 @@ async function seedAccount(Account, t) {
     accounts.push(account);
   }
 
-  console.log(`✓ Created ${accounts.length} accounts`);
+  console.log(`✓ Created ${accounts.length} receptionist/barber accounts`);
   return accounts;
+}
+
+/**
+ * Seed admin account with global access
+ * Admins can manage all establishments and accounts, so they are not linked to a specific establishment
+ */
+async function seedAdminAccount(Account, t) {
+  const adminData = {
+    full_name: "Admin User",
+    email: "admin@barbershop.com",
+    password: "admin123",
+    role: "admin",
+    // No establishment_id - admins see all establishments
+  };
+
+  const { password, ...accountData } = adminData;
+  const password_hash = await hash(password);
+
+  const adminAccount = await Account.create(
+    {
+      ...accountData,
+      password_hash,
+    },
+    { transaction: t },
+  );
+  console.log(`✓ Created admin account: ${adminAccount.email}`);
+  return adminAccount;
 }
 
 /**
@@ -385,6 +417,10 @@ async function seedAccount(Account, t) {
  *
  * Converts all appointment datetimes to GMT-06:00 format before saving
  * to ensure consistent timezone handling across the database
+ *
+ * Appointments are distributed across establishments based on barber assignments:
+ * - Establishment 1 (Downtown Barber Shop): barbers[0], barbers[2], barbers[4]
+ * - Establishment 2 (Uptown Cuts): barbers[1], barbers[3]
  */
 async function seedAppointment(
   Appointment,
@@ -397,6 +433,7 @@ async function seedAppointment(
   const DB_TIMEZONE = "-06:00";
 
   const appointmentsData = [
+    // Establishment 1 (Downtown Barber Shop) appointments
     {
       customer_name: "Juan Pérez",
       customer_phone: "5551234567",
@@ -404,18 +441,8 @@ async function seedAppointment(
       appointment_datetime: new Date("2024-12-02T10:00:00"),
       total_duration: 30,
       status: "confirmed",
-      barber_id: barbers[0].id,
+      barber_id: barbers[0].id, // SEBASTIÁN - Establishment 1
       services: [services[0]], // Corte de Cabello
-    },
-    {
-      customer_name: "María García",
-      customer_phone: "5552345678",
-      customer_email: "maria.garcia@email.com",
-      appointment_datetime: new Date("2024-12-02T14:30:00"),
-      total_duration: 45,
-      status: "confirmed",
-      barber_id: barbers[1].id,
-      services: [services[2]], // Combo
     },
     {
       customer_name: "Carlos López",
@@ -424,18 +451,8 @@ async function seedAppointment(
       appointment_datetime: new Date("2024-12-03T11:00:00"),
       total_duration: 20,
       status: "pending",
-      barber_id: barbers[2].id,
+      barber_id: barbers[2].id, // JOSÉ - Establishment 1
       services: [services[1]], // Barba
-    },
-    {
-      customer_name: "Ana Martínez",
-      customer_phone: "5554567890",
-      customer_email: "ana.martinez@email.com",
-      appointment_datetime: new Date("2024-12-03T16:00:00"),
-      total_duration: 50,
-      status: "confirmed",
-      barber_id: barbers[3].id,
-      services: [services[0], services[1]], // Corte + Barba
     },
     {
       customer_name: "Roberto Sánchez",
@@ -444,12 +461,57 @@ async function seedAppointment(
       appointment_datetime: new Date("2024-12-04T09:30:00"),
       total_duration: 30,
       status: "pending",
-      barber_id: barbers[4].id,
+      barber_id: barbers[4].id, // KEVIN - Establishment 1
+      services: [services[0]], // Corte
+    },
+    {
+      customer_name: "Laura Fernández",
+      customer_phone: "5556789012",
+      customer_email: "laura.fernandez@email.com",
+      appointment_datetime: new Date("2024-12-05T15:00:00"),
+      total_duration: 45,
+      status: "confirmed",
+      barber_id: barbers[0].id, // SEBASTIÁN - Establishment 1
+      services: [services[2]], // Combo
+    },
+
+    // Establishment 2 (Uptown Cuts) appointments
+    {
+      customer_name: "María García",
+      customer_phone: "5552345678",
+      customer_email: "maria.garcia@email.com",
+      appointment_datetime: new Date("2024-12-02T14:30:00"),
+      total_duration: 45,
+      status: "confirmed",
+      barber_id: barbers[1].id, // ADRIÁN - Establishment 2
+      services: [services[2]], // Combo
+    },
+    {
+      customer_name: "Ana Martínez",
+      customer_phone: "5554567890",
+      customer_email: "ana.martinez@email.com",
+      appointment_datetime: new Date("2024-12-03T16:00:00"),
+      total_duration: 50,
+      status: "confirmed",
+      barber_id: barbers[3].id, // CARLOS - Establishment 2
+      services: [services[0], services[1]], // Corte + Barba
+    },
+    {
+      customer_name: "Diego Ramírez",
+      customer_phone: "5557890123",
+      customer_email: "diego.ramirez@email.com",
+      appointment_datetime: new Date("2024-12-04T13:00:00"),
+      total_duration: 30,
+      status: "confirmed",
+      barber_id: barbers[1].id, // ADRIÁN - Establishment 2
       services: [services[0]], // Corte
     },
   ];
 
   const appointments = [];
+  let est1Count = 0;
+  let est2Count = 0;
+
   for (const data of appointmentsData) {
     const { services: appointmentServices, ...appointmentData } = data;
 
@@ -481,10 +543,20 @@ async function seedAppointment(
       );
     }
 
+    // Track establishment distribution
+    const barber = barbers.find((b) => b.id === appointmentData.barber_id);
+    if (barber?.establishment_id === 1) {
+      est1Count++;
+    } else if (barber?.establishment_id === 2) {
+      est2Count++;
+    }
+
     appointments.push(appointment);
   }
 
   console.log(`✓ Created ${appointments.length} appointments (GMT-06:00)`);
+  console.log(`  - Establishment 1 (Downtown): ${est1Count} appointments`);
+  console.log(`  - Establishment 2 (Uptown): ${est2Count} appointments`);
   return appointments;
 }
 

@@ -45,6 +45,14 @@ export const Account = sequelize.define(
       allowNull: false,
       defaultValue: "receptionist",
     },
+    establishment_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: "establishment",
+        key: "id",
+      },
+    },
   },
   { tableName: "account", timestamps: false, underscored: true },
 );
