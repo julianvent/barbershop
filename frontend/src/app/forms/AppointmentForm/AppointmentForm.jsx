@@ -17,7 +17,7 @@ import {
   timeValidation,
   establishmentValidation
 } from "@/app/utils/appointmentValidators";
-import { useEffect, useEffectEvent, useMemo, useState } from "react";
+import { useEffect, useEffectEvent, useMemo, useState, useRef } from "react";
 import { status } from "../../utils/data";
 import { useRouter } from "next/navigation";
 import {
@@ -44,6 +44,9 @@ export default function AppointmentForm({ appointment, mode }) {
   const [services, setServices] = useState([]);
   const router = useRouter();
   const establishments = useEstablishment();
+  
+  // Track if this is the initial load to avoid clearing form data
+  const isInitialLoad = useRef(true);
 
   const methods = useForm({ defaultValues: {} });
 
@@ -101,11 +104,14 @@ export default function AppointmentForm({ appointment, mode }) {
       const parsedAppointment = parseAppointment(appointment);
       setMinDate(date);
       methods.reset(parsedAppointment);
+      // Mark as initial load complete after setting appointment data
+      isInitialLoad.current = true;
     } else {
       setMinDate(getToday());
       methods.resetField("date", { defaultValue: minDate });
+      isInitialLoad.current = false;
     }
-  }, [appointment, minDate, methods, establishments, services]);
+  }, [appointment]); // Only reset when appointment prop changes, not when services/establishments change
   
   useEffect(() => {
     if (barberId) {
@@ -133,11 +139,24 @@ export default function AppointmentForm({ appointment, mode }) {
           setAvailableTimes([]);
           setServices([]);
           setBarbers([]);
+          
+          // Only clear form selections if this is a user-initiated change (not initial load)
+          if (!isInitialLoad.current) {
+            methods.setValue('barber_id', '');
+            methods.setValue('services_ids', []);
+            methods.setValue('time', '');
+          }
+          
           const dataEmployees = await getEmployeesByEstablishment(establishmentId);
           setBarbers(dataEmployees.data);
 
           const dataService = await getServicesByEstablishment(establishmentId);
-          setServices(dataService)
+          setServices(dataService);
+          
+          // After first establishment load, mark initial load as complete
+          if (isInitialLoad.current) {
+            isInitialLoad.current = false;
+          }
         } catch (error) {
           setServices([]);
           setBarbers([]);
@@ -145,7 +164,7 @@ export default function AppointmentForm({ appointment, mode }) {
       }
       fetchAvailability(establishmentId);
     }
-  }, [establishmentId]);
+  }, [establishmentId, methods]);
 
   return (
     <FormProvider {...methods}>

@@ -19,10 +19,6 @@ export const ScheduleController = {
       let establishment_id =
         req.query.establishment_id || req.body.establishment_id;
 
-      if (req.user?.role === "receptionist" && req.user?.establishment_id) {
-        establishment_id = req.user.establishment_id;
-      }
-
       const schedule = await ScheduleService.findByDay(
         day_of_week,
         establishment_id,
@@ -88,11 +84,19 @@ export const ScheduleController = {
         return res.status(400).json({ error: "establishment_id is required" });
       }
 
-      const schedules = (req.body.schedules || req.body).map((schedule) => ({
+      const schedules = req.body.schedules;
+
+      if (!schedules || !Array.isArray(schedules)) {
+        return res.status(400).json({ error: "schedules must be an array" });
+      }
+
+      const schedulesWithEstablishment = schedules.map((schedule) => ({
         ...schedule,
         establishment_id,
       }));
-      const createdSchedules = await ScheduleService.createMultiple(schedules);
+      const createdSchedules = await ScheduleService.createMultiple(
+        schedulesWithEstablishment,
+      );
       res.status(201).json(createdSchedules);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -110,7 +114,12 @@ export const ScheduleController = {
         return res.status(400).json({ error: "establishment_id is required" });
       }
 
-      const schedules = req.body.schedules || req.body;
+      const schedules = req.body.schedules;
+
+      if (!schedules || !Array.isArray(schedules)) {
+        return res.status(400).json({ error: "schedules must be an array" });
+      }
+
       const updatedSchedules = await ScheduleService.updateMultiple(
         schedules,
         establishment_id,
@@ -130,7 +139,6 @@ export const ScheduleController = {
         establishment_id = req.user.establishment_id;
       }
 
-      // Admins must specify establishment_id
       if (!establishment_id) {
         return res.status(400).json({ error: "establishment_id is required" });
       }

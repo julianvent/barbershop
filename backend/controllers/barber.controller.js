@@ -10,9 +10,6 @@ export const BarberController = {
         establishment_id: req.query.establishment_id,
       };
 
-      if (req.user?.role === "receptionist" && req.user?.establishment_id) {
-        filters.establishment_id = req.user.establishment_id;
-      }
 
       let result;
       if (filters.establishment_id) {

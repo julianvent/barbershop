@@ -6,10 +6,6 @@ export const ServiceController = {
       const { page, limit, q, sort, dir, establishment_id } = req.query;
       const filters = { page, limit, q, sort, dir, establishment_id };
 
-      if (req.user?.role === "receptionist" && req.user?.establishment_id) {
-        filters.establishment_id = req.user.establishment_id;
-      }
-
       const result = await ServiceService.list(filters);
       res.json(result);
     } catch (e) {

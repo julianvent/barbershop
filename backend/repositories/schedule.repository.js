@@ -38,11 +38,11 @@ export const ScheduleRepository = {
         );
       }
       const newSchedule = await Schedule.create({
-        start_time: scheduleData.start_time,
-        end_time: scheduleData.end_time,
-        is_active: scheduleData.is_active,
         day_of_week: scheduleData.day_of_week,
+        end_time: scheduleData.end_time,
         establishment_id: scheduleData.establishment_id,
+        start_time: scheduleData.start_time,
+        is_active: scheduleData.is_active,
       });
       return Schedule.findByPk(newSchedule.id, {
         attributes: RETURN_ATTRS,
@@ -86,7 +86,12 @@ export const ScheduleRepository = {
       throw new Error(`Schedule not found for day ${day_of_week} at this establishment`);
     }
     
-    await Schedule.update(scheduleData, { where });
+    const updateData = {};
+    if ('start_time' in scheduleData) updateData.start_time = scheduleData.start_time;
+    if ('end_time' in scheduleData) updateData.end_time = scheduleData.end_time;
+    if ('is_active' in scheduleData) updateData.is_active = scheduleData.is_active;
+    
+    await Schedule.update(updateData, { where });
 
     return Schedule.findOne({
       where,
