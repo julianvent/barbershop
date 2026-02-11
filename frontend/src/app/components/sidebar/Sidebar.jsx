@@ -30,6 +30,14 @@ const Sidebar = forwardRef(({ visible, isAdmin }, ref) => {
             <span>Personal</span>
           </Link>
         </li>
+        <li>
+          <Link href="/admin/schedule">
+            <div className={styles.iconContainer}>
+              <img src="/icons/scheduleClock.svg" alt="" />
+            </div>
+            <span>Horario</span>
+          </Link>
+        </li>
         { isAdmin&&(
           <>
           <li>

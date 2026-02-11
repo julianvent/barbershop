@@ -1,5 +1,4 @@
 'use client';
-import { staffRoute } from "@/app/utils/routes";
 import EmployeeForm from "../../../../forms/EmployeeForm";
 import { getEmployee, updateEmployee } from "@/app/apiHandlers/adminStaff";
 import React, { useState, useEffect }  from "react";
@@ -26,7 +25,7 @@ export default function UpdateStaff({params, isAdmin}){
 
     const submit = async (data) => {
         try{
-            await updateEmployee(id, data);
+            await updateEmployee(id, data, isAdmin);
         }catch(err){
             return err.message;
         }
@@ -49,7 +48,8 @@ export default function UpdateStaff({params, isAdmin}){
                 }
             <EmployeeForm 
             onSubmit={submit}
-            employee={employee}/>
+            employee={employee}
+            isAdmin={isAdmin}/>
 
         </Layout>
         

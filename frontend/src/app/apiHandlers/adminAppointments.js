@@ -9,6 +9,7 @@ import {
   getAvailabilityApiRoute,
   updateAppointmentApiRoute,
 } from "../routes/adminAppointments";
+import { redirect } from "next/navigation";
 
 export async function getAppointments() {
   try {
@@ -54,6 +55,7 @@ export async function getAppointment(appointmentId, auth) {
     const { date, time } = splitDateTime(appointment.appointment_datetime);
     return { ...appointment, date, time };
   } catch (error) {
+    if (error.response.status == 403) redirect('/forbidden')
     throw error;
   }
 }

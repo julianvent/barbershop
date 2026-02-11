@@ -15,8 +15,23 @@ import { getAppointments } from "../../apiHandlers/adminAppointments";
 import { useEffect, useState } from "react";
 
 export default function Appointments() {
-  const appointments = useAppointments();
+  const [appointments, setAppointments] = useState(null);
+  const [message, setMessage] = useState('Cargando las citas ...');
 
+  useEffect(() => {
+      const fetchAppointments = async () => {
+        try {
+          const data = await getAppointments();
+          setAppointments(data);
+        } catch (error) {
+          setMessage('No se pudieron recuperar las citas');
+          setAppointments([]);
+        }
+      };
+      
+      fetchAppointments();
+    
+  }, []);
   const router = useRouter();
 
   const actions = [
@@ -83,22 +98,11 @@ export default function Appointments() {
           columnDefs={fields}
           pagination={true}
           paginationPageSize={20}
+          overlayNoRowsTemplate={message}
         />
       </div>
     </>
   );
 }
 
-function useAppointments() {
-  const [appointments, setAppointments] = useState([]);
 
-  useEffect(() => {
-    const fetchAppointments = async () => {
-      const data = await getAppointments();
-      setAppointments(data);
-    };
-
-    fetchAppointments();
-  }, []);
-  return appointments;
-}

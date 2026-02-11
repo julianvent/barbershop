@@ -1,0 +1,36 @@
+
+.field {
+  margin-top: 3%;
+    display: grid;
+    gap: 0.3em;
+    grid-template-rows: auto 1fr 0.5fr;
+}
+
+.field>select {
+    font-size: 0.9rem;
+    min-height: 3em;
+    border-radius: 5px;
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+.field>label {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+
+.dataContainer > div{
+  display: grid;
+  width: 50%;
+  padding: 1%;
+}
+
+@media (width <= 800px) {
+  .dataContainer {
+    align-content:flex-start;
+    padding: 3%;
+  }
+  .dataContainer > div{
+    width: 100%;
+  }
+}

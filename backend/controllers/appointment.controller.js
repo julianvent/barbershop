@@ -14,7 +14,10 @@ export const AppointmentController = {
         establishment_id: req.query.establishment_id,
       };
 
-      if ((req.user?.role === "receptionist" || req.user?.role === "barber") && req.user?.establishment_id) {
+      if (
+        (req.user?.role === "receptionist" || req.user?.role === "barber") &&
+        req.user?.establishment_id
+      ) {
         filters.establishment_id = req.user.establishment_id;
       }
 
@@ -29,6 +32,17 @@ export const AppointmentController = {
     try {
       const { id } = req.params;
       const appointment = await AppointmentService.find(id);
+
+      if (
+        (req.user?.role === "receptionist" || req.user?.role === "barber") &&
+        req.user?.establishment_id &&
+        appointment.establishment_id !== req.user.establishment_id
+      ) {
+        return res
+          .status(403)
+          .json({ message: "Access denied to this appointment" });
+      }
+
       appointment.image_finish_path = generateImageUrl(
         appointment.image_finish_path,
       );
@@ -57,6 +71,21 @@ export const AppointmentController = {
     try {
       const { id } = req.params;
       const appointmentData = req.body;
+
+      if (
+        (req.user?.role === "receptionist" || req.user?.role === "barber") &&
+        req.user?.establishment_id
+      ) {
+        const existingAppointment = await AppointmentService.find(id);
+        if (
+          existingAppointment.establishment_id !== req.user.establishment_id
+        ) {
+          return res
+            .status(403)
+            .json({ message: "Access denied to this appointment" });
+        }
+      }
+
       const updatedAppointment = await AppointmentService.update(
         id,
         appointmentData,
@@ -70,6 +99,21 @@ export const AppointmentController = {
   async delete(req, res) {
     try {
       const { id } = req.params;
+
+      if (
+        (req.user?.role === "receptionist" || req.user?.role === "barber") &&
+        req.user?.establishment_id
+      ) {
+        const existingAppointment = await AppointmentService.find(id);
+        if (
+          existingAppointment.establishment_id !== req.user.establishment_id
+        ) {
+          return res
+            .status(403)
+            .json({ message: "Access denied to this appointment" });
+        }
+      }
+
       await AppointmentService.delete(id);
       res.status(204).send();
     } catch (error) {
@@ -98,6 +142,20 @@ export const AppointmentController = {
         });
       const { id } = req.params;
 
+      if (
+        (req.user?.role === "receptionist" || req.user?.role === "barber") &&
+        req.user?.establishment_id
+      ) {
+        const existingAppointment = await AppointmentService.find(id);
+        if (
+          existingAppointment.establishment_id !== req.user.establishment_id
+        ) {
+          return res
+            .status(403)
+            .json({ message: "Access denied to this appointment" });
+        }
+      }
+
       const file = req.files?.[0];
       const filename = file ? file.filename : null;
 
@@ -119,6 +177,20 @@ export const AppointmentController = {
   async cancel(req, res) {
     try {
       const { id } = req.params;
+
+      if (
+        (req.user?.role === "receptionist" || req.user?.role === "barber") &&
+        req.user?.establishment_id
+      ) {
+        const existingAppointment = await AppointmentService.find(id);
+        if (
+          existingAppointment.establishment_id !== req.user.establishment_id
+        ) {
+          return res
+            .status(403)
+            .json({ message: "Access denied to this appointment" });
+        }
+      }
 
       const appointment = await AppointmentService.cancel(id);
       appointment.image_finish_path = generateImageUrl(

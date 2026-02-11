@@ -101,4 +101,66 @@ export const ServiceRepository = {
     );
     return updated > 0;
   },
+
+  async linkToAllEstablishments(serviceId, price, establishments) {
+    const links = establishments.map((establishment) => ({
+      service_id: serviceId,
+      establishment_id: establishment.id,
+      price: price,
+    }));
+
+    await EstablishmentService.bulkCreate(links, {
+      ignoreDuplicates: true,
+    });
+  },
+
+  async linkToEstablishment(serviceId, price, establishmentId) {
+    await EstablishmentService.create({
+      service_id: serviceId,
+      establishment_id: establishmentId,
+      price: price,
+    });
+  },
+
+  async getByEstablishment(establishmentId, params = {}) {
+    const { page = 1, limit = 10, q = "" } = params;
+    const offset = (Number(page) - 1) * Number(limit);
+
+    const where = q
+      ? {
+          [Op.or]: [
+            { name: { [Op.like]: `%${q}%` } },
+            { description: { [Op.like]: `%${q}%` } },
+            { type: { [Op.like]: `%${q}%` } },
+          ],
+        }
+      : undefined;
+
+    const options = {
+      where,
+      attributes: RETURN_ATTRS,
+      include: [
+        {
+          model: EstablishmentService,
+          as: "establishment_services",
+          where: { establishment_id: Number(establishmentId) },
+          attributes: ["price"],
+          required: true,
+        },
+      ],
+      limit: Number(limit),
+      offset,
+    };
+
+    const { rows, count } = await Service.findAndCountAll(options);
+    return {
+      data: rows,
+      meta: {
+        page: Number(page),
+        limit: Number(limit),
+        total: count,
+        pages: Math.ceil(count / Number(limit)),
+      },
+    };
+  },
 };

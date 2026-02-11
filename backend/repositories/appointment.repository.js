@@ -1,10 +1,11 @@
 import { Appointment } from "../models/appointment.model.js";
+import { Establishment } from "../models/establishment.model.js";
 import { ServiceRepository } from "./service.repository.js";
 import { EstablishmentService } from "../models/associations/establishment.service.model.js";
 import { ServiceAppointment } from "../models/associations/service.appointment.model.js";
 import { BarberRepository } from "../repositories/barber.repository.js";
 import { Barber } from "../models/barber.model.js";
-import { Op } from "sequelize";
+import { Op, col } from "sequelize";
 import { DAYS } from "../validators/schedule.validator.js";
 import { ScheduleRepository } from "./schedule.repository.js";
 import {
@@ -23,6 +24,7 @@ const RETURN_ATTRS = [
   "barber_id",
   "image_finish_path",
   "establishment_id",
+  [col("establishment.name"), "establishment_name"],
 ];
 
 const availability_states = ["pending", "confirmed"];
@@ -52,26 +54,43 @@ export const AppointmentRepository = {
     const options = {
       where,
       order,
+      attributes: RETURN_ATTRS,
+      include: [
+        {
+          model: Establishment,
+          as: "establishment",
+          attributes: [],
+          required: false,
+        },
+      ],
     };
     if (offset != null) options.offset = offset;
     if (limit != null) options.limit = limit;
 
     if (establishmentId != null) {
-      options.include = [
-        {
-          model: Barber,
-          as: "barber",
-          where: { establishment_id: establishmentId },
-          attributes: [],
-        },
-      ];
+      options.include.push({
+        model: Barber,
+        as: "barber",
+        where: { establishment_id: establishmentId },
+        attributes: [],
+      });
     }
 
     return Appointment.findAndCountAll(options);
   },
 
   async getById(id) {
-    return Appointment.findByPk(id);
+    return Appointment.findByPk(id, {
+      attributes: RETURN_ATTRS,
+      include: [
+        {
+          model: Establishment,
+          as: "establishment",
+          attributes: [],
+          required: false,
+        },
+      ],
+    });
   },
   async getServiceByAppointmentId(id) {
     const where = { appointment_id: id };

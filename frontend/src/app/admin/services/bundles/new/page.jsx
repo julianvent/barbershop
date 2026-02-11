@@ -10,7 +10,7 @@ export default async function Page() {
       mainTitle={"Registrar nuevo paquete"}
       isAdmin={isAdm}
     >
-      <NewService/>
+      <NewService isAdmin={isAdm}/>
     </Layout>
   );
 }

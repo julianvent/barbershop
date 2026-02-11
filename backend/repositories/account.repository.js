@@ -1,6 +1,7 @@
 import { Account } from "../models/account.model.js";
-import { Op } from "sequelize";
-const RETURN_ATTRS = ["id", "email", "full_name", "role", "establishment_id"];
+import { Establishment } from "../models/establishment.model.js";
+import { Op, col } from "sequelize";
+const RETURN_ATTRS = ["id", "email", "full_name", "role", "establishment_id", [col("establishment.name"), "establishment_name"]];
 
 export const AccountRepository = {
   async getAll({ page = 1, pageSize = 20, q, establishment_id } = {}) {
@@ -19,6 +20,14 @@ export const AccountRepository = {
     const { rows, count } = await Account.findAndCountAll({
       where,
       attributes: RETURN_ATTRS,
+      include: [
+        {
+          model: Establishment,
+          as: "establishment",
+          attributes: [],
+          required: false,
+        },
+      ],
       offset,
       limit,
       order: [["id", "ASC"]],
@@ -33,7 +42,17 @@ export const AccountRepository = {
     };
   },
   async getById(id) {
-    const account = await Account.findByPk(id, { attributes: RETURN_ATTRS });
+    const account = await Account.findByPk(id, {
+      attributes: RETURN_ATTRS,
+      include: [
+        {
+          model: Establishment,
+          as: "establishment",
+          attributes: [],
+          required: false,
+        },
+      ],
+    });
     if (!account) {
       throw new Error("Account not found");
     }
@@ -66,7 +85,17 @@ export const AccountRepository = {
       establishment_id: account.establishment_id,
     });
 
-    return Account.findByPk(created.id, { attributes: RETURN_ATTRS });
+    return Account.findByPk(created.id, {
+      attributes: RETURN_ATTRS,
+      include: [
+        {
+          model: Establishment,
+          as: "establishment",
+          attributes: [],
+          required: false,
+        },
+      ],
+    });
   },
   async update(id, account) {
     const existingAccount = await Account.findByPk(id);
@@ -103,7 +132,17 @@ export const AccountRepository = {
       payload.establishment_id = account.establishment_id;
 
     await existingAccount.update(payload);
-    return Account.findByPk(id, { attributes: RETURN_ATTRS });
+    return Account.findByPk(id, {
+      attributes: RETURN_ATTRS,
+      include: [
+        {
+          model: Establishment,
+          as: "establishment",
+          attributes: [],
+          required: false,
+        },
+      ],
+    });
   },
   async delete(id) {
     const existingAccount = await Account.findByPk(id);

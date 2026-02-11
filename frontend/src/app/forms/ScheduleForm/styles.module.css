@@ -1,0 +1,81 @@
+.container {
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1%;
+  margin-bottom: 5%;
+  box-sizing: content-box;
+}
+
+.container > div {
+  border-width: 0.001em;
+  padding: 2%;
+  border-radius: 5%;
+}
+
+.buttons {
+  display: flex;
+  gap: 2em;
+  justify-self: end;
+  margin-bottom: 1%;
+  margin-right: 1%;
+}
+
+.buttons button {
+  background-color: #0033cb;
+  color: white;
+  padding: 0.75em 3em;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.buttons .cancelButton {
+  background-color: #4e4e4e;
+}
+
+.soloRow {
+  margin-left: 1%;
+  padding: 1%;
+  box-sizing: content-box;
+}
+
+.cancelBoton {
+  background-color: black;
+  color: white;
+  padding: 1%;
+}
+
+.fieldsConta {
+  display: block;
+}
+
+@media (width <= 1300px) {
+  .container {
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+
+@media (width <=800px) {
+  .container {
+    display: grid;
+    grid-template-columns:none;
+    gap: 1%;
+    height: 20%;
+  }
+
+  .fieldsConta {
+    display: flex;
+    margin-bottom: 5%;
+    justify-content: center;
+  }
+
+  .buttons {        
+    gap: 1em;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}

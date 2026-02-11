@@ -37,3 +37,11 @@ export const passwordValidation = (isNeeded) => ({
     required: isNeeded
   },
 });
+
+export const establishmentValidation = {
+  id: "establishment_id",
+  label: "Seleccione el establecimiento al que se asignara la cuenta:",
+  validation: {
+    required: "Requerido*"
+  }
+}

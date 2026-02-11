@@ -1,6 +1,6 @@
 const validFields = ["start_time", "end_time", "is_active", "day_of_week"];
 const validUpdateFields = ["start_time", "end_time", "is_active"];
-const optionalFields = ["establishment_id"];
+const optionalFields = ["establishment_id", "id", "day_of_week"];
 export const DAYS = [
   "Sunday",
   "Monday",
@@ -16,14 +16,14 @@ export const ScheduleValidator = {
     if (!schedule || typeof schedule !== "object") {
       throw new Error("Body is empty or invalid");
     }
-    
+
     // Check all fields in the schedule are valid
     for (const field in schedule) {
       if (!validFields.includes(field) && !optionalFields.includes(field)) {
         throw new Error(`Invalid field: ${field}`);
       }
     }
-    
+
     // Check required fields are present
     for (const field of validFields) {
       if (!(field in schedule)) {
@@ -31,7 +31,7 @@ export const ScheduleValidator = {
       }
       if (field === "day_of_week" && !DAYS.includes(schedule.day_of_week)) {
         throw new Error(
-          `Invalid day of week. Must be one of: ${DAYS.join(", ")}`
+          `Invalid day of week. Must be one of: ${DAYS.join(", ")}`,
         );
       }
     }
@@ -42,13 +42,17 @@ export const ScheduleValidator = {
       throw new Error("Body is empty or invalid");
     }
     for (const field in scheduleData) {
-      if (!validUpdateFields.includes(field) && !optionalFields.includes(field)) {
+      console.log(field);
+      if (
+        !validUpdateFields.includes(field) &&
+        !optionalFields.includes(field)
+      ) {
         throw new Error(`Invalid field in update: ${field}`);
       }
     }
     if (!DAYS.includes(day_of_week)) {
       throw new Error(
-        `Invalid day of week in URL. Must be one of: ${DAYS.join(", ")}`
+        `Invalid day of week in URL. Must be one of: ${DAYS.join(", ")}`,
       );
     }
   },
@@ -56,7 +60,7 @@ export const ScheduleValidator = {
   validateFindByDay(day_of_week) {
     if (!DAYS.includes(day_of_week)) {
       throw new Error(
-        `Invalid day of week. Must be one of: ${DAYS.join(", ")}`
+        `Invalid day of week. Must be one of: ${DAYS.join(", ")}`,
       );
     }
   },

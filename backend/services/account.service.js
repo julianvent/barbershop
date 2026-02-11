@@ -20,6 +20,7 @@ export const AccountService = {
       full_name: account.full_name,
       email: account.email,
       role: account.role,
+      establishment_id: account.establishment_id,
       password_hash,
     };
     return AccountRepository.create(payload);

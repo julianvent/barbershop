@@ -12,7 +12,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 
 export default function IndexAccounts(){
   const router = useRouter();
-  const [accounts, setAccounts] = useState([]);
+  const [accounts, setAccounts] = useState(null);
   const [message, setMessage] = useState('Obteniendo cuentas ...');
   
   const actions = [
@@ -61,6 +61,7 @@ export default function IndexAccounts(){
         setAccounts(accs);
       } catch (e) {
         setMessage(e);
+        setAccounts([])
       }
     }
 

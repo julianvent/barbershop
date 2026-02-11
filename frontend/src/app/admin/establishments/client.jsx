@@ -13,7 +13,7 @@ import { getEstablishments } from "@/app/apiHandlers/adminEstablishments";
 import { ActionButton } from "@/app/components/action/ActionButton";
 
 export default function IndexEstablishment(){
-  const [establishments, setEstablishments] = useState([])
+  const [establishments, setEstablishments] = useState(null)
   const [ message, setMessage] = useState('No se han registrado los establecimentos')
 
   const actions = [
@@ -44,6 +44,7 @@ export default function IndexEstablishment(){
         setEstablishments(response);
       } catch (e) {
         setMessage('No se pudieron cargar los establecimientos')
+        setEstablishments([]);
       }
     };
 

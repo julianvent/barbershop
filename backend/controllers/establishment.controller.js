@@ -13,11 +13,6 @@ export const EstablishmentController = {
         page: req.query.page,
         limit: req.query.limit,
       };
-
-      if (req.user?.role === "receptionist" && req.user?.establishment_id) {
-        filters.id = req.user.establishment_id;
-      }
-
       const establishments = await EstablishmentService.list(filters);
       const data = establishments.map((establishment) => ({
         ...(establishment.get?.() ?? establishment),

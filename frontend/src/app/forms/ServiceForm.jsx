@@ -16,7 +16,7 @@ import StatusSelect from "@/app/components/form/input/StatusSelect";
 import { statusValidation } from "@/app/utils/servicesValidators";
 import InputDecimal from "@/app/components/form/input/InputDecimal";
 
-export default function ServiceForm({ onSubmit, service }) {
+export default function ServiceForm({ onSubmit, service, isAdmin }) {
   const router = useRouter();
   const [isCreatingService, setIsCreatingService] = useState(false);
   const methods = useForm({
@@ -35,10 +35,10 @@ export default function ServiceForm({ onSubmit, service }) {
           type: "server",
           message: err,
         });
-        setIsCreatingService(false);
       }else{
         router.push(servicesRoute);
       }
+      setIsCreatingService(false);
   });
 
   useEffect(() => {

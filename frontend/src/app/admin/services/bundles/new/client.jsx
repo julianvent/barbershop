@@ -2,11 +2,11 @@
 import BundleForm from "../../../../forms/BundleForm";
 import { createBundle } from "../../../../apiHandlers/adminServices";
 
-export default function NewService() {
+export default function NewService({isAdmin}) {
 
   const submit = async (data, services) => {
     try{
-      await createBundle(data,services);
+      await createBundle(data,services, isAdmin);
     }catch(err){
       return err;
     }

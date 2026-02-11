@@ -442,6 +442,7 @@ async function seedAppointment(
       total_duration: 30,
       status: "confirmed",
       barber_id: barbers[0].id, // SEBASTIÁN - Establishment 1
+      establishment_id: barbers[0].establishment_id,
       services: [services[0]], // Corte de Cabello
     },
     {
@@ -452,6 +453,7 @@ async function seedAppointment(
       total_duration: 20,
       status: "pending",
       barber_id: barbers[2].id, // JOSÉ - Establishment 1
+      establishment_id: barbers[2].establishment_id,
       services: [services[1]], // Barba
     },
     {
@@ -462,6 +464,7 @@ async function seedAppointment(
       total_duration: 30,
       status: "pending",
       barber_id: barbers[4].id, // KEVIN - Establishment 1
+      establishment_id: barbers[4].establishment_id,
       services: [services[0]], // Corte
     },
     {
@@ -472,6 +475,7 @@ async function seedAppointment(
       total_duration: 45,
       status: "confirmed",
       barber_id: barbers[0].id, // SEBASTIÁN - Establishment 1
+      establishment_id: barbers[0].establishment_id,
       services: [services[2]], // Combo
     },
 
@@ -484,6 +488,7 @@ async function seedAppointment(
       total_duration: 45,
       status: "confirmed",
       barber_id: barbers[1].id, // ADRIÁN - Establishment 2
+      establishment_id: barbers[1].establishment_id,
       services: [services[2]], // Combo
     },
     {
@@ -494,6 +499,7 @@ async function seedAppointment(
       total_duration: 50,
       status: "confirmed",
       barber_id: barbers[3].id, // CARLOS - Establishment 2
+      establishment_id: barbers[3].establishment_id,
       services: [services[0], services[1]], // Corte + Barba
     },
     {
@@ -504,6 +510,7 @@ async function seedAppointment(
       total_duration: 30,
       status: "confirmed",
       barber_id: barbers[1].id, // ADRIÁN - Establishment 2
+      establishment_id: barbers[1].establishment_id,
       services: [services[0]], // Corte
     },
   ];

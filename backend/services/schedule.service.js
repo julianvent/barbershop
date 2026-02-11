@@ -33,6 +33,7 @@ export const ScheduleService = {
   async updateMultiple(scheduleDataArray, establishment_id) {
     const updatedSchedules = [];
     for (const scheduleData of scheduleDataArray) {
+      console.log(scheduleData)
       const updated = await this.update(scheduleData.day_of_week, scheduleData, establishment_id);
       updatedSchedules.push(updated);
     }

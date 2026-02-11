@@ -43,6 +43,20 @@ export const isAdmin = async () => {
     }
 }
 
+export const getEstablishmentId = async () => {
+    try{
+        const cookieStore = await cookies();
+        const token = cookieStore.get("token")?.value;
+        const payload = JSON.parse(
+            Buffer.from(token.split('.')[1], 'base64').toString()
+        );
+
+        return payload.establishment_id;
+    } catch(err){
+        return 0;
+    }
+}
+
 export const logOut = async () => {
     try{
         const cookieStore = await cookies();
