@@ -1,7 +1,7 @@
 import {states} from './appointment.validator.js'
 
 const validFields = ["barber_name","is_active","email","phone"];
-const validUpdateFields = [...validFields, "image_path"];
+const validUpdateFields = [...validFields, "image_path", "establishment_id"];
 const orderValues = ["ASC", "DESC"];
 
 export const BarberValidator = {

@@ -1,11 +1,21 @@
 import { Barber } from "../models/barber.model.js";
+import { Establishment } from "../models/establishment.model.js";
+import { col } from "sequelize";
 
-const RETURN_ATTRS = ["id", "barber_name", "is_active", "image_path", "phone", "email", "establishment_id"];
+const RETURN_ATTRS = ["id", "barber_name", "is_active", "image_path", "phone", "email", "establishment_id", [col("establishment.name"), "establishment_name"]];
 
 export const BarberRepository = {
     async list(offset, limit, sort){
         const options = {
             attributes: RETURN_ATTRS,
+            include: [
+                {
+                    model: Establishment,
+                    as: "establishment",
+                    attributes: [],
+                    required: false,
+                },
+            ],
             order: [['id', sort] ]
         }
 
@@ -26,7 +36,15 @@ export const BarberRepository = {
                 establishment_id: barberData.establishment_id,
             });
             return Barber.findByPk(newBarber.id,{
-                attributes: RETURN_ATTRS
+                attributes: RETURN_ATTRS,
+                include: [
+                    {
+                        model: Establishment,
+                        as: "establishment",
+                        attributes: [],
+                        required: false,
+                    },
+                ],
             })
         }catch(error){
             throw new Error("Error creating barber: " + error.message);
@@ -36,6 +54,14 @@ export const BarberRepository = {
     async getById(id){
         const existing_barber = await Barber.findByPk(id, {
             attributes: RETURN_ATTRS,
+            include: [
+                {
+                    model: Establishment,
+                    as: "establishment",
+                    attributes: [],
+                    required: false,
+                },
+            ],
         });
         return existing_barber;
     },
@@ -47,6 +73,14 @@ export const BarberRepository = {
 
             return Barber.findByPk(existing_barber.id, {
                     attributes: RETURN_ATTRS,
+                    include: [
+                        {
+                            model: Establishment,
+                            as: "establishment",
+                            attributes: [],
+                            required: false,
+                        },
+                    ],
             });
         }
         catch(error){
@@ -70,6 +104,14 @@ export const BarberRepository = {
     async getByEstablishmentId(establishmentId, offset, limit, sort = 'ASC'){
         const options = {
             attributes: RETURN_ATTRS,
+            include: [
+                {
+                    model: Establishment,
+                    as: "establishment",
+                    attributes: [],
+                    required: false,
+                },
+            ],
             where: { establishment_id: establishmentId },
             order: [['id', sort]]
         }

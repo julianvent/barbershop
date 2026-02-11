@@ -1,6 +1,7 @@
 import {Account} from "../account.model.js";
 import {Establishment} from "../establishment.model.js";
 import {Schedule} from "../schedule.model.js";
+import {Appointment} from "../appointment.model.js";
 
 /*
 Means that a One-To-Many relationship exists between Account and Establishment, 
@@ -33,4 +34,22 @@ Schedule.belongsTo(Establishment, {
   as: "establishment",
 });
 
-export { Account, Establishment, Schedule };
+Account.belongsTo(Establishment, {
+  foreignKey: "establishment_id",
+  onDelete: "SET NULL",
+  as: "establishment",
+});
+
+Appointment.belongsTo(Establishment, {
+  foreignKey: "establishment_id",
+  onDelete: "SET NULL",
+  as: "establishment",
+});
+
+Establishment.hasMany(Appointment, {
+  foreignKey: "establishment_id",
+  onDelete: "SET NULL",
+  as: "appointments",
+});
+
+export { Account, Establishment, Schedule, Appointment };

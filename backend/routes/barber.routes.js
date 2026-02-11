@@ -3,10 +3,10 @@ import { BarberController } from "../controllers/barber.controller.js";
 import { uploadBarberImage } from "../config/upload.images.js";
 import { handleMulterErrors, validateFileType } from "../middlewares/multer.error.middleware.js";
 import { requireRole } from "../middlewares/require.admin.middleware.js";
-import { isBarberInEstablishment } from "../middlewares/require.property.barber.middleware.js";
 import requireAuth from "../middlewares/require.auth.middleware.js";
 import { barberOutput } from "../middlewares/barber.output.middleware.js";
 import requireOptionalAuth from "../middlewares/require.optional.auth.middleware.js";
+import { isBarberInEstablishment } from "../middlewares/require.property.barber.middleware.js";
 const router = Router();
 
 router.get("/", requireOptionalAuth, barberOutput(), BarberController.getAll);

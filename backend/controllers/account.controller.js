@@ -29,11 +29,6 @@ export const AccountController = {
   async create(req, res) {
     try {
       const accountData = req.body;
-      
-      if (req.user?.role === "receptionist" && req.user?.establishment_id) {
-        accountData.establishment_id = req.user.establishment_id;
-      }
-      
       const newAccount = await AccountService.create(accountData);
       res.status(201).json(newAccount);
     } catch (error) {
@@ -47,7 +42,6 @@ export const AccountController = {
       
       if (req.user.role != "admin") {
         delete accountData.role;
-        delete accountData.establishment_id;
       }
       
       const updatedAccount = await AccountService.update(id, accountData);

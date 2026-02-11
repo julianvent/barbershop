@@ -10,7 +10,6 @@ export const BarberController = {
         establishment_id: req.query.establishment_id,
       };
 
-      // Receptionists can only see barbers from their establishment
       if (req.user?.role === "receptionist" && req.user?.establishment_id) {
         filters.establishment_id = req.user.establishment_id;
       }
@@ -57,11 +56,6 @@ export const BarberController = {
       // Prevent clients from setting image_path and finish_path manually, since we don't use a request DTO and this field must only be assigned from the uploaded file
       delete barberData.image_path;
       delete barberData.image_finish_path;
-      
-      if (req.user?.role === "receptionist" && req.user?.establishment_id) {
-        barberData.establishment_id = req.user.establishment_id;
-      }
-      
       const file = req.files?.[0];
       if (file) barberData.image_path = file.filename;
       const newBarber = await BarberService.create(barberData);
