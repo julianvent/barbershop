@@ -15,7 +15,7 @@ export const ServiceService = {
     return service;
   },
 
-  async create(body, user = {}) {
+  async create(body, user = {}, establishment_id = null) {
     ServiceValidator.validateCreate(body);
     const name = String(body.name).trim();
     body.name = name;
@@ -33,6 +33,12 @@ export const ServiceService = {
             establishments,
           );
         }
+      } else if (establishment_id) {
+        await ServiceRepository.linkToEstablishment(
+          service.id,
+          service.price,
+          establishment_id,
+        );
       }
 
       return service;

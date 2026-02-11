@@ -114,6 +114,14 @@ export const ServiceRepository = {
     });
   },
 
+  async linkToEstablishment(serviceId, price, establishmentId) {
+    await EstablishmentService.create({
+      service_id: serviceId,
+      establishment_id: establishmentId,
+      price: price,
+    });
+  },
+
   async getByEstablishment(establishmentId, params = {}) {
     const { page = 1, limit = 10, q = "" } = params;
     const offset = (Number(page) - 1) * Number(limit);
