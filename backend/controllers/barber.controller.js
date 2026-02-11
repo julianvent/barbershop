@@ -9,10 +9,10 @@ export const BarberController = {
         limit: req.query.limit,
         establishment_id: req.query.establishment_id,
       };
-
-      if (req.user?.role === "receptionist" && req.user?.establishment_id) {
-        filters.establishment_id = req.user.establishment_id;
-      }
+      // todo: check the scenario when its a client making an appoinment
+      // if (req.user?.role === "receptionist" && req.user?.establishment_id) {
+      //   filters.establishment_id = req.user.establishment_id;
+      // }
 
       let result;
       if (filters.establishment_id) {

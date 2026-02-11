@@ -1,5 +1,6 @@
 import axios from "axios";
 import { axiosConfig } from "../utils/requestBuilder";
+import { redirect } from "next/navigation";
 
 const baseUrl = '/api/schedules/'
 
@@ -10,7 +11,7 @@ export async function getSchedules(id) {
     return response.data;
 
   } catch (err) {
-    console.log(err)
+    if (error.response.status == 403) redirect('/forbidden')
     throw "Error obteniendo los horarios del establecimiento";
   }
 } 

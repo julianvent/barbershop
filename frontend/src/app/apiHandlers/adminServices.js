@@ -1,4 +1,4 @@
-import { axiosConfig } from "@/app/utils/requestBuilder";
+import { axiosConfig, getEstablishmentId } from "@/app/utils/requestBuilder";
 import axios from "axios";
 import {
   createServiceApiRoute,
@@ -6,6 +6,7 @@ import {
   getServicesApiRoute,
   updateServiceApiRoute,
 } from "../routes/adminServices";
+import { redirect } from "next/navigation";
 
 export const getServices = async () => {
   try {
@@ -30,9 +31,14 @@ export const getServicesByEstablishment = async (establishmentId) => {
   }  
 }
 
-export const createService = async (data) => {
+export const createService = async (data, isAdmin) => {
   try {
     const headers = await axiosConfig();
+    if (!isAdmin) {
+      const establishmentId = await getEstablishmentId();
+      data.establishment_id = establishmentId;
+    }
+
     await axios.post(createServiceApiRoute, data, headers);
   } catch (err) {
     let message = "Ocurrio un error en el servidor";
@@ -60,7 +66,7 @@ export const updateService = async (data, name) => {
   }
 };
 
-export const createBundle = async (data, servis) => {
+export const createBundle = async (data, servis, isAdmin) => {
   const servs = servis.filter((s) => data.services.includes(s.name));
   let rows = "";
   let duration = 0;
@@ -101,6 +107,10 @@ const description = `
   </table>
 `;
 
+  if (!isAdmin) {
+    const establishmentId = await getEstablishmentId();
+    data.establishment_id = establishmentId;
+  }
 
   data.description = description;
   data.duration = duration;
@@ -120,6 +130,7 @@ export const getService = async (name) => {
     const request = await axios.get(uri, headers);
     return request.data;
   } catch (error) {
+    if (error.response.status == 403) redirect('/forbidden')
     throw "Error recuperando servicio";
   }
 };

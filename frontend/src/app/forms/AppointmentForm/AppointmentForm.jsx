@@ -111,7 +111,7 @@ export default function AppointmentForm({ appointment, mode }) {
       methods.resetField("date", { defaultValue: minDate });
       isInitialLoad.current = false;
     }
-  }, [appointment]); // Only reset when appointment prop changes, not when services/establishments change
+  }, [appointment, establishments]); // Only reset when appointment prop changes, not when services change
   
   useEffect(() => {
     if (barberId) {

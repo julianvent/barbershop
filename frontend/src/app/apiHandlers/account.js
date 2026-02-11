@@ -45,6 +45,7 @@ export async function createAccount(data){
         const headers = await axiosConfig();
         await axios.post(baseRoute, data, headers);        
     } catch (err) {
+        console.log(err)
         throw "Error creando cuenta";
     }
 }

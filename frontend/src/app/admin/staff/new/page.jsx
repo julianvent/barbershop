@@ -12,7 +12,7 @@ export default async function Page() {
       isAdmin={isAdm}
     >
       <title>SG BarberShop - Registrar Empleado</title>
-      <NewEmployee />
+      <NewEmployee isAdmin={isAdm} />
     </Layout>
   );
 }

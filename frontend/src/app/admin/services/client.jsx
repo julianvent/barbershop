@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 import { ActionButton } from "@/app/components/action/ActionButton";
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-export default function Services({isAdm, establishment_id}) {
+export default function Services({isAdmin, establishment_id}) {
   const router = useRouter();
   const [services, setServices] = useState(null);
   const [message,setMessage] = useState(null);
@@ -24,7 +24,7 @@ export default function Services({isAdm, establishment_id}) {
     const fetch = async() =>{
       try{
         let data;
-        if (isAdm) data = await getServices();
+        if (isAdmin) data = await getServices();
         else data = await getServicesByEstablishment(establishment_id);
         setServices(data);
         
