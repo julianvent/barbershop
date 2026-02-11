@@ -1,4 +1,5 @@
 
+const VALID_ROLES = ["admin", "receptionist"];
 
 export function barberOutput() {
     return function(req, res, next) {
@@ -9,11 +10,11 @@ export function barberOutput() {
                 const role = req.user?.role;
                 if (body?.data && Array.isArray(body.data)) {
 
-                    if (role === undefined) {
+                    if (!VALID_ROLES.includes(role)) {
                         body.data = body.data.map(item => BarberPublicDTO(item));
                     }
 
-                } else if (body && typeof body === "object" && role !== "admin") {
+                } else if (body && typeof body === "object" && !VALID_ROLES.includes(role)) {
                     body = BarberPublicDTO(body);
                 }
 

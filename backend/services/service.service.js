@@ -1,5 +1,6 @@
 import { ServiceValidator } from "../validators/service.validator.js";
 import { ServiceRepository } from "../repositories/service.repository.js";
+import { EstablishmentRepository } from "../repositories/establishment.repository.js";
 
 export const ServiceService = {
   list(params) {
@@ -14,13 +15,27 @@ export const ServiceService = {
     return service;
   },
 
-  async create(body) {
+  async create(body, user = {}) {
     ServiceValidator.validateCreate(body);
     const name = String(body.name).trim();
     body.name = name;
 
     try {
-      return await ServiceRepository.create(body);
+      const service = await ServiceRepository.create(body);
+
+      // If admin creates the service, link it to all establishments
+      if (user.role === "admin") {
+        const establishments = await EstablishmentRepository.list({});
+        if (establishments && establishments.length > 0) {
+          await ServiceRepository.linkToAllEstablishments(
+            service.id,
+            service.price,
+            establishments,
+          );
+        }
+      }
+
+      return service;
     } catch (error) {
       throw new Error("A service with that name already exists");
     }
@@ -46,6 +61,9 @@ export const ServiceService = {
     if (!establishmentId || isNaN(Number(establishmentId))) {
       throw new Error("Valid establishment ID is required");
     }
-    return ServiceRepository.getByEstablishment(Number(establishmentId), params);
+    return ServiceRepository.getByEstablishment(
+      Number(establishmentId),
+      params,
+    );
   },
 };

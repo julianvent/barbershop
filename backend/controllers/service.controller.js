@@ -35,7 +35,7 @@ export const ServiceController = {
 
   async create(req, res) {
     try {
-      const row = await ServiceService.create(req.body);
+      const row = await ServiceService.create(req.body, req.user);
       res.status(201).json(row);
     } catch (e) {
       res.status(400).json({ error: e.message });
