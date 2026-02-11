@@ -38,6 +38,8 @@ export default function ShowAccount({ params, isAdmin}){
       mainTitle={'Usuario: ' + (account ? account.full_name : '...')}
       headerTitle={'Modificar cuenta'}
       >
+      <title> SG Barbershop - Modificar cuenta</title>
+
         {message?(
               <div className={warning.errorMessage}>
                   {message}

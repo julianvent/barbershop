@@ -10,6 +10,7 @@ export default async function Page(){
       headerTitle={'Crear cuenta'}
       mainTitle={'Registrar cuenta en el sistema'}
     >
+      <title> SG Barbershop - Crear cuenta</title>
       <CreateAccount/>
     </Layout>
   )
