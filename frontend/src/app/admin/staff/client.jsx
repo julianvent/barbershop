@@ -11,10 +11,10 @@ import { AgGridReact } from "ag-grid-react";
 import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
 import { ActionButton } from "@/app/components/action/ActionButton";
 import { useEffect, useState } from "react";
-import { getEmployees } from "../../apiHandlers/adminStaff";
+import { getEmployees, getEmployeesByEstablishment } from "../../apiHandlers/adminStaff";
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-export default function StaffIndex() {
+export default function StaffIndex({isAdmin, establishmentId}) {
   const router = useRouter();
   const [employees, setEmployees] = useState();
   const [message, setMessage] = useState(null);
@@ -23,7 +23,9 @@ export default function StaffIndex() {
     setMessage('No se han registrado los servicios');
     const fetch = async () => {
       try{
-        const data = await getEmployees();
+        let data;
+        if (isAdmin) data = await getEmployees();
+        else data = await getEmployeesByEstablishment(establishmentId);
         setEmployees(data.data);
 
       }catch (err){

@@ -10,12 +10,12 @@ import {
 import { serviceFields, defaultColDef, actionsDef } from "@/app/utils/columns";
 import { AgGridReact } from "ag-grid-react";
 import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
-import { getServices } from "../../apiHandlers/adminServices";
+import { getServices, getServicesByEstablishment } from "../../apiHandlers/adminServices";
 import { useEffect, useState } from "react";
 import { ActionButton } from "@/app/components/action/ActionButton";
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-export default function Services() {
+export default function Services({isAdm, establishment_id}) {
   const router = useRouter();
   const [services, setServices] = useState(null);
   const [message,setMessage] = useState(null);
@@ -23,7 +23,9 @@ export default function Services() {
   useEffect(() => {
     const fetch = async() =>{
       try{
-        const data = await getServices();
+        let data;
+        if (isAdm) data = await getServices();
+        else data = await getServicesByEstablishment(establishment_id);
         setServices(data);
         
       }catch(err){
