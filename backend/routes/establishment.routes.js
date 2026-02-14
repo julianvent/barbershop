@@ -8,11 +8,9 @@ import { uploadEstablishmentImage } from "../config/upload.images.js";
 
 const router = Router();
 
-router.use(requireAuth);
-
-router.get("/", requireRole("receptionist"), EstablishmentController.getAll);
-router.get("/:id", requireRole("receptionist"), EstablishmentController.getById);
-router.post("/", requireRole(), uploadEstablishmentImage.any(), EstablishmentController.create);
-router.put("/:id", requireRole(), uploadEstablishmentImage.any(), EstablishmentController.update);
-router.delete("/:id", isEstablishmentOwner(), EstablishmentController.delete);
+router.get("/", EstablishmentController.getAll);
+router.get("/:id", requireAuth, requireRole("receptionist"), EstablishmentController.getById);
+router.post("/", requireAuth, requireRole(), uploadEstablishmentImage.any(), EstablishmentController.create);
+router.put("/:id", requireAuth, requireRole(), uploadEstablishmentImage.any(), EstablishmentController.update);
+router.delete("/:id", requireAuth, isEstablishmentOwner(), EstablishmentController.delete);
 export default router;
