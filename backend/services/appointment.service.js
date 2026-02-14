@@ -148,7 +148,6 @@ export const AppointmentService = {
   async getAvailability(filters) {
     const { from, to } =
       await AppointmentValidator.validateAvailabilityAppointment(filters);
-
     let barberIds = [];
 
     if (filters.barber_id) {
@@ -176,6 +175,11 @@ export const AppointmentService = {
       const workStart = new Date(from);
       const [h1, m1, s1] = schedule.start_time.split(":").map(Number);
       workStart.setHours(h1, m1, s1, 0);
+      
+      if(!filters.from){
+        const now = new Date()
+        workStart.setTime(Math.max(now.getTime(), workStart.getTime()))
+      }
 
       const workEnd = new Date(from);
       const [h2, m2, s2] = schedule.end_time.split(":").map(Number);
