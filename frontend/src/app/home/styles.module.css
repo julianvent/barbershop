@@ -111,7 +111,7 @@
 }
 
 .socials{
-  margin-top: 5%;
+  margin-top: 1%;
   justify-items: center;
 }
 
@@ -127,18 +127,19 @@
 }
 
 .socials > div > ul > li{
-  padding: 1em;
+  padding: 0em 2em;
 }
 
 .socials > div > ul > li > a > img {
-  max-height: 100px;
+  max-height: 30px;
+  filter: brightness(0) saturate(100%) invert(100%) sepia(96%) saturate(0%) hue-rotate(47deg) brightness(104%) contrast(107%);
 }
 
 .footer {
   bottom: 0;
   background-color: rgb(21, 21, 21);
   color: white;
-  padding: 2em;
+  padding: 1em;
   justify-items: center;
   grid-column: 3;
 }
@@ -156,8 +157,8 @@
     margin-top: 10%;
     margin-bottom: 10%;
   }
-  .socials > div > ul > li > a > img {
-    max-height: 50px;
+  .socials > div > ul > li  {
+    padding: 0em 1em;
   }
 
   .scrollableContent {

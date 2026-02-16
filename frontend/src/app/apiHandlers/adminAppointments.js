@@ -114,13 +114,14 @@ export async function completeAppointment(data, id) {
 export async function cancelAppointment(id, auth=null) {
   try {
     let headers;
+    let url = cancelAppointmentApiRoute(id);
     if(auth != null){
-      headers = {headers : { 'Authorization': `Bearer ${auth}` }};
+      url += `?auth=${auth}`
     }else{
       headers = await axiosConfig();
     }
 
-    const res = axios.post(cancelAppointmentApiRoute(id),{},headers);
+    const res = axios.post(url,{},headers);
     return res;
   } catch (error) {}
 }

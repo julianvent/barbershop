@@ -100,9 +100,16 @@ export default function Page() {
             </div>
           </div>
         </article>
+        
+        </article>
 
+
+
+
+      <footer className={styles.footer}>
+        <p>Sagoz Barbershop © 2026</p>
+        
         <div className={styles.socials}>
-          <h2>Contactanos</h2>
           <div>
             <ul>
               <li>
@@ -112,13 +119,13 @@ export default function Page() {
               </li>
 
               <li>
-                <a href="https://www.instagram.com/sagoz/">
+                <a href="https://www.instagram.com/">
                   <img src="/icons/social-media/instagram.svg" alt="instagram image" />
                 </a>
               </li>
 
               <li>
-                <a href="https://wa.me/5219211231200">
+                <a href="https://wa.me">
                   <img src="/icons/social-media/whatsapp.svg" alt="whatsapp image" />
                 </a>
               </li>
@@ -131,18 +138,6 @@ export default function Page() {
             </ul>
           </div>
         </div>
-
-        
-        </article>
-
-
-
-
-      <footer className={styles.footer}>
-        <p>
-        Sagoz Barbershop © 2026
-
-        </p>
       </footer>
       </main>
 
