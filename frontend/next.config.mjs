@@ -11,11 +11,6 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: "/",
-        destination: "/signin",
-        permanent: true,
-      },
-      {
         source: "/admin",
         destination: "/admin/appointments",
         permanent: true,

@@ -3,9 +3,16 @@
     
     <url>
         <loc>http://localhost:3000/</loc> 
-        <lastmod>2025-12-03</lastmod> 
+        <lastmod>2025-02-14</lastmod> 
         <priority>1.0</priority> 
     </url>
+
+    <url>
+        <loc>http://localhost:3000/appointments</loc> 
+        <lastmod>2025-02-14</lastmod> 
+        <priority>1.0</priority> 
+    </url>
+
 
 
 </urlset>

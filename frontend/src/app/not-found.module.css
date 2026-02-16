@@ -5,6 +5,7 @@
     flex-direction: column;
     min-height: 100%;
     row-gap: 1em;
+    background-color: rgb(248, 248, 248);
 }
 
 .notFoundLayout figure {
@@ -17,6 +18,23 @@
 }
 
 .notFoundLayout a {
-    color: black;
+    color: white;
+    padding: 0.25em 0.5em;
+    border-radius: 0.5em;
+    background-color: black;
+    text-decoration: none;
     font-size: 1.5rem;
+}
+
+
+.notFoundLayout a:hover {
+    background-color: rgb(35, 35, 35);
+}
+.card {
+    border-radius: 1em;
+    padding: 2em;
+    box-shadow: 0px 2px 4px rgb(219, 219, 219);
+    display: grid;
+    justify-items: center;
+    gap: 1em;
 }
