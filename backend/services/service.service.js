@@ -7,8 +7,11 @@ export const ServiceService = {
     return ServiceRepository.list(params);
   },
 
-  async get(serviceId) {
-    const service = await ServiceRepository.getById(serviceId);
+  async get(serviceId, establishmentId = null) {
+    const service = await ServiceRepository.getById(
+      serviceId,
+      establishmentId ? Number(establishmentId) : null,
+    );
     if (!service) {
       throw new Error("Service not found");
     }
@@ -24,7 +27,13 @@ export const ServiceService = {
       const service = await ServiceRepository.create(body);
 
       // If admin creates the service, link it to all establishments
-      if (user.role === "admin") {
+      if (establishment_id) {
+        await ServiceRepository.linkToEstablishment(
+          service.id,
+          service.price,
+          establishment_id,
+        );
+      } else if (user.role === "admin") {
         const establishments = await EstablishmentRepository.list({});
         if (establishments && establishments.length > 0) {
           await ServiceRepository.linkToAllEstablishments(
@@ -33,12 +42,6 @@ export const ServiceService = {
             establishments,
           );
         }
-      } else if (establishment_id) {
-        await ServiceRepository.linkToEstablishment(
-          service.id,
-          service.price,
-          establishment_id,
-        );
       }
 
       return service;

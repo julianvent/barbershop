@@ -1,4 +1,5 @@
 import { Service } from "../models/service.model.js";
+import { Establishment } from "../models/establishment.model.js";
 import { EstablishmentService } from "../models/associations/establishment.service.model.js";
 import { Op } from "sequelize";
 
@@ -74,10 +75,30 @@ export const ServiceRepository = {
     };
   },
 
-  async getById(id) {
-    const existing_service = await Service.findByPk(id, {
+  async getById(id, establishmentId = null) {
+    const options = {
       attributes: RETURN_ATTRS,
-    });
+      include: [
+        {
+          model: EstablishmentService,
+          as: "establishment_services",
+          attributes: ["establishment_id"],
+          include: [
+            {
+              model: Establishment,
+              as: "establishment",
+              attributes: ["id", "name"],
+            },
+          ],
+        },
+      ],
+    };
+
+    if (establishmentId != null) {
+      options.include[0].where = { establishment_id: Number(establishmentId) };
+    }
+
+    const existing_service = await Service.findByPk(id, options);
     if (!existing_service) throw new Error("Service not found");
     return existing_service;
   },

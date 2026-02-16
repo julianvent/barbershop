@@ -31,7 +31,7 @@ export const ServiceController = {
 
   async getById(req, res) {
     try {
-      const row = await ServiceService.get(req.params.id);
+      const row = await ServiceService.get(req.params.id, req.query.establishment_id);
       res.json(row);
     } catch (e) {
       res.status(404).json({ error: e.message });
