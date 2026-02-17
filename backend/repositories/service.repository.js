@@ -2,16 +2,67 @@ import { Service } from "../models/service.model.js";
 import { Establishment } from "../models/establishment.model.js";
 import { EstablishmentService } from "../models/associations/establishment.service.model.js";
 import { Op } from "sequelize";
+import { sequelize } from "../config/database.config.js";
 
 const RETURN_ATTRS = [
   "id",
   "name",
   "description",
-  "price",
   "duration",
   "type",
   "status",
 ];
+
+const RETURN_ATTRS_WITH_ESTABLISHMENT = [
+  "id",
+  "name",
+  "description",
+  "duration",
+  "type",
+  "status",
+];
+
+/**
+ * Transform service data to flatten establishment info
+ * @param {Object} service - Service instance or plain object
+ * @param {Number|null} establishmentId - Optional establishment ID filter
+ * @returns {Object} Transformed service data
+ */
+function transformServiceWithEstablishments(service, establishmentId = null) {
+  const serviceData =
+    typeof service.toJSON === "function" ? service.toJSON() : service;
+
+  if (
+    serviceData.establishment_services &&
+    serviceData.establishment_services.length > 0
+  ) {
+    serviceData.establishment_services = serviceData.establishment_services.map(
+      (es) => {
+        if (establishmentId != null) {
+          return { price: es.price };
+        }
+
+        // When not filtered, return all establishment info
+        return {
+          price: es.price,
+          establishment_id: es.establishment_id || es.establishment?.id,
+          establishment_name: es.establishment?.name,
+        };
+      },
+    );
+
+    // If filtered by establishment_id, return single object instead of array
+    if (
+      establishmentId != null &&
+      serviceData.establishment_services.length === 1
+    ) {
+      serviceData.establishment_services =
+        serviceData.establishment_services[0];
+    }
+  }
+
+  return serviceData;
+}
 
 export const ServiceRepository = {
   async list({
@@ -35,14 +86,7 @@ export const ServiceRepository = {
         }
       : undefined;
 
-    const sortable = new Set([
-      "id",
-      "name",
-      "price",
-      "duration",
-      "type",
-      "status",
-    ]);
+    const sortable = new Set(["id", "name", "duration", "type", "status"]);
     if (!sortable.has(sort)) {
       sort = "name";
     }
@@ -62,15 +106,44 @@ export const ServiceRepository = {
           model: EstablishmentService,
           as: "establishment_services",
           where: { establishment_id: Number(establishment_id) },
-          attributes: [],
+          attributes: ["price"],
           required: true,
+          include: [
+            {
+              model: Establishment,
+              as: "establishment",
+              attributes: ["id", "name"],
+            },
+          ],
+        },
+      ];
+    } else {
+      // Always include establishment services to show prices
+      options.include = [
+        {
+          model: EstablishmentService,
+          as: "establishment_services",
+          attributes: ["establishment_id", "price"],
+          required: false,
+          include: [
+            {
+              model: Establishment,
+              as: "establishment",
+              attributes: ["id", "name"],
+            },
+          ],
         },
       ];
     }
 
     const { rows, count } = await Service.findAndCountAll(options);
+
+    const transformedRows = rows.map((service) =>
+      transformServiceWithEstablishments(service, establishment_id),
+    );
+
     return {
-      data: rows,
+      data: transformedRows,
       meta: { page, limit, total: count, pages: Math.ceil(count / limit) },
     };
   },
@@ -82,7 +155,10 @@ export const ServiceRepository = {
         {
           model: EstablishmentService,
           as: "establishment_services",
-          attributes: ["establishment_id"],
+          attributes:
+            establishmentId != null
+              ? ["price"] // Only price when filtering by establishment
+              : ["establishment_id", "price"], // Both when not filtered
           include: [
             {
               model: Establishment,
@@ -100,7 +176,13 @@ export const ServiceRepository = {
 
     const existing_service = await Service.findByPk(id, options);
     if (!existing_service) throw new Error("Service not found");
-    return existing_service;
+
+    const serviceData = transformServiceWithEstablishments(
+      existing_service,
+      establishmentId,
+    );
+
+    return serviceData;
   },
 
   async create(data) {
@@ -110,12 +192,115 @@ export const ServiceRepository = {
     });
   },
 
-  async update(id, data) {
-    await Service.update(data, { where: { id } });
-    return this.getById(id);
+  async createWithLinks(data, establishment_id = null, isAdmin = false) {
+    const transaction = await sequelize.transaction();
+
+    try {
+      const { price, ...serviceData } = data;
+
+      if (!price) {
+        throw new Error("Price is required");
+      }
+
+      // Create the service without price
+      const created = await Service.create(serviceData, { transaction });
+
+      if (establishment_id) {
+        await EstablishmentService.create(
+          {
+            service_id: created.id,
+            establishment_id: Number(establishment_id),
+            price: price,
+          },
+          { transaction },
+        );
+      } else if (isAdmin) {
+        // Admin without establishment_id: link to all establishments
+        const establishments = await Establishment.findAll({
+          attributes: ["id"],
+          transaction,
+        });
+
+        if (establishments.length > 0) {
+          const links = establishments.map((establishment) => ({
+            service_id: created.id,
+            establishment_id: establishment.id,
+            price: price,
+          }));
+
+          await EstablishmentService.bulkCreate(links, {
+            transaction,
+            ignoreDuplicates: true,
+          });
+        }
+      }
+
+      await transaction.commit();
+
+      return Service.findByPk(created.id, {
+        attributes: RETURN_ATTRS,
+        include: [
+          {
+            model: EstablishmentService,
+            as: "establishment_services",
+            attributes:
+              establishment_id != null
+                ? ["price"]
+                : ["establishment_id", "price"],
+          },
+        ],
+      });
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
+    }
   },
 
-  async deactivate(id) {
+  async update(id, data, establishment_id = null, isAdmin = false) {
+    const updateData = { ...data };
+
+    if (updateData.price !== undefined) {
+      const priceToUpdate = updateData.price;
+      delete updateData.price;
+
+      if (establishment_id) {
+        await EstablishmentService.update(
+          { price: priceToUpdate },
+          {
+            where: {
+              service_id: id,
+              establishment_id: Number(establishment_id),
+            },
+          },
+        );
+      } else if (isAdmin) {
+        await EstablishmentService.update(
+          { price: priceToUpdate },
+          { where: { service_id: id } },
+        );
+      }
+    }
+
+    // Update other Service fields
+    if (Object.keys(updateData).length > 0) {
+      await Service.update(updateData, { where: { id } });
+    }
+
+    return this.getById(id, establishment_id);
+  },
+
+  async deactivate(id, establishment_id = null) {
+    if (establishment_id) {
+      const deleted = await EstablishmentService.destroy({
+        where: {
+          service_id: id,
+          establishment_id: Number(establishment_id),
+        },
+      });
+      return deleted > 0;
+    }
+
+    // Otherwise, deactivate globally
     const [updated] = await Service.update(
       { status: "inactive" },
       { where: { id } },
@@ -159,7 +344,7 @@ export const ServiceRepository = {
 
     const options = {
       where,
-      attributes: RETURN_ATTRS,
+      attributes: RETURN_ATTRS_WITH_ESTABLISHMENT,
       include: [
         {
           model: EstablishmentService,
@@ -183,5 +368,28 @@ export const ServiceRepository = {
         pages: Math.ceil(count / Number(limit)),
       },
     };
+  },
+
+  async unlinkFromEstablishment(serviceId, establishmentId) {
+    const deleted = await EstablishmentService.destroy({
+      where: {
+        service_id: serviceId,
+        establishment_id: establishmentId,
+      },
+    });
+    return deleted > 0;
+  },
+
+  async updateEstablishmentPrice(serviceId, establishmentId, price) {
+    const [updated] = await EstablishmentService.update(
+      { price },
+      {
+        where: {
+          service_id: serviceId,
+          establishment_id: establishmentId,
+        },
+      },
+    );
+    return updated > 0;
   },
 };

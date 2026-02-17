@@ -1,6 +1,5 @@
 import { ServiceValidator } from "../validators/service.validator.js";
 import { ServiceRepository } from "../repositories/service.repository.js";
-import { EstablishmentRepository } from "../repositories/establishment.repository.js";
 
 export const ServiceService = {
   list(params) {
@@ -24,45 +23,36 @@ export const ServiceService = {
     body.name = name;
 
     try {
-      const service = await ServiceRepository.create(body);
-
-      // If admin creates the service, link it to all establishments
-      if (establishment_id) {
-        await ServiceRepository.linkToEstablishment(
-          service.id,
-          service.price,
-          establishment_id,
-        );
-      } else if (user.role === "admin") {
-        const establishments = await EstablishmentRepository.list({});
-        if (establishments && establishments.length > 0) {
-          await ServiceRepository.linkToAllEstablishments(
-            service.id,
-            service.price,
-            establishments,
-          );
-        }
-      }
+      // Create service and link in a transaction for safety
+      const service = await ServiceRepository.createWithLinks(
+        body,
+        establishment_id,
+        user.role === "admin"
+      );
 
       return service;
     } catch (error) {
-      throw new Error("A service with that name already exists");
+      if (error.name === "SequelizeUniqueConstraintError") {
+        throw new Error("A service with that name already exists");
+      }
+      throw error;
     }
   },
 
-  async update(serviceId, body) {
+  async update(serviceId, body, establishmentId = null, isAdmin = false) {
     ServiceValidator.validateUpdate(body);
-    const current = await ServiceRepository.getById(serviceId);
+    const current = await ServiceRepository.getById(serviceId, establishmentId);
     if (!current) {
       throw new Error("Service not found");
     }
-    return ServiceRepository.update(serviceId, body);
+    return ServiceRepository.update(serviceId, body, establishmentId, isAdmin);
   },
 
-  async remove(serviceId) {
-    const deleted = await ServiceRepository.deactivate(serviceId);
+  async remove(serviceId, establishmentId = null) {
+    const deleted = await ServiceRepository.deactivate(serviceId, establishmentId);
     if (!deleted) {
-      throw new Error("Service not found or could not be deactivated");
+      const action = establishmentId ? "unlinked" : "deactivated";
+      throw new Error(`Service not found or could not be ${action}`);
     }
   },
 
