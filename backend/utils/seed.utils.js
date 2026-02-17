@@ -134,7 +134,7 @@ export async function seedDatabase(
 }
 
 /**
- * Seed services
+ * Seed services (without price - price is set per establishment in EstablishmentService)
  */
 async function seedService(Service, t) {
   const services = await Service.bulkCreate(
@@ -142,7 +142,6 @@ async function seedService(Service, t) {
       {
         name: "Corte de Cabello",
         description: "Corte de cabello clásico o moderno, incluye lavado",
-        price: 15.0,
         duration: 30,
         type: "haircut",
         status: "active",
@@ -150,7 +149,6 @@ async function seedService(Service, t) {
       {
         name: "Arreglo de Barba",
         description: "Recorte y perfilado de barba con navaja",
-        price: 10.0,
         duration: 20,
         type: "beard",
         status: "active",
@@ -158,7 +156,6 @@ async function seedService(Service, t) {
       {
         name: "Combo Corte + Barba",
         description: "Corte de cabello completo más arreglo de barba",
-        price: 22.0,
         duration: 45,
         type: "combo",
         status: "active",
@@ -166,7 +163,6 @@ async function seedService(Service, t) {
       {
         name: "Coloración de Cabello",
         description: "Aplicación de color para cabello, incluye asesoría",
-        price: 40.0,
         duration: 60,
         type: "coloring",
         status: "active",
@@ -174,7 +170,9 @@ async function seedService(Service, t) {
     ],
     { transaction: t },
   );
-  console.log(`✓ Created ${services.length} services`);
+  console.log(
+    `✓ Created ${services.length} services (prices set per establishment)`,
+  );
   return services;
 }
 
@@ -538,13 +536,22 @@ async function seedAppointment(
       { transaction: t },
     );
 
-    // Create service_appointment records
+    // Create service_appointment records with establishment-specific pricing
     for (const service of appointmentServices) {
+      // Get the price from EstablishmentService for this establishment
+      const establishmentService = await EstablishmentService.findOne({
+        where: {
+          establishment_id: appointmentData.establishment_id,
+          service_id: service.id,
+        },
+        transaction: t,
+      });
+
       await ServiceAppointment.create(
         {
           appointment_id: appointment.id,
           service_id: service.id,
-          price: service.price,
+          price: establishmentService ? establishmentService.price : 0,
         },
         { transaction: t },
       );

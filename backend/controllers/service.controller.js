@@ -1,3 +1,4 @@
+
 import { ServiceService } from "../services/service.service.js";
 
 export const ServiceController = {
@@ -31,7 +32,10 @@ export const ServiceController = {
 
   async getById(req, res) {
     try {
-      const row = await ServiceService.get(req.params.id, req.query.establishment_id);
+      const row = await ServiceService.get(
+        req.params.id,
+        req.query.establishment_id,
+      );
       res.json(row);
     } catch (e) {
       res.status(404).json({ error: e.message });
@@ -40,13 +44,22 @@ export const ServiceController = {
 
   async create(req, res) {
     try {
-      // Force receptionists to link service to their establishment
-      let establishment_id = null;
+      let establishment_id = 
+        req.params.establishment_id || 
+        req.query.establishment_id || 
+        req.body.establishment_id || 
+        null;
+
+      // Force receptionists to link service to their establishment only
       if (req.user?.role === "receptionist" && req.user?.establishment_id) {
         establishment_id = req.user.establishment_id;
       }
-      
-      const row = await ServiceService.create(req.body, req.user, establishment_id);
+
+      const row = await ServiceService.create(
+        req.body,
+        req.user,
+        establishment_id ? Number(establishment_id) : null,
+      );
       res.status(201).json(row);
     } catch (e) {
       res.status(400).json({ error: e.message });
@@ -55,7 +68,20 @@ export const ServiceController = {
 
   async update(req, res) {
     try {
-      const row = await ServiceService.update(req.params.id, req.body);
+      let establishment_id = req.query.establishment_id || null;
+      const isAdmin = req.user?.role === "admin";
+
+      // Force receptionists to update only their establishment
+      if (req.user?.role === "receptionist" && req.user?.establishment_id) {
+        establishment_id = req.user.establishment_id;
+      }
+
+      const row = await ServiceService.update(
+        req.params.id,
+        req.body,
+        establishment_id ? Number(establishment_id) : null,
+        isAdmin,
+      );
       res.json(row);
     } catch (e) {
       res.status(400).json({ error: e.message });
@@ -64,7 +90,16 @@ export const ServiceController = {
 
   async delete(req, res) {
     try {
-      await ServiceService.remove(req.params.id);
+      let establishment_id = req.query.establishment_id || null;
+
+      if (req.user?.role === "receptionist" && req.user?.establishment_id) {
+        establishment_id = req.user.establishment_id;
+      }
+
+      await ServiceService.remove(
+        req.params.id,
+        establishment_id ? Number(establishment_id) : null,
+      );
       res.status(204).send();
     } catch (e) {
       res.status(404).json({ error: e.message });

@@ -5,7 +5,6 @@ import { isEstablishmentOwner } from "../middlewares/require.property.establishm
 import requireAuth from "../middlewares/require.auth.middleware.js";
 import { uploadEstablishmentImage } from "../config/upload.images.js";
 
-
 const router = Router();
 
 router.get("/", EstablishmentController.getAll);
@@ -13,4 +12,5 @@ router.get("/:id", requireAuth, requireRole("receptionist"), EstablishmentContro
 router.post("/", requireAuth, requireRole(), uploadEstablishmentImage.any(), EstablishmentController.create);
 router.put("/:id", requireAuth, requireRole(), uploadEstablishmentImage.any(), EstablishmentController.update);
 router.delete("/:id", requireAuth, isEstablishmentOwner(), EstablishmentController.delete);
+
 export default router;
