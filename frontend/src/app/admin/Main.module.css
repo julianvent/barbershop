@@ -69,6 +69,15 @@
     font-size: 0.9rem;
 }
 
+.modalButton {
+    background-color: #001e77;
+    color: white;
+    padding: 0.5em 1em;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
 .tableContainer {
     min-height: 100%;
 }

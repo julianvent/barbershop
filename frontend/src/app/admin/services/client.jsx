@@ -13,12 +13,54 @@ import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
 import { getServices, getServicesByEstablishment } from "../../apiHandlers/adminServices";
 import { useEffect, useState } from "react";
 import { ActionButton } from "@/app/components/action/ActionButton";
+import SebasModal from "@/app/components/modal/SebasModal";
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 export default function Services({isAdmin, establishment_id}) {
   const router = useRouter();
   const [services, setServices] = useState(null);
   const [message,setMessage] = useState(null);
+  const [selectedService, setSelectedService] = useState(null);
+  const modalId = "service_prices_modal";
+
+
+  const price = (isAdmin) => {
+    let price;
+    if (isAdmin) {
+      price =  {
+        headerName: 'Precios',
+        cellRenderer: (params) => {
+          return (
+            <div style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%"
+            }}
+            >
+              <button
+                className={styles.modalButton}
+                type="button"
+                onClick={() => {
+                  setSelectedService(params.data);
+                  MicroModal.show(modalId);
+                }}
+              >
+                Ver
+              </button>
+            </div>
+          );
+        }
+      }
+    } else {
+      price = {
+        headerName: 'Precio',
+        valueFormatter: (params) => `$${params.data.establishment_services?.price.toFixed(2)}`
+      };
+    }
+
+    return price;
+  }
 
   useEffect(() => {
     const fetch = async() =>{
@@ -26,6 +68,7 @@ export default function Services({isAdmin, establishment_id}) {
         let data;
         if (isAdmin) data = await getServices();
         else data = await getServicesByEstablishment(establishment_id);
+        console.log(data)
         setServices(data);
         
       }catch(err){
@@ -49,7 +92,8 @@ export default function Services({isAdmin, establishment_id}) {
     },
   ];
   const fields = [
-    ...serviceFields,
+    ...serviceFields(isAdmin),
+    price(isAdmin),
     {
       headerName: "Estado",
       resizable: false,
@@ -108,6 +152,18 @@ export default function Services({isAdmin, establishment_id}) {
           />
         </div>
       </div>
+      <SebasModal
+        id={modalId}
+        title="Precios"
+        confirmButton={false}
+      >
+        
+        {selectedService?.establishment_services?.map((item, index) => (
+          <div key={index}>
+            {item.establishment_name} - {`$${item.price.toFixed(2)}`}
+          </div>
+        ))}
+      </SebasModal>
     </>
   );
 }

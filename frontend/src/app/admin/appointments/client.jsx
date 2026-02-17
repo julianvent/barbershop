@@ -14,7 +14,7 @@ import { ActionButton } from "@/app/components/action/ActionButton";
 import { getAppointments } from "../../apiHandlers/adminAppointments";
 import { useEffect, useState } from "react";
 
-export default function Appointments() {
+export default function Appointments({isAdmin}) {
   const [appointments, setAppointments] = useState(null);
   const [message, setMessage] = useState('Cargando las citas ...');
 
@@ -22,6 +22,7 @@ export default function Appointments() {
       const fetchAppointments = async () => {
         try {
           const data = await getAppointments();
+          console.log(data)
           setAppointments(data);
         } catch (error) {
           setMessage('No se pudieron recuperar las citas');
@@ -46,7 +47,7 @@ export default function Appointments() {
   ];
 
   const fields = [
-    ...appointmentColumns,
+    ...appointmentColumns(isAdmin),
     {
       headerName: "Estado",
       resizable: false,

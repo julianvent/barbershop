@@ -26,7 +26,9 @@ export const actionsDef = {
   flex: 1,
 };
 
-export const appointmentColumns = [
+export const appointmentColumns = (isAdmin) => {
+  
+  const fields = [
   {
     headerName: "Fecha",
     field: "date",
@@ -49,47 +51,89 @@ export const appointmentColumns = [
   },
 ];
 
-export const serviceFields = [
-  {
-    headerName: "Nombre",
-    field: "name",
-  },
-  {
-    headerName: "Precio",
-    field: "price",
-    valueFormatter: (params) => `$${params.data.price.toFixed(2)}`,
-  },
-  {
-    headerName: "Duración aproximada",
-    field: "duration",
-    valueFormatter: (params) =>
-      Math.floor(params.data.duration / 60) >= 1
-        ? Math.floor(params.data.duration / 60) +
-          " hr " +
-          (params.data.duration % 60) +
-          " minutos"
-        : params.data.duration + " minutos",
-  },
-  {
-    headerName: "Tipo",
-    field: "type",
-  },
-];
+  if(isAdmin) {
+    fields.push(
+        {
+        headerName: "Establecimiento",
+        field: "establishment_name",
+        width: 300,
+      },
+    )
+  }
+  return fields;
 
-export const employeesEntries = [
-  {
-    headerName: "Nombre Completo",
-    field: "barber_name",
-  },
-  {
-    headerName: "Telefono",
-    field: "phone",
-  },
-  {
-    headerName: "Correo",
-    field: "email",
-  },
-];
+}
+
+export const serviceFields = (isAdmin) => {
+  
+  const fields = [
+    {
+      headerName: "Nombre",
+      field: "name",
+    },
+    {
+      headerName: "Duración aproximada",
+      field: "duration",
+      valueFormatter: (params) =>
+        Math.floor(params.data.duration / 60) >= 1
+          ? Math.floor(params.data.duration / 60) +
+            " hr " +
+            (params.data.duration % 60) +
+            " minutos"
+          : params.data.duration + " minutos",
+    },
+    {
+      headerName: "Tipo",
+      field: "type",
+    },
+  ];
+
+  if(isAdmin){
+    fields.push(
+      {
+        headerName: "Establecimiento",
+        valueFormatter: (params) => {
+          if(params.data.establishment_services.length > 1){
+            return "Todos los locales"
+          } else {
+            return params.data.establishment_services[0].establishment_name
+          }
+        },
+        width: 150,
+      }
+    )
+  }
+
+  return fields;
+}
+
+export const employeesEntries = (isAdmin) => {
+  const fields = [
+    {
+      headerName: "Nombre Completo",
+      field: "barber_name",
+    },
+    {
+      headerName: "Telefono",
+      field: "phone",
+    },
+    {
+      headerName: "Correo",
+      field: "email",
+    },
+  ];
+
+  if(isAdmin){
+    fields.push(
+      {
+        headerName: "Establecimiento",
+        field: "establishment_name"
+      }
+    )
+  }
+
+  return fields;
+}
 
 export const appointments_fields = [
   {

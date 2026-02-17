@@ -37,6 +37,8 @@ export const createService = async (data, isAdmin) => {
     if (!isAdmin) {
       const establishmentId = await getEstablishmentId();
       data.establishment_id = establishmentId;
+    } else {
+      if(data.establishment_id === "") delete data.establishment_id
     }
 
     await axios.post(createServiceApiRoute, data, headers);

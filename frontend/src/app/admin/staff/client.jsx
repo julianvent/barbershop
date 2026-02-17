@@ -49,7 +49,7 @@ export default function StaffIndex({isAdmin, establishmentId}) {
   ];
 
   const fields = [
-    ...employeesEntries,
+    ...employeesEntries(isAdmin),
     {
       headerName: "Estado",
       resizable: false,

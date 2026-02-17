@@ -7,7 +7,7 @@ export default async function Page() {
 
   return (
     <Layout isAdmin={isAdm}>
-      <Appointments />
+      <Appointments isAdmin={isAdm}/>
     </Layout>
   );
 }
