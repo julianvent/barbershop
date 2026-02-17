@@ -88,6 +88,10 @@
         padding: 1em 0.6em;
         min-height: auto;
     }
+    .layoutShow {
+        padding: 1em 0.6em;
+        min-height: auto;
+    }
 
     .toolbar h1 {
         font-size: 1rem;

@@ -56,13 +56,28 @@ export const createService = async (data, isAdmin) => {
   }
 };
 
-export const updateService = async (data, name) => {
+export const updateService = async (data, name, isAdmin) => {
   try {
     const headers = await axiosConfig();
+    let establishment = '';
     delete data.id;
-    await axios.put(updateServiceApiRoute + name, data, headers);
+    delete data.status;
+    delete data.establishment_services;
+
+    if(!isAdmin){
+      const establishmentId = await getEstablishmentId();
+      data.establishment_id = establishmentId;
+    }
+
+    if(data.establishment_id){
+      establishment = `/?establishment_id=${data.establishment_id}`;
+    }
+
+    delete data.establishment_id;
+    await axios.put(updateServiceApiRoute + name + establishment, data, headers);
     return null;
   } catch (err) {
+    console.log(err)
     let message = "Ocurrio un error en el servidor";
     throw message;
   }
@@ -125,10 +140,14 @@ const description = `
   }
 };
 
-export const getService = async (name) => {
+export const getService = async (name, isAdmin) => {
   try {
     const headers = await axiosConfig();
-    const uri = getServicesApiRoute + name;
+    let uri = getServicesApiRoute + name;
+    if(!isAdmin){
+      const establishment = await getEstablishmentId();
+      uri = uri + `/?establishment_id=${establishment}`
+    }
     const request = await axios.get(uri, headers);
     return request.data;
   } catch (error) {
@@ -137,8 +156,11 @@ export const getService = async (name) => {
   }
 };
 
-export const deleteService = async (name) => {
+export const deleteService = async ({name, isAdmin, id}) => {
   const headers = await axiosConfig();
+  if(isAdmin&&id){
+    
+  }
   const uri = deleteServiceApiRoute + name;
   try {
     await axios.delete(uri, headers);

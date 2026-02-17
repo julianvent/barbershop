@@ -68,7 +68,7 @@ export const statusValidation = {
 
 export const establishmentValidation = {
   id: "establishment_id",
-  label: "Seleccione el establecimiento al que se asignara la cuenta:",
+  label: "Seleccione el establecimiento al que se asignara el servicio:",
   validation: {
     required: "Requerido*"
   }

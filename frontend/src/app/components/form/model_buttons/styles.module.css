@@ -15,6 +15,10 @@
     font-size: 0.9rem;
 }
 
+.buttons button:disabled {
+    cursor:not-allowed;
+}
+
 .buttons .cancelButton {
     background-color: #4e4e4e;
 }
