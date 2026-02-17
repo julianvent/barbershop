@@ -67,15 +67,15 @@ function transformServiceWithEstablishments(service, establishmentId = null) {
 export const ServiceRepository = {
   async list({
     page = 1,
-    limit = 10,
+    limit = null,
     q = "",
     sort = "id",
     dir = "ASC",
     establishment_id = null,
   }) {
     page = Number(page);
-    limit = Number(limit);
-    const offset = (page - 1) * limit;
+    const limitNum = limit ? Number(limit) : null;
+    const offset = limitNum ? (page - 1) * limitNum : 0;
     const where = q
       ? {
           [Op.or]: [
@@ -96,9 +96,12 @@ export const ServiceRepository = {
       where,
       attributes: RETURN_ATTRS,
       order: [[sort, dir]],
-      limit,
       offset,
     };
+
+    if (limitNum != null) {
+      options.limit = limitNum;
+    }
 
     if (establishment_id != null) {
       options.include = [
@@ -144,7 +147,12 @@ export const ServiceRepository = {
 
     return {
       data: transformedRows,
-      meta: { page, limit, total: count, pages: Math.ceil(count / limit) },
+      meta: {
+        page,
+        limit: limitNum,
+        total: count,
+        pages: limitNum ? Math.ceil(count / limitNum) : 1,
+      },
     };
   },
 

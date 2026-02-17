@@ -38,7 +38,7 @@ export const AppointmentRepository = {
     to = null,
     sort = "ASC",
     offset = 0,
-    limit = 20,
+    limit = null,
   } = {}) {
     const where = {};
     if (barberId != null) where.barber_id = barberId;
@@ -146,7 +146,7 @@ export const AppointmentRepository = {
     if (appointment.services_ids && appointment.services_ids.length > 0) {
       for (const service_id of appointment.services_ids) {
         const service = await ServiceRepository.getById(service_id);
-        
+
         if (targetEstablishmentId) {
           const establishmentService = await EstablishmentService.findOne({
             where: {
@@ -154,15 +154,20 @@ export const AppointmentRepository = {
               service_id: service_id,
             },
           });
-          
+
           if (!establishmentService) {
-            throw new Error(`Service "${service.name}" is not offered by this establishment`);
+            throw new Error(
+              `Service "${service.name}" is not offered by this establishment`,
+            );
           }
-          
+
           // Store establishment-specific price
-          establishmentServicePrices.set(service_id, establishmentService.price);
+          establishmentServicePrices.set(
+            service_id,
+            establishmentService.price,
+          );
         }
-        
+
         sum_duration += service.duration;
         services.push(service);
       }
@@ -215,8 +220,9 @@ export const AppointmentRepository = {
     for (const service of services) {
       try {
         // Use establishment-specific price if available, otherwise use service price
-        const price = establishmentServicePrices.get(service.id) ?? service.price;
-        
+        const price =
+          establishmentServicePrices.get(service.id) ?? service.price;
+
         await ServiceAppointment.create({
           service_id: service.id,
           appointment_id: newAppointment.id,
@@ -254,14 +260,15 @@ export const AppointmentRepository = {
       let sum_duration = 0;
       const services = [];
       const establishmentServicePrices = new Map();
-      
+
       const targetEstablishmentId = appointment.establishment_id
         ? parseInt(appointment.establishment_id)
-        : existingAppointment.establishment_id ?? existingBarber?.establishment_id;
+        : (existingAppointment.establishment_id ??
+          existingBarber?.establishment_id);
 
       for (const service_id of appointment.services_ids) {
         const service = await ServiceRepository.getById(service_id);
-        
+
         if (targetEstablishmentId) {
           const establishmentService = await EstablishmentService.findOne({
             where: {
@@ -269,15 +276,20 @@ export const AppointmentRepository = {
               service_id: service_id,
             },
           });
-          
+
           if (!establishmentService) {
-            throw new Error(`Service "${service.name}" is not offered by this establishment`);
+            throw new Error(
+              `Service "${service.name}" is not offered by this establishment`,
+            );
           }
-          
+
           // Store establishment-specific price
-          establishmentServicePrices.set(service_id, establishmentService.price);
+          establishmentServicePrices.set(
+            service_id,
+            establishmentService.price,
+          );
         }
-        
+
         sum_duration += service.duration;
         services.push(service);
       }
@@ -292,8 +304,9 @@ export const AppointmentRepository = {
 
       for (const service of services) {
         // Use establishment-specific price if available, otherwise use service price
-        const price = establishmentServicePrices.get(service.id) ?? service.price;
-        
+        const price =
+          establishmentServicePrices.get(service.id) ?? service.price;
+
         await ServiceAppointment.create({
           service_id: service.id,
           appointment_id: id,

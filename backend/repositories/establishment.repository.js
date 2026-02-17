@@ -25,7 +25,7 @@ export const EstablishmentRepository = {
       state,
       sort = "ASC",
       page = 1,
-      limit = 10,
+      limit = null,
     } = filters;
 
     const where = {};
@@ -52,9 +52,11 @@ export const EstablishmentRepository = {
       order: [["name", sort.toUpperCase()]],
     };
 
-    if (page && limit) {
+    if (limit != null) {
       options.limit = parseInt(limit, 10);
-      options.offset = (parseInt(page, 10) - 1) * parseInt(limit, 10);
+      if (page) {
+        options.offset = (parseInt(page, 10) - 1) * parseInt(limit, 10);
+      }
     }
 
     const establishments = await Establishment.findAll(options);

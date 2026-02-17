@@ -1,10 +1,17 @@
 import { Account } from "../models/account.model.js";
 import { Establishment } from "../models/establishment.model.js";
 import { Op, col } from "sequelize";
-const RETURN_ATTRS = ["id", "email", "full_name", "role", "establishment_id", [col("establishment.name"), "establishment_name"]];
+const RETURN_ATTRS = [
+  "id",
+  "email",
+  "full_name",
+  "role",
+  "establishment_id",
+  [col("establishment.name"), "establishment_name"],
+];
 
 export const AccountRepository = {
-  async getAll({ page = 1, pageSize = 20, q, establishment_id } = {}) {
+  async getAll({ page = 1, pageSize = null, q, establishment_id } = {}) {
     const where = {};
     if (q) {
       where[Op.or] = [
@@ -15,8 +22,10 @@ export const AccountRepository = {
     if (establishment_id) {
       where.establishment_id = establishment_id;
     }
-    const offset = (Math.max(page, 1) - 1) * Math.max(pageSize, 1);
-    const limit = Math.min(Math.max(pageSize, 1), 100);
+    const offset = pageSize
+      ? (Math.max(page, 1) - 1) * Math.max(pageSize, 1)
+      : 0;
+    const limit = pageSize ? Math.max(pageSize, 1) : null;
     const { rows, count } = await Account.findAndCountAll({
       where,
       attributes: RETURN_ATTRS,
@@ -38,7 +47,7 @@ export const AccountRepository = {
       page: Number(page),
       pageSize: limit,
       total: count,
-      totalPage: Math.ceil(count / limit),
+      totalPage: limit ? Math.ceil(count / limit) : 1,
     };
   },
   async getById(id) {
