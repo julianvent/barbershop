@@ -1,3 +1,4 @@
+
 import { ServiceService } from "../services/service.service.js";
 
 export const ServiceController = {
@@ -43,8 +44,12 @@ export const ServiceController = {
 
   async create(req, res) {
     try {
-      let establishment_id = req.query.establishment_id || req.body.establishment_id || null;
-      
+      let establishment_id = 
+        req.params.establishment_id || 
+        req.query.establishment_id || 
+        req.body.establishment_id || 
+        null;
+
       // Force receptionists to link service to their establishment only
       if (req.user?.role === "receptionist" && req.user?.establishment_id) {
         establishment_id = req.user.establishment_id;
