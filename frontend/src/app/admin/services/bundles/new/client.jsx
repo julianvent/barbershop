@@ -2,7 +2,7 @@
 import BundleForm from "../../../../forms/BundleForm";
 import { createBundle } from "../../../../apiHandlers/adminServices";
 
-export default function NewService({isAdmin}) {
+export default function NewService({isAdmin, establishmentId}) {
 
   const submit = async (data, services) => {
     try{
@@ -13,8 +13,7 @@ export default function NewService({isAdmin}) {
   };
   return (
     <>
-      <title>SG BarberShop - Crear Paquetes</title>
-      <BundleForm onSubmit={submit}></BundleForm>
+      <BundleForm onSubmit={submit} establishmentId={establishmentId}></BundleForm>
     </>
   );
 }

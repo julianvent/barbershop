@@ -134,7 +134,7 @@ const description = `
   data.type = "Paquete";
   const { services, ...newData } = data;
   try {
-    await createService(newData);
+    await createService(newData, isAdmin);
   } catch (err) {
     throw err;
   }
@@ -156,12 +156,17 @@ export const getService = async (name, isAdmin) => {
   }
 };
 
-export const deleteService = async ({name, isAdmin, id}) => {
+export const deleteService = async ({id, isAdmin, establishment_id}) => {
   const headers = await axiosConfig();
-  if(isAdmin&&id){
-    
+  let uri = deleteServiceApiRoute + id;
+  let establishment = establishment_id;
+  if(!isAdmin){
+    establishment = await getEstablishmentId();
   }
-  const uri = deleteServiceApiRoute + name;
+
+  if(establishment){
+    uri = uri + `/?establishment_id=${establishment}`
+  }
   try {
     await axios.delete(uri, headers);
   } catch (err) {

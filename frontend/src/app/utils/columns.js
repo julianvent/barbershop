@@ -124,27 +124,34 @@ export const serviceFields = (isAdmin) => {
     },
   ];
 
-  if(isAdmin){
-    fields.push(
-      {
-        headerName: "Establecimiento",
-        valueFormatter: (params) => {
-          if(params.data.establishment_services.length > 1){
-            return "Todos los locales"
-          } else {
-            return params.data.establishment_services[0].establishment_name
-          }
-        },
-        getQuickFilterText: (params) => {
-          if (params.data.establishment_services.length > 1) {
-            return "Todos los locales";
-          } else {
-            return params.data.establishment_services[0].establishment_name;
-          }
-        },
-        width: 150,
+  if (isAdmin) {
+
+    const getEstablishmentText = (params) => {
+      const services = params?.data?.establishment_services;
+
+      if (!Array.isArray(services) || services.length === 0) {
+        return "No asignado";
       }
-    )
+
+      if (services.length > 1) {
+        return "Todos los locales";
+      }
+
+      const first = services[0];
+
+      if (!first || !first.establishment_name) {
+        return "No asignado";
+      }
+
+      return first.establishment_name;
+    };
+
+    fields.push({
+      headerName: "Establecimiento",
+      width: 150,
+      valueGetter: getEstablishmentText,
+      getQuickFilterText: getEstablishmentText,
+    });
   }
 
   return fields;

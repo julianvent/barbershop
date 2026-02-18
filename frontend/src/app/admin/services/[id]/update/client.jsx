@@ -15,7 +15,7 @@ export default function UpdateServices({params, isAdmin}) {
             try{
               const data = await getService(id, isAdmin);
               if(isAdmin){
-                setIsOnlyOne(data.establishment_services.length == 1)
+                setIsOnlyOne(data.establishment_services.length == 1 || data.establishment_services.length == 0 )
               } 
               setService(data);
             }catch(err){

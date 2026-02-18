@@ -97,7 +97,7 @@ export default function ShowService({params, isAdmin}){
                 </article>
             
                 {
-                    service&&(<ServiceButtons model={service}/>
+                    service&&(<ServiceButtons model={service} isAdmin={isAdmin}/>
                     )
                 }
 

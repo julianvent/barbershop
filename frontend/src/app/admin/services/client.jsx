@@ -33,6 +33,9 @@ export default function Services({isAdmin, establishment_id}) {
       price =  {
         headerName: 'Precios',
         cellRenderer: (params) => {
+          if(params.data.establishment_services.length == 0){
+            return 'No asignado'
+          }
           return (
             <div style={{
               display: "flex",
@@ -97,27 +100,6 @@ export default function Services({isAdmin, establishment_id}) {
   const fields = [
     ...serviceFields(isAdmin),
     price(isAdmin),
-    {
-      headerName: "Estado",
-      resizable: false,
-      cellRenderer: (params) => {
-        const Map = {
-          'active': {color:'#004b0aff', text: 'Activo' },
-          'inactive': {color:'#9d0000ff', text: 'Inactivo' },
-        };
-
-        return (
-          <span style={{
-            color: Map[params.data.status].color,
-            fontWeight: '600',
-            fontSize: '0.875rem'
-          }}>
-            {Map[params.data.status].text}
-          </span>
-        );
-      }
-    }
-    ,
     {
       ...actionsDef,
       cellRenderer: (params) => {

@@ -12,8 +12,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import TextArea from "@/app/components/form/input/TextArea";
 import { servicesRoute } from "@/app/utils/routes";
-import StatusSelect from "@/app/components/form/input/StatusSelect";
-import { statusValidation } from "@/app/utils/servicesValidators";
 import InputDecimal from "@/app/components/form/input/InputDecimal";
 import Select from "../components/form/input/Select";
 import { establishmentValidation } from "../utils/servicesValidators";
@@ -91,6 +89,7 @@ export default function ServiceForm({ onSubmit, service, isAdmin, isOnlyOne=fals
         methods.setValue('price',service.establishment_services.price);
       }else{
         if(isOnlyOne) {
+          if (service.establishment_services == 0) return;
           methods.setValue('establishment_id',service.establishment_services[0].establishment_id);
           methods.setValue('price',service.establishment_services[0].price);
         }

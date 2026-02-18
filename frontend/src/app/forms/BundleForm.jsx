@@ -11,29 +11,30 @@ import {
 import TextArea from "@/app/components/form/input/TextArea";
 import ServiceCheckbox from "@/app/components/form/checkbox/ServiceCheckbox";
 import { servicesRoute } from "@/app/utils/routes";
-import { getServices } from "@/app/apiHandlers/adminServices";
+import { getServicesByEstablishment } from "@/app/apiHandlers/adminServices";
 import InputDecimal from "@/app/components/form/input/InputDecimal";
 
-export default function BundleForm({ onSubmit }) {
+export default function BundleForm({ onSubmit, establishmentId}) {
   const router = useRouter();
   const [services, setServices] = useState(null);
   const [isCreatingBundle, setIsCreatingBundle] = useState(false);
 
   useEffect(()=> {
     const fetch = async () => {
-      const data = await getServices();
+      const data = await getServicesByEstablishment(establishmentId);
       const onlyServices = data.filter((e) => e.type != 'Paquete');
       setServices(onlyServices);
     };
 
     fetch();
 
-  },[]);
+  },[establishmentId]);
   
   const methods = useForm();
   const submit = methods.handleSubmit(async (data) => {
       setIsCreatingBundle(true);
       
+      data.establishment_id = establishmentId;
       const err = await onSubmit(data, services);
 
       if(err){
@@ -95,7 +96,7 @@ export default function BundleForm({ onSubmit }) {
               >
                 Cancelar
               </button>
-              <button>Confirmar</button>
+              <button disabled={isCreatingBundle}>Confirmar</button>
             </div>
           </div>
         </div>
