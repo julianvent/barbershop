@@ -1,14 +1,11 @@
-import { deleteService } from "@/app/apiHandlers/adminServices";
 import { deleteEmployee } from "@/app/apiHandlers/adminStaff";
 import { deleteAppointment } from "@/app/apiHandlers/adminAppointments";
 import {
   appointmentsRoute,
   editAppointments,
   editEstablishment,
-  editService,
   editStaffRoute,
   establishmentRoute,
-  servicesRoute,
   staffRoute,
 } from "@/app/utils/routes";
 import styles from "./styles.module.css";
@@ -21,11 +18,6 @@ export default function Buttons({ model, modelType }) {
   const router = useRouter();
   let routes = {};
   switch (modelType) {
-    case "service":
-      routes.index = servicesRoute;
-      routes.edit = editService;
-      routes.deleteFunction = deleteService;
-      break;
     case "appointment":
       routes.index = appointmentsRoute;
       routes.edit = editAppointments;

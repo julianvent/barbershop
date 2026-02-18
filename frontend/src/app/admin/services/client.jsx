@@ -11,14 +11,62 @@ import { serviceFields, defaultColDef, actionsDef } from "@/app/utils/columns";
 import { AgGridReact } from "ag-grid-react";
 import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
 import { getServices, getServicesByEstablishment } from "../../apiHandlers/adminServices";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ActionButton } from "@/app/components/action/ActionButton";
+import SebasModal from "@/app/components/modal/SebasModal";
+import SearchGrid from "@/app/components/base_layout/SearchGrid";
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 export default function Services({isAdmin, establishment_id}) {
   const router = useRouter();
   const [services, setServices] = useState(null);
   const [message,setMessage] = useState(null);
+  const [selectedService, setSelectedService] = useState(null);
+  const [gridApi, setGridApi] = useState(null);
+  const gridRef = useRef();
+  const modalId = "service_prices_modal";
+
+
+  const price = (isAdmin) => {
+    let price;
+    if (isAdmin) {
+      price =  {
+        headerName: 'Precios',
+        cellRenderer: (params) => {
+          if(params.data.establishment_services.length == 0){
+            return 'No asignado'
+          }
+          return (
+            <div style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%"
+            }}
+            >
+              <button
+                className={styles.modalButton}
+                type="button"
+                onClick={() => {
+                  setSelectedService(params.data);
+                  MicroModal.show(modalId);
+                }}
+              >
+                Ver
+              </button>
+            </div>
+          );
+        }
+      }
+    } else {
+      price = {
+        headerName: 'Precio',
+        valueFormatter: (params) => `$${params.data.establishment_services?.price.toFixed(2)}`
+      };
+    }
+
+    return price;
+  }
 
   useEffect(() => {
     const fetch = async() =>{
@@ -26,6 +74,7 @@ export default function Services({isAdmin, establishment_id}) {
         let data;
         if (isAdmin) data = await getServices();
         else data = await getServicesByEstablishment(establishment_id);
+        console.log(data)
         setServices(data);
         
       }catch(err){
@@ -49,28 +98,8 @@ export default function Services({isAdmin, establishment_id}) {
     },
   ];
   const fields = [
-    ...serviceFields,
-    {
-      headerName: "Estado",
-      resizable: false,
-      cellRenderer: (params) => {
-        const Map = {
-          'active': {color:'#004b0aff', text: 'Activo' },
-          'inactive': {color:'#9d0000ff', text: 'Inactivo' },
-        };
-
-        return (
-          <span style={{
-            color: Map[params.data.status].color,
-            fontWeight: '600',
-            fontSize: '0.875rem'
-          }}>
-            {Map[params.data.status].text}
-          </span>
-        );
-      }
-    }
-    ,
+    ...serviceFields(isAdmin),
+    price(isAdmin),
     {
       ...actionsDef,
       cellRenderer: (params) => {
@@ -98,16 +127,33 @@ export default function Services({isAdmin, establishment_id}) {
           </div>
         </div>
         <div className={styles.tableContainer}>
+        <article className={styles.index}>
+          <SearchGrid text="Buscar servicios ..." gridApi={gridApi}/>
           <AgGridReact
+            ref={gridRef}
+            onGridReady={(params) => setGridApi(params.api)}
             defaultColDef={defaultColDef}
             rowData={services}
             columnDefs={fields}
-            overlayNoRowsTemplate={message}
             pagination={true}
             paginationPageSize={20}
+            overlayNoRowsTemplate={message}
           />
+        </article>
         </div>
       </div>
+      <SebasModal
+        id={modalId}
+        title="Precios"
+        confirmButton={false}
+      >
+        
+        {selectedService?.establishment_services?.map((item, index) => (
+          <div key={index}>
+            {item.establishment_name} - {`$${item.price.toFixed(2)}`}
+          </div>
+        ))}
+      </SebasModal>
     </>
   );
 }

@@ -8,13 +8,16 @@ import { actionsDef, defaultColDef, establishmentsFields } from "@/app/utils/col
 ModuleRegistry.registerModules([AllCommunityModule]);
 import { useRouter } from "next/navigation";
 import { editEstablishment, newEstablishment, seeEstablishment } from "@/app/utils/routes";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getEstablishments } from "@/app/apiHandlers/adminEstablishments";
 import { ActionButton } from "@/app/components/action/ActionButton";
+import SearchGrid from "@/app/components/base_layout/SearchGrid";
 
 export default function IndexEstablishment(){
   const [establishments, setEstablishments] = useState(null)
-  const [ message, setMessage] = useState('No se han registrado los establecimentos')
+  const [ message, setMessage] = useState('No se han registrado los establecimentos');
+  const [gridApi, setGridApi] = useState(null);
+  const gridRef = useRef();
 
   const actions = [
     {
@@ -63,15 +66,19 @@ export default function IndexEstablishment(){
         </div>
 
         <div className={styles.tableContainer}>
-          
+          <article className={styles.index}>
+          <SearchGrid text="Buscar establecimientos ..." gridApi={gridApi}/>
           <AgGridReact
+            ref={gridRef}
+            onGridReady={(params) => setGridApi(params.api)}
             defaultColDef={defaultColDef}
             rowData={establishments}
             columnDefs={columnDefs}
-            overlayNoRowsTemplate={message}
             pagination={true}
             paginationPageSize={20}
+            overlayNoRowsTemplate={message}
           />
+        </article>
 
         </div>
       </div>

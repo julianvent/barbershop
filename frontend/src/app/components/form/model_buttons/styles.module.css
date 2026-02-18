@@ -15,6 +15,35 @@
     font-size: 0.9rem;
 }
 
+.deleteButtons {
+    padding: 1rem;
+    display: flex;
+    gap: 2em;
+    justify-self: end;
+}
+
+.deleteButtons button{
+    margin-top: 1em;
+    background-color:  #0033cb;
+    color: white;
+    padding: 0.75em 3em;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 0.9rem;    
+}
+
+.deleteButtons .cancelButton {
+    background-color: #4e4e4e;
+}
+
+.deleteButtons .deleteButton {
+    background-color: #b30000;
+}
+
+.buttons button:disabled {
+    cursor:not-allowed;
+}
+
 .buttons .cancelButton {
     background-color: #4e4e4e;
 }
@@ -41,5 +70,11 @@
     .buttons button{
         width: 40%;
         text-align: center;
+    }
+
+    .deleteButtons{
+        display: grid;
+        gap: 0.5em;
+        justify-self: center;
     }
 }

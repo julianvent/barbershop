@@ -8,11 +8,15 @@ import warning from "../../../../forms/styles.module.css"
 export default function UpdateServices({params, isAdmin}) {
     const [service, setService] = useState(null);
     const [error, setError] = useState(null);
+    const [isOnlyOne, setIsOnlyOne] = useState(false)
     const { id } = React.use(params);
     useEffect(() => {
        async function load() {
             try{
-              const data = await getService(id);
+              const data = await getService(id, isAdmin);
+              if(isAdmin){
+                setIsOnlyOne(data.establishment_services.length == 1 || data.establishment_services.length == 0 )
+              } 
               setService(data);
             }catch(err){
               setError(err);
@@ -23,7 +27,7 @@ export default function UpdateServices({params, isAdmin}) {
 
     const submit = async (data) => {
       try{
-        await updateService(data,id);
+        await updateService(data,id, isAdmin);
       }catch(err){
         return err;
       }
@@ -45,6 +49,8 @@ export default function UpdateServices({params, isAdmin}) {
       <ServiceForm
         onSubmit={submit}
         service={service}
+        isAdmin={isAdmin}
+        isOnlyOne={isOnlyOne}
       ></ServiceForm>
       
     </Layout>

@@ -4,6 +4,21 @@
     gap: 2rem;
 }
 
+.prices {
+    margin-top: 2rem ;
+    display: grid;
+    padding: 1rem 0rem;
+}
+
+.prices > p {
+    font-weight: 800;
+}
+
+.prices > ul {
+    list-style: none;
+}
+
+
 .labelText{
     font-weight: 600;
     font-size: 1rem

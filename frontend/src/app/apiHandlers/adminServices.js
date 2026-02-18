@@ -37,6 +37,8 @@ export const createService = async (data, isAdmin) => {
     if (!isAdmin) {
       const establishmentId = await getEstablishmentId();
       data.establishment_id = establishmentId;
+    } else {
+      if(data.establishment_id === "") delete data.establishment_id
     }
 
     await axios.post(createServiceApiRoute, data, headers);
@@ -54,13 +56,28 @@ export const createService = async (data, isAdmin) => {
   }
 };
 
-export const updateService = async (data, name) => {
+export const updateService = async (data, name, isAdmin) => {
   try {
     const headers = await axiosConfig();
+    let establishment = '';
     delete data.id;
-    await axios.put(updateServiceApiRoute + name, data, headers);
+    delete data.status;
+    delete data.establishment_services;
+
+    if(!isAdmin){
+      const establishmentId = await getEstablishmentId();
+      data.establishment_id = establishmentId;
+    }
+
+    if(data.establishment_id){
+      establishment = `/?establishment_id=${data.establishment_id}`;
+    }
+
+    delete data.establishment_id;
+    await axios.put(updateServiceApiRoute + name + establishment, data, headers);
     return null;
   } catch (err) {
+    console.log(err)
     let message = "Ocurrio un error en el servidor";
     throw message;
   }
@@ -117,16 +134,20 @@ const description = `
   data.type = "Paquete";
   const { services, ...newData } = data;
   try {
-    await createService(newData);
+    await createService(newData, isAdmin);
   } catch (err) {
     throw err;
   }
 };
 
-export const getService = async (name) => {
+export const getService = async (name, isAdmin) => {
   try {
     const headers = await axiosConfig();
-    const uri = getServicesApiRoute + name;
+    let uri = getServicesApiRoute + name;
+    if(!isAdmin){
+      const establishment = await getEstablishmentId();
+      uri = uri + `/?establishment_id=${establishment}`
+    }
     const request = await axios.get(uri, headers);
     return request.data;
   } catch (error) {
@@ -135,9 +156,17 @@ export const getService = async (name) => {
   }
 };
 
-export const deleteService = async (name) => {
+export const deleteService = async ({id, isAdmin, establishment_id}) => {
   const headers = await axiosConfig();
-  const uri = deleteServiceApiRoute + name;
+  let uri = deleteServiceApiRoute + id;
+  let establishment = establishment_id;
+  if(!isAdmin){
+    establishment = await getEstablishmentId();
+  }
+
+  if(establishment){
+    uri = uri + `/?establishment_id=${establishment}`
+  }
   try {
     await axios.delete(uri, headers);
   } catch (err) {
