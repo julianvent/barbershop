@@ -56,20 +56,27 @@ export default function ShowService({params, isAdmin}){
                                 <p>{service ? `$${service.establishment_services.price.toFixed(2)}` : '...'}</p>
                             </div>
                         ):( 
-                            <div className={styles.prices}>
-                                <p>Precios asignados al servicio</p>
-                                <hr />
-                                <ul>
-                                    {service?.establishment_services.map((establishment, index) => {
-                                        return (
-                                            <li className={styles.price} key={index}>
-                                                <p className={styles.labelEstablishment}>{establishment.establishment_name}</p>
-                                                <p>{service ? `$${establishment.price.toFixed(2)}` : '...'}</p>
-                                            </li>
-                                        );
-                                    })}
-                                </ul>
-                            </div>
+                            <>
+                            
+                            {(service?.establishment_services?.length > 0)?
+                                (<div className={styles.prices}>
+                                    <p>Precios asignados al servicio</p>
+                                    <hr />
+                                    <ul>
+                                        {service?.establishment_services.map((establishment, index) => {
+                                            return (
+                                                <li className={styles.price} key={index}>
+                                                    <p className={styles.labelEstablishment}>{establishment.establishment_name}</p>
+                                                    <p>{service ? `$${establishment.price.toFixed(2)}` : '...'}</p>
+                                                </li>
+                                            );
+                                        })}
+                                    </ul>
+                                </div>) :
+                                (<div className={styles.prices}>
+                                    <p>No se ha asignado este servicio</p>
+                                </div>)}
+                            </>
                         )}
 
                         <div className={styles.price}>
