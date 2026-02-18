@@ -51,7 +51,7 @@ export const ServiceService = {
   async remove(serviceId, establishmentId = null) {
     const deleted = await ServiceRepository.deactivate(serviceId, establishmentId);
     if (!deleted) {
-      const action = establishmentId ? "unlinked" : "deactivated";
+      const action = establishmentId ? "unlinked from establishment" : "unlinked from all establishments";
       throw new Error(`Service not found or could not be ${action}`);
     }
   },

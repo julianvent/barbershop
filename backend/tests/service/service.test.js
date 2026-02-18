@@ -67,7 +67,6 @@ describe("Service routes workflow", () => {
       price: 350,
       duration: 60,
       type: "hair",
-      status: "active",
     };
     serviceRepoMock.getById.mockResolvedValue(service);
 
@@ -99,7 +98,7 @@ describe("Service routes workflow", () => {
       duration: 50,
       type: "hair",
     };
-    const created = { ...payload, name: "Premium Fade", status: "active", id: 3 };
+    const created = { ...payload, name: "Premium Fade", id: 3 };
     serviceRepoMock.create.mockResolvedValueOnce(created);
 
     const response = await requestApp(createApp(), {
@@ -151,7 +150,6 @@ describe("Service routes workflow", () => {
   test("PUT /services/:id updates the resource", async () => {
     const updatePayload = {
       price: 320,
-      status: "inactive",
     };
     const updated = {
       id: 2,

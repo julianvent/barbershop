@@ -10,7 +10,6 @@ const RETURN_ATTRS = [
   "description",
   "duration",
   "type",
-  "status",
 ];
 
 const RETURN_ATTRS_WITH_ESTABLISHMENT = [
@@ -19,7 +18,6 @@ const RETURN_ATTRS_WITH_ESTABLISHMENT = [
   "description",
   "duration",
   "type",
-  "status",
 ];
 
 /**
@@ -86,7 +84,7 @@ export const ServiceRepository = {
         }
       : undefined;
 
-    const sortable = new Set(["id", "name", "duration", "type", "status"]);
+    const sortable = new Set(["id", "name", "duration", "type"]);
     if (!sortable.has(sort)) {
       sort = "name";
     }
@@ -330,6 +328,7 @@ export const ServiceRepository = {
 
   async deactivate(id, establishment_id = null) {
     if (establishment_id != null) {
+      // Delete only the association for this specific establishment
       const deleted = await EstablishmentService.destroy({
         where: {
           service_id: id,
@@ -339,12 +338,10 @@ export const ServiceRepository = {
       return deleted > 0;
     }
 
-    await EstablishmentService.destroy({
+    // Admin: delete all establishment associations but keep the service record
+    // This preserves service data for historical appointments (audit/income tracking)
+    const deleted = await EstablishmentService.destroy({
       where: { service_id: id },
-    });
-
-    const deleted = await Service.destroy({
-      where: { id },
     });
     return deleted > 0;
   },

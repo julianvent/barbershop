@@ -13,11 +13,6 @@ export const Service = sequelize.define(
     description: { type: DataTypes.TEXT, allowNull: false },
     duration: { type: DataTypes.INTEGER, allowNull: false },
     type: { type: DataTypes.STRING(50), allowNull: false },
-    status: {
-      type: DataTypes.ENUM("active", "inactive"),
-      allowNull: false,
-      defaultValue: "active",
-    },
   },
   {
     tableName: "service",
