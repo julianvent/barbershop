@@ -77,7 +77,6 @@ export const updateService = async (data, name, isAdmin) => {
     await axios.put(updateServiceApiRoute + name + establishment, data, headers);
     return null;
   } catch (err) {
-    console.log(err)
     let message = "Ocurrio un error en el servidor";
     throw message;
   }

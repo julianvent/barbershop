@@ -26,7 +26,6 @@ export default function Appointments({isAdmin}) {
       const fetchAppointments = async () => {
         try {
           const data = await getAppointments();
-          console.log(data)
           setAppointments(data);
         } catch (error) {
           setMessage('No se pudieron recuperar las citas');

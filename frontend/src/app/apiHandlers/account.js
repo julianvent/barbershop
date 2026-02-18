@@ -6,7 +6,6 @@ export async function getAccounts() {
     try{
         const headers = await axiosConfig();
         const request = await axios.get(baseRoute, headers);
-        console.log(request.data)
         return request.data.data;
     }catch(err){
         throw 'Error al obtener las cuentas';
@@ -45,7 +44,6 @@ export async function createAccount(data){
         const headers = await axiosConfig();
         await axios.post(baseRoute, data, headers);        
     } catch (err) {
-        console.log(err)
         throw "Error creando cuenta";
     }
 }

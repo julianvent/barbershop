@@ -14,7 +14,6 @@ export default function ShowAccount({ params, isAdmin}){
   const submit = async (data) => {
     try {
       await updateAdminAccount({data, id})
-      console.log(data)
     } catch (error) {
       return error;
     }

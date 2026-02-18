@@ -50,7 +50,6 @@ export const createEmployee = async (data, isAdmin) => {
       await axios.post(baseUrl , formData, headers);
 
     } catch (err) {
-        console.log(err)
       throw 'Error al registrar el empleado';
     }
 };

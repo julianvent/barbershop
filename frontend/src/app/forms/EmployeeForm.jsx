@@ -55,7 +55,6 @@ export default function EmployeeForm({onSubmit,employee, isAdmin}){
     const file = watch("image");
     const submit = methods.handleSubmit( async function(data){
         setIsCreatingEmployee(true);
-        console.log(data)
         const err = await onSubmit(data);
 
         if(err){

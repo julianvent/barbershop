@@ -31,7 +31,6 @@ export default function ScheduleForm({ onSubmit, schedules }){
 
   const submit = methods.handleSubmit(async (data) => {
     setIsCreatingSchedules(true);
-    console.log(data)
     const err = await onSubmit(data);
     
 

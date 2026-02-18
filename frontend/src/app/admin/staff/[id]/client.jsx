@@ -15,10 +15,9 @@ export default function EmployeeDetail({params, isAdmin}){
             async function load() {
                 try{
                     const data = await getEmployee(id);
-                    setEmployee(data);console.log(data);
+                    setEmployee(data);
 
                 }catch(err){
-                    console.log(err);
                     setMessage(err);
                 }
             }

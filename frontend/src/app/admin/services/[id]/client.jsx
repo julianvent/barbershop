@@ -16,7 +16,6 @@ export default function ShowService({params, isAdmin}){
         async function load() {
                 try{
                     const data = await getService(id, isAdmin);
-                    console.log(data);
                     setService(data);
 
                 }catch(err){

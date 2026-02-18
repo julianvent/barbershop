@@ -363,7 +363,6 @@ function parseAppointment(appointment) {
   // convert barber id into a string, since radio input works with string values
   parsed.barber_id = String(parsed.barber?.barber_id ?? parsed.barber_id ?? "");
   parsed.establishment_id = String(parsed.establishment_id ?? "");
-  console.log(parsed)
 
   // convert services ids into strings, since checkbox input works with string values
   const services_ids = (parsed.services || []).map((service) =>

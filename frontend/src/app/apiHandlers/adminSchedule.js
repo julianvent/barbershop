@@ -26,7 +26,6 @@ export async function createSchedules(id, data) {
     }
     await axios.post(uri, newData, headers)
   } catch (error) {
-    console.log(error)
     throw "Error al crear el horario del establecimiento";
   }
 }
@@ -41,7 +40,6 @@ export async function updateSchedules(id, data) {
     }
     await axios.put(uri, newData, headers);
   } catch (error) {
-    console.log(error)
     throw "Error al modificar los horarios del establecimiento";
   }
 }

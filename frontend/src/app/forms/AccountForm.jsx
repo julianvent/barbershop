@@ -53,7 +53,6 @@ export default function AccountForm ({onSubmit, account}) {
 
   const submit = methods.handleSubmit( async (data) => {
     setIsCreatingAccount(true);
-    console.log(data)
 
     if (account && !data.password) delete data.password;
     const err = await onSubmit(data);

@@ -27,7 +27,6 @@ export default function AdminView(){
           <div className={styles.field}>
             <label>Selecciona el establecimiento</label>
             <select name="establishment" id="establishment" onChange={(e) =>{
-              console.log(e.target.value)
               setEstablishmentId(e.target.value)
             }}>
               <option value="">Selecciona un establecimiento</option>
