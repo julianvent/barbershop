@@ -4,7 +4,9 @@ import { ServiceService } from "../services/service.service.js";
 export const ServiceController = {
   async getAll(req, res) {
     try {
-      const { page, limit, q, sort, dir, establishment_id } = req.query;
+
+      const { page, limit, q, sort, dir } = req.query;
+      const establishment_id = req.query.establishment_id || req.query.establishment;
       const filters = { page, limit, q, sort, dir, establishment_id };
 
       // todo: check the scenario when its a client making an appoinment
@@ -32,9 +34,10 @@ export const ServiceController = {
 
   async getById(req, res) {
     try {
+      const establishment_id = req.query.establishment_id || req.query.establishment;
       const row = await ServiceService.get(
         req.params.id,
-        req.query.establishment_id,
+        establishment_id,
       );
       res.json(row);
     } catch (e) {
@@ -50,7 +53,6 @@ export const ServiceController = {
         req.body.establishment_id || 
         null;
 
-      // Force receptionists to link service to their establishment only
       if (req.user?.role === "receptionist" && req.user?.establishment_id) {
         establishment_id = req.user.establishment_id;
       }
@@ -68,10 +70,9 @@ export const ServiceController = {
 
   async update(req, res) {
     try {
-      let establishment_id = req.query.establishment_id || null;
+      let establishment_id = req.query.establishment_id || req.query.establishment || null;
       const isAdmin = req.user?.role === "admin";
 
-      // Force receptionists to update only their establishment
       if (req.user?.role === "receptionist" && req.user?.establishment_id) {
         establishment_id = req.user.establishment_id;
       }
@@ -90,7 +91,7 @@ export const ServiceController = {
 
   async delete(req, res) {
     try {
-      let establishment_id = req.query.establishment_id || null;
+      let establishment_id = req.query.establishment_id || req.query.establishment || null;
 
       if (req.user?.role === "receptionist" && req.user?.establishment_id) {
         establishment_id = req.user.establishment_id;
