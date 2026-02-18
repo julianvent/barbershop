@@ -111,13 +111,6 @@ export const ServiceRepository = {
           where: { establishment_id: Number(establishment_id) },
           attributes: ["price"],
           required: true,
-          include: [
-            {
-              model: Establishment,
-              as: "establishment",
-              attributes: ["id", "name"],
-            },
-          ],
         },
       ];
     } else {
@@ -167,13 +160,15 @@ export const ServiceRepository = {
             establishmentId != null
               ? ["price"] // Only price when filtering by establishment
               : ["establishment_id", "price"], // Both when not filtered
-          include: [
-            {
-              model: Establishment,
-              as: "establishment",
-              attributes: ["id", "name"],
-            },
-          ],
+          ...(establishmentId == null && {
+            include: [
+              {
+                model: Establishment,
+                as: "establishment",
+                attributes: ["id", "name"],
+              },
+            ],
+          }),
         },
       ],
     };
@@ -191,13 +186,6 @@ export const ServiceRepository = {
     );
 
     return serviceData;
-  },
-
-  async create(data) {
-    const created = await Service.create(data);
-    return Service.findByPk(created.id, {
-      attributes: RETURN_ATTRS,
-    });
   },
 
   async createWithLinks(data, establishment_id = null, isAdmin = false) {
@@ -267,11 +255,54 @@ export const ServiceRepository = {
   async update(id, data, establishment_id = null, isAdmin = false) {
     const updateData = { ...data };
 
-    if (updateData.price !== undefined) {
+    if (updateData.establishment_services) {
+      const establishmentServices = Array.isArray(
+        updateData.establishment_services,
+      )
+        ? updateData.establishment_services
+        : [updateData.establishment_services];
+
+      if (establishment_id != null) {
+        const targetService = establishmentServices.find(
+          (es) => es.establishment_id === Number(establishment_id),
+        );
+
+        if (targetService && targetService.price !== undefined) {
+          await EstablishmentService.update(
+            { price: targetService.price },
+            {
+              where: {
+                service_id: id,
+                establishment_id: Number(establishment_id),
+              },
+            },
+          );
+        }
+      } else if (isAdmin) {
+        for (const es of establishmentServices) {
+          if (es.establishment_id && es.price !== undefined) {
+            await EstablishmentService.update(
+              { price: es.price },
+              {
+                where: {
+                  service_id: id,
+                  establishment_id: Number(es.establishment_id),
+                },
+              },
+            );
+          }
+        }
+      }
+
+      delete updateData.establishment_services;
+    }
+    // Handle legacy top-level price field
+    else if (updateData.price !== undefined) {
       const priceToUpdate = updateData.price;
       delete updateData.price;
 
-      if (establishment_id) {
+      
+      if (establishment_id != null) {
         await EstablishmentService.update(
           { price: priceToUpdate },
           {
@@ -298,7 +329,7 @@ export const ServiceRepository = {
   },
 
   async deactivate(id, establishment_id = null) {
-    if (establishment_id) {
+    if (establishment_id != null) {
       const deleted = await EstablishmentService.destroy({
         where: {
           service_id: id,
@@ -308,12 +339,14 @@ export const ServiceRepository = {
       return deleted > 0;
     }
 
-    // Otherwise, deactivate globally
-    const [updated] = await Service.update(
-      { status: "inactive" },
-      { where: { id } },
-    );
-    return updated > 0;
+    await EstablishmentService.destroy({
+      where: { service_id: id },
+    });
+
+    const deleted = await Service.destroy({
+      where: { id },
+    });
+    return deleted > 0;
   },
 
   async linkToAllEstablishments(serviceId, price, establishments) {
