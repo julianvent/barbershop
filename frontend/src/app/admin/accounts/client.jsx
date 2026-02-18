@@ -4,16 +4,19 @@ import styles from '../Main.module.css'
 import { editAccounts, newAccounts, seeAccounts } from '@/app/utils/routes';
 import { AgGridReact } from 'ag-grid-react';
 import { accountsFields, actionsDef, defaultColDef } from '@/app/utils/columns';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { getAccounts } from '@/app/apiHandlers/account';
 import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
 import { ActionButton } from '@/app/components/action/ActionButton';
+import SearchGrid from '@/app/components/base_layout/SearchGrid';
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 export default function IndexAccounts(){
   const router = useRouter();
   const [accounts, setAccounts] = useState(null);
   const [message, setMessage] = useState('Obteniendo cuentas ...');
+  const [gridApi, setGridApi] = useState(null);
+  const gridRef = useRef();
   
   const actions = [
     {
@@ -81,14 +84,19 @@ export default function IndexAccounts(){
           Registrar cuentas
         </button>
       </div>
-      <AgGridReact
-        defaultColDef={defaultColDef}
-        rowData={accounts}
-        columnDefs={fields}
-        overlayNoRowsTemplate={message}
-        pagination={true}
-        paginationPageSize={20}
-      />
+        <article className={styles.index}>
+          <SearchGrid text="Buscar cuentas ..." gridApi={gridApi}/>
+          <AgGridReact
+            ref={gridRef}
+            onGridReady={(params) => setGridApi(params.api)}
+            defaultColDef={defaultColDef}
+            rowData={accounts}
+            columnDefs={fields}
+            pagination={true}
+            paginationPageSize={20}
+            overlayNoRowsTemplate={message}
+          />
+        </article>
     </div>
   )
 }

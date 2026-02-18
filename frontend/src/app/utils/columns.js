@@ -32,7 +32,36 @@ export const appointmentColumns = (isAdmin) => {
   {
     headerName: "Fecha",
     field: "date",
-    width: 120,
+    sortable: true,
+
+    valueFormatter: (params) => {
+      if (!params.value) return "";
+
+      const date = new Date(params.value);
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = date.getFullYear();
+
+      return `${day}/${month}/${year}`;
+    },
+
+    getQuickFilterText: (params) => {
+      if (!params.value) return "";
+
+      const date = new Date(params.value);
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = date.getFullYear();
+
+      return `${day}/${month}/${year}`;
+    },
+
+    comparator: (valueA, valueB) => {
+      if (!valueA) return -1;
+      if (!valueB) return 1;
+
+      return new Date(valueA) - new Date(valueB);
+    }
   },
   {
     headerName: "Hora",
@@ -81,6 +110,13 @@ export const serviceFields = (isAdmin) => {
             (params.data.duration % 60) +
             " minutos"
           : params.data.duration + " minutos",
+      getQuickFilterText: (params) =>
+        Math.floor(params.data.duration / 60) >= 1
+          ? Math.floor(params.data.duration / 60) +
+            " hr " +
+            (params.data.duration % 60) +
+            " minutos"
+          : params.data.duration + " minutos"
     },
     {
       headerName: "Tipo",
@@ -97,6 +133,13 @@ export const serviceFields = (isAdmin) => {
             return "Todos los locales"
           } else {
             return params.data.establishment_services[0].establishment_name
+          }
+        },
+        getQuickFilterText: (params) => {
+          if (params.data.establishment_services.length > 1) {
+            return "Todos los locales";
+          } else {
+            return params.data.establishment_services[0].establishment_name;
           }
         },
         width: 150,

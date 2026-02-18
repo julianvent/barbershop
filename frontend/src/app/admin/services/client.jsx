@@ -11,9 +11,10 @@ import { serviceFields, defaultColDef, actionsDef } from "@/app/utils/columns";
 import { AgGridReact } from "ag-grid-react";
 import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
 import { getServices, getServicesByEstablishment } from "../../apiHandlers/adminServices";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ActionButton } from "@/app/components/action/ActionButton";
 import SebasModal from "@/app/components/modal/SebasModal";
+import SearchGrid from "@/app/components/base_layout/SearchGrid";
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 export default function Services({isAdmin, establishment_id}) {
@@ -21,6 +22,8 @@ export default function Services({isAdmin, establishment_id}) {
   const [services, setServices] = useState(null);
   const [message,setMessage] = useState(null);
   const [selectedService, setSelectedService] = useState(null);
+  const [gridApi, setGridApi] = useState(null);
+  const gridRef = useRef();
   const modalId = "service_prices_modal";
 
 
@@ -142,14 +145,19 @@ export default function Services({isAdmin, establishment_id}) {
           </div>
         </div>
         <div className={styles.tableContainer}>
+        <article className={styles.index}>
+          <SearchGrid text="Buscar servicios ..." gridApi={gridApi}/>
           <AgGridReact
+            ref={gridRef}
+            onGridReady={(params) => setGridApi(params.api)}
             defaultColDef={defaultColDef}
             rowData={services}
             columnDefs={fields}
-            overlayNoRowsTemplate={message}
             pagination={true}
             paginationPageSize={20}
+            overlayNoRowsTemplate={message}
           />
+        </article>
         </div>
       </div>
       <SebasModal

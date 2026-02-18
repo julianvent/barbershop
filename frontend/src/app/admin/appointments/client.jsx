@@ -13,10 +13,14 @@ import { defaultColDef, appointmentColumns, actionsDef } from "@/app/utils/colum
 import { ActionButton } from "@/app/components/action/ActionButton";
 import { getAppointments } from "../../apiHandlers/adminAppointments";
 import { useEffect, useState } from "react";
+import { useRef } from "react";
+import SearchGrid from "@/app/components/base_layout/SearchGrid";
 
 export default function Appointments({isAdmin}) {
   const [appointments, setAppointments] = useState(null);
   const [message, setMessage] = useState('Cargando las citas ...');
+  const [gridApi, setGridApi] = useState(null);
+  const gridRef = useRef();
 
   useEffect(() => {
       const fetchAppointments = async () => {
@@ -51,6 +55,16 @@ export default function Appointments({isAdmin}) {
     {
       headerName: "Estado",
       resizable: false,
+      valueGetter: (params) => {
+        const Map = {
+          pending: "Pendiente",
+          confirmed: "Confirmada",
+          completed: "Completada",
+          cancelled: "Cancelada",
+        };
+
+        return Map[params.data.status];
+      },
       cellRenderer: (params) => {
         const Map = {
           pending: { color: "#4e4e4e", text: "Pendiente" },
@@ -93,14 +107,19 @@ export default function Appointments({isAdmin}) {
             Nueva cita
           </button>
         </div>
-        <AgGridReact
-          defaultColDef={defaultColDef}
-          rowData={appointments}
-          columnDefs={fields}
-          pagination={true}
-          paginationPageSize={20}
-          overlayNoRowsTemplate={message}
-        />
+        <article className={styles.index}>
+          <SearchGrid text="Buscar en las citas ..." gridApi={gridApi}/>
+          <AgGridReact
+            ref={gridRef}
+            onGridReady={(params) => setGridApi(params.api)}
+            defaultColDef={defaultColDef}
+            rowData={appointments}
+            columnDefs={fields}
+            pagination={true}
+            paginationPageSize={20}
+            overlayNoRowsTemplate={message}
+          />
+        </article>
       </div>
     </>
   );

@@ -10,14 +10,17 @@ import { actionsDef, defaultColDef, employeesEntries } from "@/app/utils/columns
 import { AgGridReact } from "ag-grid-react";
 import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
 import { ActionButton } from "@/app/components/action/ActionButton";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getEmployees, getEmployeesByEstablishment } from "../../apiHandlers/adminStaff";
+import SearchGrid from "@/app/components/base_layout/SearchGrid";
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 export default function StaffIndex({isAdmin, establishmentId}) {
   const router = useRouter();
   const [employees, setEmployees] = useState();
   const [message, setMessage] = useState(null);
+  const [gridApi, setGridApi] = useState(null);
+  const gridRef = useRef();
   
   useEffect(() => {
     setMessage('No se han registrado los servicios');
@@ -53,6 +56,9 @@ export default function StaffIndex({isAdmin, establishmentId}) {
     {
       headerName: "Estado",
       resizable: false,
+      valueGetter: (params) => {
+        return params.data.is_active ? "Activo" : "Inactivo";
+      },
       cellRenderer: (params) => {        
         const Map = {  
           true : {color:'#004b0aff', text: 'Activo' },
@@ -93,15 +99,19 @@ export default function StaffIndex({isAdmin, establishmentId}) {
           </button>
         </div>
         <div className={styles.tableContainer}>
-          
+        <article className={styles.index}>
+          <SearchGrid text="Buscar empleados ..." gridApi={gridApi}/>
           <AgGridReact
+            ref={gridRef}
+            onGridReady={(params) => setGridApi(params.api)}
             defaultColDef={defaultColDef}
             rowData={employees}
             columnDefs={fields}
-            overlayNoRowsTemplate={message}
             pagination={true}
             paginationPageSize={20}
+            overlayNoRowsTemplate={message}
           />
+        </article>
         </div>
       </div>
     </>
