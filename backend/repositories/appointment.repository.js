@@ -1,7 +1,7 @@
 import { Appointment } from "../models/appointment.model.js";
 import { Establishment } from "../models/establishment.model.js";
+import { Service } from "../models/service.model.js";
 import { ServiceRepository } from "./service.repository.js";
-import { EstablishmentService } from "../models/associations/establishment.service.model.js";
 import { ServiceAppointment } from "../models/associations/service.appointment.model.js";
 import { BarberRepository } from "../repositories/barber.repository.js";
 import { Barber } from "../models/barber.model.js";
@@ -80,24 +80,65 @@ export const AppointmentRepository = {
   },
 
   async getById(id) {
-    return Appointment.findByPk(id, {
-      attributes: RETURN_ATTRS,
+    const appointment = await Appointment.findByPk(id, {
+      attributes: [
+        "id",
+        "customer_name",
+        "customer_phone",
+        "customer_email",
+        "appointment_datetime",
+        "total_duration",
+        "status",
+        "barber_id",
+        "image_finish_path",
+        "establishment_id",
+      ],
       include: [
         {
           model: Establishment,
           as: "establishment",
-          attributes: [],
-          required: false,
+          attributes: ["id", "name"],
+        },
+        {
+          model: ServiceAppointment,
+          as: "service_appointments",
+          attributes: ["service_id", "price"],
+          include: [
+            {
+              model: Service,
+              as: "service",
+              attributes: ["id", "name", "description", "duration", "type"],
+            },
+          ],
         },
       ],
     });
-  },
-  async getServiceByAppointmentId(id) {
-    const where = { appointment_id: id };
-    return ServiceAppointment.findAll({ where });
+
+    if (!appointment) return null;
+
+    // Transform to include services with their appointment-specific prices
+    const appointmentData = appointment.toJSON();
+    appointmentData.services = appointmentData.service_appointments?.map(sa => ({
+      id: sa.service.id,
+      name: sa.service.name,
+      description: sa.service.description,
+      duration: sa.service.duration,
+      type: sa.service.type,
+      price: sa.price, // Price from the appointment relation
+    })) || [];
+    delete appointmentData.service_appointments;
+
+    return appointmentData;
   },
 
   async create(appointment) {
+    // TODO: Move business logic validations to service layer:
+    // - Barber belongs to establishment validation
+    // - Schedule/time availability validation
+    // - Service validation and duration calculation
+    // - Overlap checking
+    // Repository should focus on data persistence only
+    
     let sum_duration = 0;
     const barber = await BarberRepository.getById(appointment.barber_id);
 
@@ -141,30 +182,15 @@ export const AppointmentRepository = {
     }
 
     const services = [];
-    const establishmentServicePrices = new Map();
 
     if (appointment.services_ids && appointment.services_ids.length > 0) {
       for (const service_id of appointment.services_ids) {
         const service = await ServiceRepository.getById(service_id);
 
-        if (targetEstablishmentId) {
-          const establishmentService = await EstablishmentService.findOne({
-            where: {
-              establishment_id: targetEstablishmentId,
-              service_id: service_id,
-            },
-          });
-
-          if (!establishmentService) {
-            throw new Error(
-              `Service "${service.name}" is not offered by this establishment`,
-            );
-          }
-
-          // Store establishment-specific price
-          establishmentServicePrices.set(
-            service_id,
-            establishmentService.price,
+        // Validate service belongs to the target establishment
+        if (targetEstablishmentId && service.Establishment_id !== targetEstablishmentId) {
+          throw new Error(
+            `Service "${service.name}" is not offered by this establishment`,
           );
         }
 
@@ -219,14 +245,11 @@ export const AppointmentRepository = {
 
     for (const service of services) {
       try {
-        // Use establishment-specific price if available, otherwise use service price
-        const price =
-          establishmentServicePrices.get(service.id) ?? service.price;
-
+        // Store the current service price in the appointment relation
         await ServiceAppointment.create({
           service_id: service.id,
           appointment_id: newAppointment.id,
-          price: price,
+          price: service.price, // Get price from Service model
         });
         services_ids.push(service);
       } catch (err) {
@@ -243,6 +266,12 @@ export const AppointmentRepository = {
     };
   },
   async update(id, appointment) {
+    // TODO: Move business logic validations to service layer:
+    // - Check if appointment exists
+    // - Service validation and duration calculation
+    // - Establishment validation
+    // Repository should focus on data persistence only
+    
     const existingAppointment = await Appointment.findByPk(id);
     if (!existingAppointment) {
       throw new Error("Appointment not found");
@@ -259,7 +288,6 @@ export const AppointmentRepository = {
     if (appointment.services_ids && appointment.services_ids.length > 0) {
       let sum_duration = 0;
       const services = [];
-      const establishmentServicePrices = new Map();
 
       const targetEstablishmentId = appointment.establishment_id
         ? parseInt(appointment.establishment_id)
@@ -269,24 +297,10 @@ export const AppointmentRepository = {
       for (const service_id of appointment.services_ids) {
         const service = await ServiceRepository.getById(service_id);
 
-        if (targetEstablishmentId) {
-          const establishmentService = await EstablishmentService.findOne({
-            where: {
-              establishment_id: targetEstablishmentId,
-              service_id: service_id,
-            },
-          });
-
-          if (!establishmentService) {
-            throw new Error(
-              `Service "${service.name}" is not offered by this establishment`,
-            );
-          }
-
-          // Store establishment-specific price
-          establishmentServicePrices.set(
-            service_id,
-            establishmentService.price,
+        // Validate service belongs to the target establishment
+        if (targetEstablishmentId && service.Establishment_id !== targetEstablishmentId) {
+          throw new Error(
+            `Service "${service.name}" is not offered by this establishment`,
           );
         }
 
@@ -302,15 +316,12 @@ export const AppointmentRepository = {
         where: { appointment_id: id },
       });
 
+      // Create new service associations with current prices
       for (const service of services) {
-        // Use establishment-specific price if available, otherwise use service price
-        const price =
-          establishmentServicePrices.get(service.id) ?? service.price;
-
         await ServiceAppointment.create({
           service_id: service.id,
           appointment_id: id,
-          price: price,
+          price: service.price, // Get price from Service model
         });
       }
     }
@@ -323,18 +334,8 @@ export const AppointmentRepository = {
 
     await existingAppointment.update(appointment);
 
-    const updatedServices = await this.getServiceByAppointmentId(id);
-    const serviceDetails = await Promise.all(
-      updatedServices.map(async (sa) => {
-        const service = await ServiceRepository.getById(sa.service_id);
-        return { id: service.id, name: service.name };
-      }),
-    );
-
-    return {
-      ...existingAppointment.toJSON(),
-      services: serviceDetails,
-    };
+    // Return updated appointment with services
+    return this.getById(id);
   },
   async delete(id) {
     const existingAppointment = await Appointment.findByPk(id);

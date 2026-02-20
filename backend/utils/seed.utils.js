@@ -7,7 +7,6 @@ import {
   Schedule,
   Service,
   ServiceAppointment,
-  EstablishmentService,
 } from "../models/index.js";
 import { hash } from "../services/password.service.js";
 import { formatDateForTimezone } from "../utils/appointment.utils.js";
@@ -94,7 +93,6 @@ export async function seedDatabase(
       await Service.destroy({ where: {}, cascade: true });
       await Appointment.destroy({ where: {}, cascade: true });
       await ServiceAppointment.destroy({ where: {}, cascade: true });
-      await EstablishmentService.destroy({ where: {}, cascade: true });
 
       // Re-enable foreign key checks
       await sequelize.query("SET FOREIGN_KEY_CHECKS = 1");
@@ -105,13 +103,7 @@ export async function seedDatabase(
     const adminAccount = await seedAdminAccount(Account, t);
     const establishments = await seedEstablishment(Establishment, t);
     const accounts = await seedAccount(Account, establishments, t);
-    const services = await seedService(Service, t);
-    await seedEstablishmentServices(
-      EstablishmentService,
-      establishments,
-      services,
-      t,
-    );
+    const services = await seedService(Service, establishments, t);
     const barbers = await seedBarber(Barber, t);
     for (const est of establishments) {
       await seedSchedulesForEstablishment(Schedule, est.id, t);
@@ -134,41 +126,83 @@ export async function seedDatabase(
 }
 
 /**
- * Seed services (without price - price is set per establishment in EstablishmentService)
+ * Seed services with establishment assignments and pricing
+ * Each service belongs to a specific establishment with its own price
  */
-async function seedService(Service, t) {
-  const services = await Service.bulkCreate(
-    [
+async function seedService(Service, establishments, t) {
+  const downtown = establishments.find(
+    (e) => e.name === "Downtown Barber Shop",
+  );
+  const uptown = establishments.find((e) => e.name === "Uptown Cuts");
+
+  const servicesData = [];
+
+  // Downtown Barber Shop services (Premium pricing)
+  if (downtown) {
+    servicesData.push(
       {
         name: "Corte de Cabello",
         description: "Corte de cabello clásico o moderno, incluye lavado",
         duration: 30,
         type: "haircut",
-      },
-      {
-        name: "Arreglo de Barba",
-        description: "Recorte y perfilado de barba con navaja",
-        duration: 20,
-        type: "beard",
+        price: 18.0,
+        Establishment_id: downtown.id,
       },
       {
         name: "Combo Corte + Barba",
         description: "Corte de cabello completo más arreglo de barba",
         duration: 45,
         type: "combo",
+        price: 25.0,
+        Establishment_id: downtown.id,
       },
       {
         name: "Coloración de Cabello",
         description: "Aplicación de color para cabello, incluye asesoría",
         duration: 60,
         type: "coloring",
+        price: 45.0,
+        Establishment_id: downtown.id,
       },
-    ],
-    { transaction: t },
-  );
+    );
+  }
+
+  // Uptown Cuts services (Budget-friendly pricing)
+  if (uptown) {
+    servicesData.push(
+      {
+        name: "Corte de Cabello",
+        description: "Corte de cabello clásico o moderno, incluye lavado",
+        duration: 30,
+        type: "haircut",
+        price: 12.0,
+        Establishment_id: uptown.id,
+      },
+      {
+        name: "Arreglo de Barba",
+        description: "Recorte y perfilado de barba con navaja",
+        duration: 20,
+        type: "beard",
+        price: 8.0,
+        Establishment_id: uptown.id,
+      },
+      {
+        name: "Combo Corte + Barba",
+        description: "Corte de cabello completo más arreglo de barba",
+        duration: 45,
+        type: "combo",
+        price: 19.0,
+        Establishment_id: uptown.id,
+      },
+    );
+  }
+
+  const services = await Service.bulkCreate(servicesData, { transaction: t });
+  console.log(`✓ Created ${services.length} services across establishments`);
   console.log(
-    `✓ Created ${services.length} services (prices set per establishment)`,
+    `  - Downtown Barber Shop: Corte ($18), Combo ($25), Coloración ($45)`,
   );
+  console.log(`  - Uptown Cuts: Corte ($12), Barba ($8), Combo ($19)`);
   return services;
 }
 
@@ -437,18 +471,30 @@ async function seedAppointment(
       status: "confirmed",
       barber_id: barbers[0].id, // SEBASTIÁN - Establishment 1
       establishment_id: barbers[0].establishment_id,
-      services: [services[0]], // Corte de Cabello
+      services: [
+        services.find(
+          (s) =>
+            s.name === "Corte de Cabello" &&
+            s.Establishment_id === barbers[0].establishment_id,
+        ),
+      ],
     },
     {
       customer_name: "Carlos López",
       customer_phone: "5553456789",
       customer_email: "carlos.lopez@email.com",
       appointment_datetime: new Date("2024-12-03T11:00:00"),
-      total_duration: 20,
+      total_duration: 30,
       status: "pending",
       barber_id: barbers[2].id, // JOSÉ - Establishment 1
       establishment_id: barbers[2].establishment_id,
-      services: [services[1]], // Barba
+      services: [
+        services.find(
+          (s) =>
+            s.name === "Corte de Cabello" &&
+            s.Establishment_id === barbers[2].establishment_id,
+        ),
+      ],
     },
     {
       customer_name: "Roberto Sánchez",
@@ -459,7 +505,13 @@ async function seedAppointment(
       status: "pending",
       barber_id: barbers[4].id, // KEVIN - Establishment 1
       establishment_id: barbers[4].establishment_id,
-      services: [services[0]], // Corte
+      services: [
+        services.find(
+          (s) =>
+            s.name === "Corte de Cabello" &&
+            s.Establishment_id === barbers[4].establishment_id,
+        ),
+      ],
     },
     {
       customer_name: "Laura Fernández",
@@ -470,7 +522,13 @@ async function seedAppointment(
       status: "confirmed",
       barber_id: barbers[0].id, // SEBASTIÁN - Establishment 1
       establishment_id: barbers[0].establishment_id,
-      services: [services[2]], // Combo
+      services: [
+        services.find(
+          (s) =>
+            s.name === "Combo Corte + Barba" &&
+            s.Establishment_id === barbers[0].establishment_id,
+        ),
+      ],
     },
 
     // Establishment 2 (Uptown Cuts) appointments
@@ -483,7 +541,13 @@ async function seedAppointment(
       status: "confirmed",
       barber_id: barbers[1].id, // ADRIÁN - Establishment 2
       establishment_id: barbers[1].establishment_id,
-      services: [services[2]], // Combo
+      services: [
+        services.find(
+          (s) =>
+            s.name === "Combo Corte + Barba" &&
+            s.Establishment_id === barbers[1].establishment_id,
+        ),
+      ],
     },
     {
       customer_name: "Ana Martínez",
@@ -494,7 +558,18 @@ async function seedAppointment(
       status: "confirmed",
       barber_id: barbers[3].id, // CARLOS - Establishment 2
       establishment_id: barbers[3].establishment_id,
-      services: [services[0], services[1]], // Corte + Barba
+      services: [
+        services.find(
+          (s) =>
+            s.name === "Corte de Cabello" &&
+            s.Establishment_id === barbers[3].establishment_id,
+        ),
+        services.find(
+          (s) =>
+            s.name === "Arreglo de Barba" &&
+            s.Establishment_id === barbers[3].establishment_id,
+        ),
+      ],
     },
     {
       customer_name: "Diego Ramírez",
@@ -505,7 +580,13 @@ async function seedAppointment(
       status: "confirmed",
       barber_id: barbers[1].id, // ADRIÁN - Establishment 2
       establishment_id: barbers[1].establishment_id,
-      services: [services[0]], // Corte
+      services: [
+        services.find(
+          (s) =>
+            s.name === "Corte de Cabello" &&
+            s.Establishment_id === barbers[1].establishment_id,
+        ),
+      ],
     },
   ];
 
@@ -532,22 +613,18 @@ async function seedAppointment(
       { transaction: t },
     );
 
-    // Create service_appointment records with establishment-specific pricing
+    // Create service_appointment records with service prices
     for (const service of appointmentServices) {
-      // Get the price from EstablishmentService for this establishment
-      const establishmentService = await EstablishmentService.findOne({
-        where: {
-          establishment_id: appointmentData.establishment_id,
-          service_id: service.id,
-        },
-        transaction: t,
-      });
+      if (!service) {
+        console.warn(`Skipping null service for appointment ${appointment.id}`);
+        continue;
+      }
 
       await ServiceAppointment.create(
         {
           appointment_id: appointment.id,
           service_id: service.id,
-          price: establishmentService ? establishmentService.price : 0,
+          price: service.price, // Get price directly from Service model
         },
         { transaction: t },
       );
@@ -568,69 +645,4 @@ async function seedAppointment(
   console.log(`  - Establishment 1 (Downtown): ${est1Count} appointments`);
   console.log(`  - Establishment 2 (Uptown): ${est2Count} appointments`);
   return appointments;
-}
-
-/**
- * Seed establishment services with establishment-specific pricing
- * Different establishments offer different services at different prices
- */
-async function seedEstablishmentServices(
-  EstablishmentService,
-  establishments,
-  services,
-  t,
-) {
-  const establishmentServicesData = [];
-
-  // Establishment 1 (Downtown Barber Shop) - Premium location, offers haircuts, combo, and coloring
-  const downtown = establishments.find(
-    (e) => e.name === "Downtown Barber Shop",
-  );
-  if (downtown) {
-    const downtownServices = [
-      { service: services[0], price: 18.0 }, // Corte de Cabello - $18 (premium)
-      { service: services[2], price: 25.0 }, // Combo Corte + Barba - $25 (premium)
-      { service: services[3], price: 45.0 }, // Coloración - $45 (premium)
-    ];
-
-    for (const { service, price } of downtownServices) {
-      establishmentServicesData.push({
-        establishment_id: downtown.id,
-        service_id: service.id,
-        price,
-      });
-    }
-  }
-
-  // Establishment 2 (Uptown Cuts) - Budget-friendly, offers haircuts, beard, and combo
-  const uptown = establishments.find((e) => e.name === "Uptown Cuts");
-  if (uptown) {
-    const uptownServices = [
-      { service: services[0], price: 12.0 }, // Corte de Cabello - $12 (budget)
-      { service: services[1], price: 8.0 }, // Arreglo de Barba - $8 (budget)
-      { service: services[2], price: 19.0 }, // Combo Corte + Barba - $19 (budget)
-    ];
-
-    for (const { service, price } of uptownServices) {
-      establishmentServicesData.push({
-        establishment_id: uptown.id,
-        service_id: service.id,
-        price,
-      });
-    }
-  }
-
-  const establishmentServices = await EstablishmentService.bulkCreate(
-    establishmentServicesData,
-    { transaction: t },
-  );
-
-  console.log(
-    `✓ Created ${establishmentServices.length} establishment-service links`,
-  );
-  console.log(
-    `  - Downtown Barber Shop: Corte ($18), Combo ($25), Coloración ($45)`,
-  );
-  console.log(`  - Uptown Cuts: Corte ($12), Barba ($8), Combo ($19)`);
-  return establishmentServices;
 }

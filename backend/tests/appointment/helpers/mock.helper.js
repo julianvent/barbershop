@@ -17,7 +17,7 @@ export const ServiceRepositoryMock = { getById: vi.fn() };
 export const BarberRepositoryMock = { getById: vi.fn() };
 export const AppointmentRepositoryMock = {
   getById: vi.fn(),
-  getServiceByAppointmentId: vi.fn(),
+  getByIdWithServices: vi.fn(),
   update: vi.fn(async (id, appointment) => {
     const existingAppointment = await AppointmentModelMock.findByPk(id);
     if (!existingAppointment) {
@@ -60,7 +60,7 @@ export const AppointmentRepositoryMock = {
       updatedServices.map(async (sa) => {
         const service = await ServiceRepositoryMock.getById(sa.service_id);
         return { id: service.id, name: service.name };
-      })
+      }),
     );
 
     return {
@@ -128,7 +128,7 @@ export function setupAppointmentMocks() {
     "../../../middlewares/require.property.appointment.middleware.js",
     () => ({
       propertyAppointment: (req, res, next) => next(),
-    })
+    }),
   );
 
   vi.doMock("../../../middlewares/require.property.middleware.js", () => ({
