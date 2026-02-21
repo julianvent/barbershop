@@ -5,8 +5,7 @@ import layout from "../../Main.module.css";
 import styles from "./styles.module.css";
 import warning from "../../../forms/styles.module.css"
 import { getService } from "../../../apiHandlers/adminServices";
-import { Status } from "@/app/components/form/status/Status";
-import ServiceButtons from "@/app/components/form/model_buttons/ServiceButtons";
+import Buttons from "@/app/components/form/model_buttons/Buttons";
 
 export default function ShowService({params, isAdmin}){
     const {id} = React.use(params);
@@ -49,43 +48,14 @@ export default function ShowService({params, isAdmin}){
                         }
 
                     
-                        {(!isAdmin)?(
-                            <div className={styles.price}>
-                                <p className={styles.labelText}>Precio</p>
-                                <p>{service ? `$${service.establishment_services.price.toFixed(2)}` : '...'}</p>
-                            </div>
-                        ):( 
-                            <>
-                            
-                            {(service?.establishment_services?.length > 0)?
-                                (<div className={styles.prices}>
-                                    <p>Precios asignados al servicio</p>
-                                    <hr />
-                                    <ul>
-                                        {service?.establishment_services.map((establishment, index) => {
-                                            return (
-                                                <li className={styles.price} key={index}>
-                                                    <p className={styles.labelEstablishment}>{establishment.establishment_name}</p>
-                                                    <p>{service ? `$${establishment.price.toFixed(2)}` : '...'}</p>
-                                                </li>
-                                            );
-                                        })}
-                                    </ul>
-                                </div>) :
-                                (<div className={styles.prices}>
-                                    <p>No se ha asignado este servicio</p>
-                                </div>)}
-                            </>
-                        )}
+                        <div className={styles.price}>
+                            <p className={styles.labelText}>Precio</p>
+                            <p>{service ? `$${service.price.toFixed(2)}` : '...'}</p>
+                        </div>
 
                         <div className={styles.price}>
                             <p className={styles.labelText}>Duracion Aproximada</p>
                             <p>{service ? Math.floor(service.duration/60) > 1 ? Math.floor(service.duration/60) + ' hr ' + service.duration%60 + ' minutos' : service.duration + ' minutos' : '...'}</p>
-                        </div>
-
-                        <div className={styles.price}>
-                            <p className={styles.labelText}>Estado</p>
-                            {service && <Status id="state" state={service.status} name={'N/A'} />}
                         </div>
 
 
@@ -103,7 +73,7 @@ export default function ShowService({params, isAdmin}){
                 </article>
             
                 {
-                    service&&(<ServiceButtons model={service} isAdmin={isAdmin}/>
+                    service&&(<Buttons model={service} modelType="service" isAdmin={isAdmin}/>
                     )
                 }
 

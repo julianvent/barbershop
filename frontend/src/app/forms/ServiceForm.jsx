@@ -1,4 +1,4 @@
-import { useForm, FormProvider, useWatch } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import styles from "./styles.module.css";
 import Input from "../components/form/input/Input";
 import {
@@ -13,22 +13,17 @@ import { useRouter } from "next/navigation";
 import TextArea from "@/app/components/form/input/TextArea";
 import { servicesRoute } from "@/app/utils/routes";
 import InputDecimal from "@/app/components/form/input/InputDecimal";
-import Select from "../components/form/input/Select";
 import { establishmentValidation } from "../utils/servicesValidators";
 import { getEstablishments } from "../apiHandlers/adminEstablishments";
+import SelectEstablishment from "../components/form/input/SelectEstablishment";
 
-export default function ServiceForm({ onSubmit, service, isAdmin, isOnlyOne=false }) {
+export default function ServiceForm({ onSubmit, service, isAdmin }) {
   const router = useRouter();
   const [isCreatingService, setIsCreatingService] = useState(false);
   const methods = useForm({
     defaultValues: service || {},
   });
   
-  const establishmentId = useWatch({
-    name: establishmentValidation.id,
-    control: methods.control,
-  });
-
   const establishments = useEstablishment();
 
   function useEstablishment() {
@@ -49,7 +44,7 @@ export default function ServiceForm({ onSubmit, service, isAdmin, isOnlyOne=fals
             {
               id: "",
               value: "",
-              name: "Todos los establecimientos"
+              name: "Elige un establecimiento"
             },
             ...es]
           setEstablishment(locals);
@@ -70,7 +65,6 @@ export default function ServiceForm({ onSubmit, service, isAdmin, isOnlyOne=fals
     
 
       if (err) {
-
         methods.setError("root.serverError", {
           type: "server",
           message: err,
@@ -84,28 +78,8 @@ export default function ServiceForm({ onSubmit, service, isAdmin, isOnlyOne=fals
   useEffect(() => {
     if (service) {
       methods.reset(service);
-
-      if(!isAdmin) {
-        methods.setValue('price',service.establishment_services.price);
-      }else{
-        if(isOnlyOne) {
-          if (service.establishment_services == 0) return;
-          methods.setValue('establishment_id',service.establishment_services[0].establishment_id);
-          methods.setValue('price',service.establishment_services[0].price);
-        }
-      }
     }
   }, [service, methods]);
-
-  useEffect(() => {
-    if(service){
-      const found = service.establishment_services.find((establishment) => {
-        return establishment.establishment_id == establishmentId
-      })
-      methods.setValue('price',found?.price);
-
-    }
-  }, [establishmentId, methods]);
 
   return (
     <FormProvider {...methods}>
@@ -127,9 +101,9 @@ export default function ServiceForm({ onSubmit, service, isAdmin, isOnlyOne=fals
           </div>
 
           {
-            isAdmin&&!isOnlyOne&&(
+            isAdmin&&!service&&(
               <div className={styles.soloRow}>
-                <Select options={establishments} {...establishmentValidation}/>
+                <SelectEstablishment options={establishments} {...establishmentValidation}/>
               </div>
             )
           }

@@ -80,44 +80,6 @@ export const appointmentColumns = (isAdmin) => {
   },
 ];
 
-export const serviceFields = (isAdmin) => {
-  const fields =[
-    {
-      headerName: "Nombre",
-      field: "name",
-    },
-    {
-      headerName: "Precio",
-      field: "price",
-      valueFormatter: (params) => `$${params.data.price.toFixed(2)}`,
-    },
-    {
-      headerName: "Duración aproximada",
-      field: "duration",
-      valueFormatter: (params) =>
-        Math.floor(params.data.duration / 60) >= 1
-          ? Math.floor(params.data.duration / 60) +
-            " hr " +
-            (params.data.duration % 60) +
-            " minutos"
-          : params.data.duration + " minutos",
-    },
-    {
-      headerName: "Tipo",
-      field: "type",
-    },
-  ]
-
-  if (isAdmin){
-    fields.push({
-      headerName: "Establecimiento",
-      valueFormatter: (params) => params.data.Establishment.name
-    })
-  }
-
-  return fields;
-};
-
   if (isAdmin) {
 
     const getEstablishmentText = (params) => {
@@ -150,6 +112,56 @@ export const serviceFields = (isAdmin) => {
 
   return fields;
 }
+
+export const serviceFields = (isAdmin) => {
+  const fields = [
+    {
+      headerName: "Nombre",
+      field: "name",
+    },
+    {
+      headerName: "Precio",
+      field: "price",
+      valueFormatter: (params) => `$${params.data.price.toFixed(2)}`,
+    },
+    {
+      headerName: "Duración aproximada",
+      field: "duration",
+      valueFormatter: (params) =>
+        Math.floor(params.data.duration / 60) >= 1
+          ? Math.floor(params.data.duration / 60) +
+            " hr " +
+            (params.data.duration % 60) +
+            " minutos"
+          : params.data.duration + " minutos",
+      getQuickFilterText: (params) =>
+        Math.floor(params.data.duration / 60) >= 1
+          ? Math.floor(params.data.duration / 60) +
+            " hr " +
+            (params.data.duration % 60) +
+            " minutos"
+          : params.data.duration + " minutos",
+    },
+    {
+      headerName: "Tipo",
+      field: "type",
+    },
+  ];
+
+  if(isAdmin) {
+    fields.push(
+      {
+        headerName: 'Establecimiento',
+        valueFormatter: (params) => params.data.Establishment.name,
+        getQuickFilterText: (params) => params.data.Establishment.name
+      }
+    )
+  }
+
+  return fields;
+}
+
+
 
 export const employeesEntries = (isAdmin) => {
   const fields = [

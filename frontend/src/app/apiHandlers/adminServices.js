@@ -37,8 +37,6 @@ export const createService = async (data, isAdmin) => {
     if (!isAdmin) {
       const establishmentId = await getEstablishmentId();
       data.establishment_id = establishmentId;
-    } else {
-      if(data.establishment_id === "") delete data.establishment_id
     }
 
     await axios.post(createServiceApiRoute, data, headers);
@@ -61,8 +59,7 @@ export const updateService = async (data, name, isAdmin) => {
     const headers = await axiosConfig();
     let establishment = '';
     delete data.id;
-    delete data.status;
-    delete data.establishment_services;
+    delete data.establishment_id;
 
     if(!isAdmin){
       const establishmentId = await getEstablishmentId();
@@ -73,10 +70,13 @@ export const updateService = async (data, name, isAdmin) => {
       establishment = `/?establishment_id=${data.establishment_id}`;
     }
 
-    delete data.establishment_id;
+    delete data.Establishment_id;
+    delete data.Establishment;
+
     await axios.put(updateServiceApiRoute + name + establishment, data, headers);
     return null;
   } catch (err) {
+    console.log(err)
     let message = "Ocurrio un error en el servidor";
     throw message;
   }

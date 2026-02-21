@@ -27,47 +27,6 @@ export default function Services({isAdmin, establishment_id}) {
   const modalId = "service_prices_modal";
 
 
-  const price = (isAdmin) => {
-    let price;
-    if (isAdmin) {
-      price =  {
-        headerName: 'Precios',
-        cellRenderer: (params) => {
-          if(params.data.establishment_services.length == 0){
-            return 'No asignado'
-          }
-          return (
-            <div style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "100%"
-            }}
-            >
-              <button
-                className={styles.modalButton}
-                type="button"
-                onClick={() => {
-                  setSelectedService(params.data);
-                  MicroModal.show(modalId);
-                }}
-              >
-                Ver
-              </button>
-            </div>
-          );
-        }
-      }
-    } else {
-      price = {
-        headerName: 'Precio',
-        valueFormatter: (params) => `$${params.data.establishment_services?.price.toFixed(2)}`
-      };
-    }
-
-    return price;
-  }
-
   useEffect(() => {
     const fetch = async() =>{
       try{

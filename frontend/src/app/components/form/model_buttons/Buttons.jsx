@@ -1,11 +1,14 @@
+import { deleteService } from "@/app/apiHandlers/adminServices";
 import { deleteEmployee } from "@/app/apiHandlers/adminStaff";
 import { deleteAppointment } from "@/app/apiHandlers/adminAppointments";
 import {
   appointmentsRoute,
   editAppointments,
   editEstablishment,
+  editService,
   editStaffRoute,
   establishmentRoute,
+  servicesRoute,
   staffRoute,
 } from "@/app/utils/routes";
 import styles from "./styles.module.css";
@@ -13,11 +16,16 @@ import { useRouter } from "next/navigation";
 import MicroModal from "micromodal";
 import { deleteEstablishment } from "@/app/apiHandlers/adminEstablishments";
 
-export default function Buttons({ model, modelType }) {
+export default function Buttons({ model, modelType, isAdmin=false }) {
   let id = model.id;
   const router = useRouter();
   let routes = {};
   switch (modelType) {
+    case "service":
+      routes.index = servicesRoute;
+      routes.edit = editService;
+      routes.deleteFunction = deleteService;
+      break;
     case "appointment":
       routes.index = appointmentsRoute;
       routes.edit = editAppointments;
@@ -62,7 +70,11 @@ export default function Buttons({ model, modelType }) {
         disabled={model.status == "inactive"}
         onClick={(e) => {
           e.preventDefault();
-          routes.deleteFunction(id);
+          if(modelType != "service"){
+            routes.deleteFunction(id);
+          } else {
+            routes.deleteFunction({id, isAdmin, establishment_id:model.Establishment_id});
+          }
           router.push(routes.index);
         }}
       >
