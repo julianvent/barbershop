@@ -26,6 +26,7 @@ export default function Services({isAdmin, establishment_id}) {
         let data;
         if (isAdmin) data = await getServices();
         else data = await getServicesByEstablishment(establishment_id);
+        console.log(data)
         setServices(data);
         
       }catch(err){
@@ -49,28 +50,7 @@ export default function Services({isAdmin, establishment_id}) {
     },
   ];
   const fields = [
-    ...serviceFields,
-    {
-      headerName: "Estado",
-      resizable: false,
-      cellRenderer: (params) => {
-        const Map = {
-          'active': {color:'#004b0aff', text: 'Activo' },
-          'inactive': {color:'#9d0000ff', text: 'Inactivo' },
-        };
-
-        return (
-          <span style={{
-            color: Map[params.data.status].color,
-            fontWeight: '600',
-            fontSize: '0.875rem'
-          }}>
-            {Map[params.data.status].text}
-          </span>
-        );
-      }
-    }
-    ,
+    ...serviceFields(isAdmin),
     {
       ...actionsDef,
       cellRenderer: (params) => {

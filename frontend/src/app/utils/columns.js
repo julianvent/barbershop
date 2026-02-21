@@ -49,32 +49,43 @@ export const appointmentColumns = [
   },
 ];
 
-export const serviceFields = [
-  {
-    headerName: "Nombre",
-    field: "name",
-  },
-  {
-    headerName: "Precio",
-    field: "price",
-    valueFormatter: (params) => `$${params.data.price.toFixed(2)}`,
-  },
-  {
-    headerName: "Duración aproximada",
-    field: "duration",
-    valueFormatter: (params) =>
-      Math.floor(params.data.duration / 60) >= 1
-        ? Math.floor(params.data.duration / 60) +
-          " hr " +
-          (params.data.duration % 60) +
-          " minutos"
-        : params.data.duration + " minutos",
-  },
-  {
-    headerName: "Tipo",
-    field: "type",
-  },
-];
+export const serviceFields = (isAdmin) => {
+  const fields =[
+    {
+      headerName: "Nombre",
+      field: "name",
+    },
+    {
+      headerName: "Precio",
+      field: "price",
+      valueFormatter: (params) => `$${params.data.price.toFixed(2)}`,
+    },
+    {
+      headerName: "Duración aproximada",
+      field: "duration",
+      valueFormatter: (params) =>
+        Math.floor(params.data.duration / 60) >= 1
+          ? Math.floor(params.data.duration / 60) +
+            " hr " +
+            (params.data.duration % 60) +
+            " minutos"
+          : params.data.duration + " minutos",
+    },
+    {
+      headerName: "Tipo",
+      field: "type",
+    },
+  ]
+
+  if (isAdmin){
+    fields.push({
+      headerName: "Establecimiento",
+      valueFormatter: (params) => params.data.Establishment.name
+    })
+  }
+
+  return fields;
+};
 
 export const employeesEntries = [
   {
