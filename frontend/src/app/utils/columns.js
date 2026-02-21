@@ -82,31 +82,12 @@ export const appointmentColumns = (isAdmin) => {
 
   if (isAdmin) {
 
-    const getEstablishmentText = (params) => {
-      const services = params?.data?.establishment_services;
-
-      if (!Array.isArray(services) || services.length === 0) {
-        return "No asignado";
-      }
-
-      if (services.length > 1) {
-        return "Todos los locales";
-      }
-
-      const first = services[0];
-
-      if (!first || !first.establishment_name) {
-        return "No asignado";
-      }
-
-      return first.establishment_name;
-    };
 
     fields.push({
       headerName: "Establecimiento",
       width: 150,
-      valueGetter: getEstablishmentText,
-      getQuickFilterText: getEstablishmentText,
+      valueGetter: (params) => params.data.establishment_name,
+      getQuickFilterText: (params) => params.data.establishment_name,
     });
   }
 

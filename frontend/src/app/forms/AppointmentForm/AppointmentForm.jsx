@@ -17,7 +17,7 @@ import {
   timeValidation,
   establishmentValidation
 } from "@/app/utils/appointmentValidators";
-import { useEffect, useEffectEvent, useMemo, useState, useRef } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { status } from "../../utils/data";
 import { useRouter } from "next/navigation";
 import {
@@ -29,9 +29,10 @@ import BarberSelector from "@/app/components/form/barberSelector/BarberSelector"
 import TimeSelector from "@/app/components/form/timeSelector/TimeSelector";
 import ServiceSelector from "@/app/components/form/serviceSelector/ServiceSelector";
 import { getEmployeesByEstablishment } from "../../apiHandlers/adminStaff";
-import { getServices, getServicesByEstablishment } from "../../apiHandlers/adminServices";
+import { getServicesByEstablishment } from "../../apiHandlers/adminServices";
 import { appointmentsRoute } from "@/app/utils/routes";
 import { getEstablishments } from "@/app/apiHandlers/adminEstablishments";
+import SelectEstablishment from "@/app/components/form/input/SelectEstablishment";
 
 export default function AppointmentForm({ appointment, mode }) {
   const [availableTimes, setAvailableTimes] = useState([]);
@@ -185,7 +186,7 @@ export default function AppointmentForm({ appointment, mode }) {
 
           <div className={styles.fieldsContainer}>
             <h2>Seleccione el establecimiento deseado:</h2>
-            <Select options={establishments} {...establishmentValidation}></Select>
+            <SelectEstablishment options={establishments} {...establishmentValidation}/>
           </div>
 
           <div className={styles.fieldsContainer}>
