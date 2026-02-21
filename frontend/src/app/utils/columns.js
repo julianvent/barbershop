@@ -80,25 +80,16 @@ export const appointmentColumns = (isAdmin) => {
   },
 ];
 
-  if(isAdmin) {
-    fields.push(
-        {
-        headerName: "Establecimiento",
-        field: "establishment_name",
-        width: 300,
-      },
-    )
-  }
-  return fields;
-
-}
-
 export const serviceFields = (isAdmin) => {
-  
-  const fields = [
+  const fields =[
     {
       headerName: "Nombre",
       field: "name",
+    },
+    {
+      headerName: "Precio",
+      field: "price",
+      valueFormatter: (params) => `$${params.data.price.toFixed(2)}`,
     },
     {
       headerName: "Duración aproximada",
@@ -110,19 +101,22 @@ export const serviceFields = (isAdmin) => {
             (params.data.duration % 60) +
             " minutos"
           : params.data.duration + " minutos",
-      getQuickFilterText: (params) =>
-        Math.floor(params.data.duration / 60) >= 1
-          ? Math.floor(params.data.duration / 60) +
-            " hr " +
-            (params.data.duration % 60) +
-            " minutos"
-          : params.data.duration + " minutos"
     },
     {
       headerName: "Tipo",
       field: "type",
     },
-  ];
+  ]
+
+  if (isAdmin){
+    fields.push({
+      headerName: "Establecimiento",
+      valueFormatter: (params) => params.data.Establishment.name
+    })
+  }
+
+  return fields;
+};
 
   if (isAdmin) {
 

@@ -74,6 +74,7 @@ export default function Services({isAdmin, establishment_id}) {
         let data;
         if (isAdmin) data = await getServices();
         else data = await getServicesByEstablishment(establishment_id);
+        console.log(data)
         setServices(data);
         
       }catch(err){
@@ -98,7 +99,6 @@ export default function Services({isAdmin, establishment_id}) {
   ];
   const fields = [
     ...serviceFields(isAdmin),
-    price(isAdmin),
     {
       ...actionsDef,
       cellRenderer: (params) => {

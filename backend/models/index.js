@@ -20,5 +20,4 @@ export { Schedule } from "./schedule.model.js";
 export { Service } from "./service.model.js";
 export { Appointment } from "./appointment.model.js";
 export { Barber } from "./barber.model.js";
-export { EstablishmentService } from "./associations/establishment.service.model.js";
 export { ServiceAppointment } from "./associations/service.appointment.model.js";

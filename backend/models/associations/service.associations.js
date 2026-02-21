@@ -1,48 +1,22 @@
 import { Appointment } from "../appointment.model.js";
 import { Establishment } from "../establishment.model.js";
 import { Service } from "../service.model.js";
-import { EstablishmentService } from "./establishment.service.model.js";
 import { ServiceAppointment } from "./service.appointment.model.js";
 
 /*
-Establishment <-> Service (many-to-many via establishment_service).
+Service <-> Establishment (one-to-many).
+Each service belongs to one establishment.
 */
-Establishment.belongsToMany(Service, {
-  through: EstablishmentService,
-  foreignKey: "establishment_id",
-  otherKey: "service_id",
+Service.belongsTo(Establishment, {
+  foreignKey: "Establishment_id",
+  onDelete: "SET NULL",
+  as: "Establishment",
+});
+
+Establishment.hasMany(Service, {
+  foreignKey: "Establishment_id",
+  onDelete: "SET NULL",
   as: "services",
-});
-
-Service.belongsToMany(Establishment, {
-  through: EstablishmentService,
-  foreignKey: "service_id",
-  otherKey: "establishment_id",
-  as: "establishments",
-});
-
-Establishment.hasMany(EstablishmentService, {
-  foreignKey: "establishment_id",
-  onDelete: "CASCADE",
-  as: "establishment_services",
-});
-
-EstablishmentService.belongsTo(Establishment, {
-  foreignKey: "establishment_id",
-  onDelete: "CASCADE",
-  as: "establishment",
-});
-
-Service.hasMany(EstablishmentService, {
-  foreignKey: "service_id",
-  onDelete: "CASCADE",
-  as: "establishment_services",
-});
-
-EstablishmentService.belongsTo(Service, {
-  foreignKey: "service_id",
-  onDelete: "CASCADE",
-  as: "service",
 });
 
 /*
@@ -91,6 +65,5 @@ export {
   Appointment,
   Establishment,
   Service,
-  EstablishmentService,
   ServiceAppointment,
 };

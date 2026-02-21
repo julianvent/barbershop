@@ -1,5 +1,3 @@
-import path from "path";
-
 import { AppointmentRepository } from "../repositories/appointment.repository.js";
 import { EstablishmentRepository } from "../repositories/establishment.repository.js";
 import { BarberRepository } from "../repositories/barber.repository.js";
@@ -39,14 +37,16 @@ export const AppointmentService = {
         const barber_data = await BarberRepository.getById(
           appointment.barber_id,
         );
-        const services = await AppointmentRepository.getServiceByAppointmentId(
+        const appointmentWithServices = await AppointmentRepository.getById(
           appointment.id,
         );
 
         let costTotal = 0;
-        services.forEach((service) => {
-          costTotal += service.price;
-        });
+        if (appointmentWithServices?.services) {
+          appointmentWithServices.services.forEach((service) => {
+            costTotal += service.price;
+          });
+        }
 
         const json = appointment.toJSON();
         return {
@@ -70,40 +70,42 @@ export const AppointmentService = {
   },
 
   async find(id) {
-    const appointment = await AppointmentRepository.getById(id);
-    if (!appointment) {
+    const appointmentWithServices = await AppointmentRepository.getById(id);
+    if (!appointmentWithServices) {
       throw new Error("Appointment not found");
     }
-    const services = await AppointmentRepository.getServiceByAppointmentId(id);
-    let establishment = null;    
-    if(appointment.establishment_id){
-      establishment = await EstablishmentRepository.getById(appointment.establishment_id)
+
+    let establishment = null;
+    if (appointmentWithServices.establishment_id) {
+      establishment = await EstablishmentRepository.getById(
+        appointmentWithServices.establishment_id,
+      );
     }
-    const barber = await BarberRepository.getById(appointment.barber_id);
-
-    let costTotal = 0;
-
-    const serviceInfo = await Promise.all(
-      services.map(async (service) => {
-        const serviceData = await ServiceRepository.getById(service.service_id);
-        costTotal += service.price;
-        return {
-          id: serviceData.id,
-          name: serviceData.name,
-          price: service.price,
-          duration: serviceData.duration,
-        };
-      }),
+    const barber = await BarberRepository.getById(
+      appointmentWithServices.barber_id,
     );
 
-    const { barber_id, ...appointment_data } = appointment.toJSON();
+    let costTotal = 0;
+    const serviceInfo = (appointmentWithServices.services || []).map(
+      (service) => {
+        costTotal += service.price;
+        return {
+          id: service.id,
+          name: service.name,
+          price: service.price, // Price from ServiceAppointment relation
+          duration: service.duration,
+        };
+      },
+    );
+
+    const { barber_id, ...appointment_data } = appointmentWithServices;
 
     return {
       ...appointment_data,
       cost_total: costTotal,
       services: serviceInfo,
       barber_id: barber ? barber.id : null,
-      establishment_name: establishment? establishment.name : "N/A",
+      establishment_name: establishment ? establishment.name : "N/A",
       barber: barber
         ? {
             barber_id: barber.id,
@@ -175,10 +177,10 @@ export const AppointmentService = {
       const workStart = new Date(from);
       const [h1, m1, s1] = schedule.start_time.split(":").map(Number);
       workStart.setHours(h1, m1, s1, 0);
-      
-      const now = new Date()
-      if(now.toDateString() == workStart.toDateString())
-        workStart.setTime(Math.max(now.getTime(), workStart.getTime()))
+
+      const now = new Date();
+      if (now.toDateString() == workStart.toDateString())
+        workStart.setTime(Math.max(now.getTime(), workStart.getTime()));
 
       const workEnd = new Date(from);
       const [h2, m2, s2] = schedule.end_time.split(":").map(Number);

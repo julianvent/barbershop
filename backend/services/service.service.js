@@ -48,11 +48,10 @@ export const ServiceService = {
     return ServiceRepository.update(serviceId, body, establishmentId, isAdmin);
   },
 
-  async remove(serviceId, establishmentId = null) {
-    const deleted = await ServiceRepository.deactivate(serviceId, establishmentId);
+  async remove(serviceId, establishmentId = null, isAdmin = false) {
+    const deleted = await ServiceRepository.deactivate(serviceId, establishmentId, isAdmin);
     if (!deleted) {
-      const action = establishmentId ? "unlinked" : "deactivated";
-      throw new Error(`Service not found or could not be ${action}`);
+      throw new Error("Service not found or could not be deactivated");
     }
   },
 
