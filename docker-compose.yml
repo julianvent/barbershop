@@ -11,6 +11,7 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - uploads_data:/app/uploads
+      - assets_data:/app/assets
     depends_on:
       - frontend
       - backend
@@ -52,6 +53,7 @@ services:
 
     volumes:
       - uploads_data:/app/uploads
+      - assets_data:/app/assets
     depends_on:
       - mysql
 
@@ -72,3 +74,4 @@ services:
 volumes:
   db_data:
   uploads_data:
+  assets_data:
