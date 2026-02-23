@@ -10,4 +10,6 @@ EXPOSE 3000
 
 RUN npm ci
 
-CMD [ "npm" "run" "start" ]
+RUN npm run build
+
+CMD ["npm", "run", "start"]

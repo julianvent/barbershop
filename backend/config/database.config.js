@@ -37,10 +37,6 @@ export async function initDB() {
     await createDatabaseIfNotExists();
     await sequelize.authenticate();
     console.log("Database connection OK");
-
-    // Lazy import models to avoid circular dependencies
-    const { seedDatabase } = await import("../utils/seed.utils.js");
-    await seedDatabase(sequelize);
   } catch (err) {
     console.error("Error connecting to database:", err.message);
     process.exit(1);
