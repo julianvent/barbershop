@@ -95,9 +95,10 @@ export async function seed(transaction = null) {
 
     const barber = await Barber.create(
       {
-        barber_name: "Barbero Principal",
+        barber_name: "Ricardo",
         is_active: true,
         establishment_id: establishment.id,
+        account_id: adminAccount.id,
       },
       { transaction: t },
     );
