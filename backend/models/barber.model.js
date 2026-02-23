@@ -15,7 +15,7 @@ export const Barber = sequelize.define(
     },
     image_path: {
       type: DataTypes.STRING(255),
-      allowNull: false,
+      allowNull: true,
     },
     is_active: {
       type: DataTypes.BOOLEAN,

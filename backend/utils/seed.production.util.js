@@ -1,6 +1,6 @@
 // Run this file to seed the database with production data.
 import { sequelize } from "../config/database.config.js";
-import { Account, Establishment, Service } from "../models/index.js";
+import { Account, Barber, Establishment, Service } from "../models/index.js";
 
 /**
  * Seeds the database with production data for La Barbería
@@ -90,6 +90,15 @@ export async function seed(transaction = null) {
           Establishment_id: establishment.id,
         },
       ],
+      { transaction: t },
+    );
+
+    const barber = await Barber.create(
+      {
+        barber_name: "Barbero Principal",
+        is_active: true,
+        establishment_id: establishment.id,
+      },
       { transaction: t },
     );
 
