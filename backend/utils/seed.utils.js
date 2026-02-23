@@ -1,3 +1,10 @@
+// This file contains utility functions for seeding the database with testing data.
+// To use it in your main application, add inside "scripts" section on the package.json the following lines:
+/*
+    "seed": "node config/seed.js",
+    "force-seed": "node config/seed.js --force"
+*/
+
 import { DataTypes } from "sequelize";
 import {
   Account,

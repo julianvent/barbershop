@@ -1,59 +1,77 @@
+version: "3.9"
+
 services:
-  frontend:
-    container_name: frontend
-    build:
-      context: frontend
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    restart: unless-stopped
     ports:
-      - 3000:3000
-    develop:
-      watch:
-        - action: sync
-          path: ./frontend
-          target: /app
-          initial_sync: true
-        - action: rebuild
-          path: ./frontend/package.json
-    command: >
-      sh -c "npm install && npm run dev"
+      - 80:80
+      - 443:443
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - uploads_data:/app/uploads
+      - assets_data:/app/assets
+    depends_on:
+      - frontend
+      - backend
+
+  frontend:
+    build:
+      context: ./frontend
+    restart: unless-stopped
     depends_on:
       - backend
 
   backend:
-    container_name: backend
     build:
-      context: backend
-    ports:
-      - 8000:8000
-    develop:
-      watch:
-        - action: sync
-          path: ./backend
-          target: /app
-          initial_sync: true
-    command: >
-      sh -c "npm install && npm run dev"
+      context: ./backend
+    restart: unless-stopped
     environment:
-      - PORT=8000
-      - DB_HOST=mysql
-      - DB_USER=root
-      - DB_PASSWORD=root
-      - DB_NAME=barberia
-      - TIMEOUT=20000
+      PORT: ${PORT}
+
+      DB_HOST: mysql
+      DB_USER: ${BACKEND_DB_USER}
+      DB_PASSWORD: ${BACKEND_DB_PASWD}
+      DB_NAME: ${BACKEND_DB}
+
+      ENABLE_EMAIL: ${ENABLE_EMAIL}
+      ENABLE_WHATSAPP: ${ENABLE_WHATSAPP}
+
+      BASE_URL_BACKEND: ${BASE_URL_BACKEND}
+      BASE_URL_FRONTEND: ${BASE_URL_FRONTEND}
+
+      EMAIL_PROVIDER: ${EMAIL_PROVIDER}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
+      APP_URL: ${APP_URL}
+
+      DEFAULT_ADMIN_EMAIL: ${DEFAULT_ADMIN_EMAIL}
+      DEFAULT_ADMIN_PASSWORD: ${DEFAULT_ADMIN_PASSWORD}
+
+    volumes:
+      - uploads_data:/app/uploads
+      - assets_data:/app/assets
+
     depends_on:
       - mysql
 
   mysql:
     image: mysql:8.0
+    restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: barberia
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASWD}
+      MYSQL_DATABASE: ${BACKEND_DB}
+      MYSQL_USER: ${BACKEND_DB_USER}
+      MYSQL_PASSWORD: ${BACKEND_DB_PASWD}
       TZ: America/Mexico_City
     command:
+      - --host-cache-size=0
       - --default-time-zone=-06:00
-    ports:
-      - 3306:3306
     volumes:
       - db_data:/var/lib/mysql
 
 volumes:
   db_data:
+  uploads_data:
+  assets_data:

@@ -57,7 +57,7 @@ export const Establishment = sequelize.define(
       allowNull: true,
     },
     phone_number: {
-      type: DataTypes.STRING(15),
+      type: DataTypes.STRING(18),
       allowNull: false,
       validate: {
         notEmpty: { msg: "Phone number cannot be empty" },
