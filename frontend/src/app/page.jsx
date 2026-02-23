@@ -113,25 +113,25 @@ export default function Page() {
           <div>
             <ul>
               <li>
-                <a href="https://www.facebook.com/profile.php">
+                <a href={ process.env.FACEBOOK_URL ?? "https://www.facebook.com/profile.php"}>
                   <img src="/icons/social-media/facebook.svg" alt="facebook image" />
                 </a>
               </li>
 
               <li>
-                <a href="https://www.instagram.com/">
+                <a href={process.env.INSTAGRAM_URL ?? "https://www.instagram.com/"}>
                   <img src="/icons/social-media/instagram.svg" alt="instagram image" />
                 </a>
               </li>
 
               <li>
-                <a href="https://wa.me">
+                <a href={process.env.WHATSAPP_URL ?? "https://wa.me"}>
                   <img src="/icons/social-media/whatsapp.svg" alt="whatsapp image" />
                 </a>
               </li>
 
               <li>
-                <a href="mailto:sagozbarberdev@gmail.com">
+                <a href={"mailto:" + process.env.MAILTO}>
                   <img src="/icons/social-media/mail.svg" alt="image of mail image" />
                 </a>
               </li>

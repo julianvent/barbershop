@@ -7,7 +7,7 @@
 [SG Barbershop Information](https://github.com/julianvent/barbershop/wiki)
 ## Raise services
 ```bash
-docker compose up --watch
+docker compose -f local.yml up
 ```
 
 Open [http://localhost:3000](http://localhost:3000) to visualize the page.
