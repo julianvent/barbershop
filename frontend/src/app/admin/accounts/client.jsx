@@ -61,6 +61,7 @@ export default function IndexAccounts(){
     async function load() {
       try{
         const accs = await getAccounts();
+        if (accs.length == 0 )  setMessage('No se han registrado cuentas en el sistema');
         setAccounts(accs);
       } catch (e) {
         setMessage(e);

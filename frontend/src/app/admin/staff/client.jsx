@@ -23,12 +23,13 @@ export default function StaffIndex({isAdmin, establishmentId}) {
   const gridRef = useRef();
   
   useEffect(() => {
-    setMessage('No se han registrado los servicios');
+    setMessage('Cargando ...');
     const fetch = async () => {
       try{
         let data;
         if (isAdmin) data = await getEmployees();
         else data = await getEmployeesByEstablishment(establishmentId);
+        if (data.data.length == 0 )  setMessage('No se han registrado los empleados');
         setEmployees(data.data);
 
       }catch (err){

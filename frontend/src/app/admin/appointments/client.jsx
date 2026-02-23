@@ -26,6 +26,7 @@ export default function Appointments({isAdmin}) {
       const fetchAppointments = async () => {
         try {
           const data = await getAppointments();
+          if (data.length == 0 )  setMessage('No se han registrado citas');
           setAppointments(data);
         } catch (error) {
           setMessage('No se pudieron recuperar las citas');

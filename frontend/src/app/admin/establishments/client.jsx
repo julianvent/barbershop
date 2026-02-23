@@ -15,7 +15,7 @@ import SearchGrid from "@/app/components/base_layout/SearchGrid";
 
 export default function IndexEstablishment(){
   const [establishments, setEstablishments] = useState(null)
-  const [ message, setMessage] = useState('No se han registrado los establecimentos');
+  const [ message, setMessage] = useState('Cargando ...');
   const [gridApi, setGridApi] = useState(null);
   const gridRef = useRef();
 
@@ -44,6 +44,7 @@ export default function IndexEstablishment(){
     const load = async () => {
       try {
         const response = await getEstablishments();
+        if (response.length == 0 )  setMessage('No se han registrado los establecimentos');
         setEstablishments(response);
       } catch (e) {
         setMessage('No se pudieron cargar los establecimientos')
