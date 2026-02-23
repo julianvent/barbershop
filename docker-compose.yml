@@ -44,16 +44,15 @@ services:
       EMAIL_PROVIDER: ${EMAIL_PROVIDER}
       SMTP_USER: ${SMTP_USER}
       SMTP_PASS: ${SMTP_PASS}
+      APP_URL: ${APP_URL}
 
-      ETHEREAL_HOST: ${ETHEREAL_HOST}
-      ETHEREAL_PORT: ${ETHEREAL_PORT}
-      ETHEREAL_NAME: ${ETHEREAL_NAME}
-      ETHEREAL_USERNAME: ${ETHEREAL_USERNAME}
-      ETHEREAL_PASSWORD: ${ETHEREAL_PASSWORD}
+      DEFAULT_ADMIN_EMAIL: ${DEFAULT_ADMIN_EMAIL}
+      DEFAULT_ADMIN_PASSWORD: ${DEFAULT_ADMIN_PASSWORD}
 
     volumes:
       - uploads_data:/app/uploads
       - assets_data:/app/assets
+
     depends_on:
       - mysql
 
@@ -67,6 +66,7 @@ services:
       MYSQL_PASSWORD: ${BACKEND_DB_PASWD}
       TZ: America/Mexico_City
     command:
+      - --host-cache-size=0
       - --default-time-zone=-06:00
     volumes:
       - db_data:/var/lib/mysql

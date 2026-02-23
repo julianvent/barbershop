@@ -12,9 +12,9 @@ import routes from "./routes/index.js";
 import { setupRateLimit } from "./middlewares/rate.limit.middleware.js";
 import { setupLogging } from "./middlewares/logging.middleware.js";
 
-
 import { initDB, sequelize } from "./config/database.config.js";
 import { createDefaultAdminIfNotExist } from "./config/createDefaultAdmin.js";
+import { seed as seedProduction } from "./utils/seed.production.util.js";
 
 
 const app = express();
@@ -43,6 +43,9 @@ async function startServer() {
     await sequelize.sync();
     console.log("Models synchronized");
     await createDefaultAdminIfNotExist();
+
+    await seedProduction();
+    
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });

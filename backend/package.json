@@ -7,9 +7,7 @@
     "test": "vitest run",
     "test:watch": "vitest watch",
     "dev": "nodemon index.js",
-    "start": "node index.js",
-    "seed": "node config/seed.js",
-    "force-seed": "node config/seed.js --force"
+    "start": "node index.js"
   },
   "author": "",
   "license": "ISC",
