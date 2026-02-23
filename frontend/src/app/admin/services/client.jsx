@@ -28,11 +28,13 @@ export default function Services({isAdmin, establishment_id}) {
 
 
   useEffect(() => {
+    setMessage('Cargando ...');
     const fetch = async() =>{
       try{
         let data;
         if (isAdmin) data = await getServices();
         else data = await getServicesByEstablishment(establishment_id);
+        if (data.length == 0 )  setMessage('No se han registrado los servicios');
         setServices(data);
         
       }catch(err){
