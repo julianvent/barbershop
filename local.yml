@@ -1,36 +1,42 @@
-version: "3.9"
-
 services:
-  nginx:
-    image: nginx:alpine
-    container_name: nginx
-    restart: unless-stopped
-    ports:
-      - 80:80
-      - 443:443
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - uploads_data:/app/uploads
-      - assets_data:/app/assets
-    depends_on:
-      - frontend
-      - backend
-
   frontend:
+    container_name: frontend
     build:
-      context: ./frontend
+      context: frontend
+      dockerfile: local.Dockerfile
+    ports:
+      - 3000:3000
+    develop:
+      watch:
+        - action: sync
+          path: ./frontend
+          target: /app
+          initial_sync: true
+        - action: rebuild
+          path: ./frontend/package.json
+    command: >
+      sh -c "npm install && npm run dev"
     environment:
       WHATSAPP_URL: ${WHATSAPP_URL}
       FACEBOOK_URL: ${FACEBOOK_URL}
       MAILTO: ${DEFAULT_ADMIN_EMAIL}
-    restart: unless-stopped
     depends_on:
       - backend
 
   backend:
+    container_name: backend
     build:
-      context: ./backend
-    restart: unless-stopped
+      context: backend
+    ports:
+      - 8000:8000
+    develop:
+      watch:
+        - action: sync
+          path: ./backend
+          target: /app
+          initial_sync: true
+    command: >
+      sh -c "npm install && npm run dev"
     environment:
       PORT: ${PORT}
 
@@ -52,11 +58,6 @@ services:
 
       DEFAULT_ADMIN_EMAIL: ${DEFAULT_ADMIN_EMAIL}
       DEFAULT_ADMIN_PASSWORD: ${DEFAULT_ADMIN_PASSWORD}
-
-    volumes:
-      - uploads_data:/app/uploads
-      - assets_data:/app/assets
-
     depends_on:
       - mysql
 
@@ -75,7 +76,6 @@ services:
     volumes:
       - db_data:/var/lib/mysql
 
+
 volumes:
   db_data:
-  uploads_data:
-  assets_data:
