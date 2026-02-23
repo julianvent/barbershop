@@ -55,7 +55,7 @@ export async function seed(transaction = null) {
           price: 150,
           duration: 30,
           type: "corte",
-          establishment_id: establishment.id,
+          Establishment_id: establishment.id,
         },
         {
           name: "Corte de barba",
@@ -63,7 +63,7 @@ export async function seed(transaction = null) {
           price: 150,
           duration: 20,
           type: "barba",
-          establishment_id: establishment.id,
+          Establishment_id: establishment.id,
         },
         {
           name: "Afeitado",
@@ -71,7 +71,7 @@ export async function seed(transaction = null) {
           price: 150,
           duration: 50,
           type: "afeitado",
-          establishment_id: establishment.id,
+          Establishment_id: establishment.id,
         },
         {
           name: "Corte infantil",
@@ -79,7 +79,7 @@ export async function seed(transaction = null) {
           price: 150,
           duration: 30,
           type: "corte",
-          establishment_id: establishment.id,
+          Establishment_id: establishment.id,
         },
         {
           name: "Tratamiento",
@@ -87,7 +87,7 @@ export async function seed(transaction = null) {
           price: 350,
           duration: 50,
           type: "tratamiento",
-          establishment_id: establishment.id,
+          Establishment_id: establishment.id,
         },
       ],
       { transaction: t },
